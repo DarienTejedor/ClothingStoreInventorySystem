@@ -1,0 +1,49 @@
+### Fase 2: Implementación del Sistema 
+
+Aquí se detallarán los pasos y tecnologías para llevar a cabo la implementación de la API.
+
+#### 1. Configuración del Entorno y Estructura del Proyecto
+
+* **Backend:**
+* Lenguaje/Framework: Java con Spring.
+* Base de datos: PostgreSQL.
+* ORM: Spring Data JPA
+* Control de versiones: Git 
+* IDE: Intellij
+
+
+## 2. Módulos Iniciales a Implementar (Backend)
+
+* Implementación de los endpoints más sencillos primero
+* Creación de la base de datos en postgres
+* crear las interfaces necesarias 
+
+## 3. Herramientas y Servicios Adicionales
+
+Probar API: Insomnia
+Versiones DB: Flyway
+
+
+## 4. Estructura de carpetas
+
+Se hará una breve idea de la organización e carpetas aunque no es una propuesta final sino que se ira actualizando según las necesidades:
+
+com.darientejedor.demo
+-controller
+-domain {
+// Carpetas de entidades, el ejemplo de usuarios aplica para las demás según sea el caso si se necesitan todas o parcialmente 
+-usuarios
+    -entity
+    -repository
+    -service
+    -dto
+-tiendas
+-productos
+-inventarios
+-ventas
+-detallesVenta
+}
+-security
+-APIAplication
+resources
+-db.migration
