@@ -29,4 +29,10 @@ public class Inventory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
+
+    public Inventory(InventoryData inventoryData, Product product, Store store){
+        this.stock = inventoryData.stock();
+        this.product = product;
+        this.store = store;
+    }
 }

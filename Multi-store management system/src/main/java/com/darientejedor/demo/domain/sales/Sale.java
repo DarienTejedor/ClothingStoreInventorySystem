@@ -1,6 +1,5 @@
 package com.darientejedor.demo.domain.sales;
 
-import com.darientejedor.demo.address.Address;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;
 import jakarta.persistence.*;
@@ -31,4 +30,11 @@ public class Sale {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public Sale(SaleData saleData, Store store, User user){
+        this.saleDate = saleData.saleDate();
+        this.totalSale = saleData.totalSale();
+        this.store = store;
+        this.user = user;
+    }
 }

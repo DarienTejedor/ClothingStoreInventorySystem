@@ -2,6 +2,7 @@ package com.darientejedor.demo.domain.stores;
 
 import com.darientejedor.demo.address.Address;
 import com.darientejedor.demo.domain.roles.Role;
+import com.darientejedor.demo.domain.users.UserData;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,5 +28,11 @@ public class Store {
     @Column(unique = true, nullable = false)
     private String email;
 
+    public Store(StoreData storeData) {
+        this.name = storeData.name();
+        this.address = storeData.address();
+        this.phoneNumber = storeData.phoneNumber();
+        this.email = storeData.email();
+    }
 }
 

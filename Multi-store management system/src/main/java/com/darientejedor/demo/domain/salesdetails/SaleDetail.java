@@ -1,11 +1,9 @@
 package com.darientejedor.demo.domain.salesdetails;
 
-import com.darientejedor.demo.address.Address;
 import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.sales.Sale;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.java.Log;
 
 import java.math.BigDecimal;
 
@@ -37,4 +35,11 @@ public class SaleDetail {
 
     @Column(nullable = false)
     private Long quantity;
+
+    public SaleDetail(SaleDetailData saleDatailData, Sale sale, Product product){
+        this.sale = sale;
+        this.product = product;
+        this.unitPrice = saleDatailData.unitPrice();
+        this.quantity = saleDatailData.quantity();
+    }
 }

@@ -24,4 +24,10 @@ public class Product {
     private String description;
     @Column(nullable = false)
     private BigDecimal price;
+
+    public Product(ProductData productData){
+        this.name = productData.name();
+        this.description = productData.description();
+        this.price = productData.price();
+    }
 }
