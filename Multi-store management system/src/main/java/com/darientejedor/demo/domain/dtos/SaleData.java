@@ -1,11 +1,5 @@
-package com.darientejedor.demo.domain.sales;
+package com.darientejedor.demo.domain.dtos;
 
-import com.darientejedor.demo.domain.stores.Store;
-import com.darientejedor.demo.domain.users.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;

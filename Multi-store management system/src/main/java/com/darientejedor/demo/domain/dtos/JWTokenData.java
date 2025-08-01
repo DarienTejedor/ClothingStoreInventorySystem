@@ -1,4 +1,4 @@
-package com.darientejedor.demo.security;
+package com.darientejedor.demo.domain.dtos;
 
 public record JWTokenData(String jwToken) {
 }

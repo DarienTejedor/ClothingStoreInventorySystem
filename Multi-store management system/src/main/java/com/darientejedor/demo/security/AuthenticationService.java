@@ -1,6 +1,6 @@
 package com.darientejedor.demo.security;
 
-import com.darientejedor.demo.domain.users.UserRepository;
+import com.darientejedor.demo.domain.respositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

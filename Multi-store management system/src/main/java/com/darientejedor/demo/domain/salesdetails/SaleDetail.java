@@ -1,5 +1,6 @@
 package com.darientejedor.demo.domain.salesdetails;
 
+import com.darientejedor.demo.domain.dtos.SaleDetailData;
 import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.sales.Sale;
 import jakarta.persistence.*;

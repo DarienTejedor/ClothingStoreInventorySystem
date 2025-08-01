@@ -1,4 +1,4 @@
-package com.darientejedor.demo.domain.roles;
+package com.darientejedor.demo.domain.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 

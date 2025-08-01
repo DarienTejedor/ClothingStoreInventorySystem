@@ -1,7 +1,5 @@
-package com.darientejedor.demo.domain.users;
+package com.darientejedor.demo.domain.dtos;
 
-import com.darientejedor.demo.domain.roles.Role;
-import com.darientejedor.demo.domain.stores.Store;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

@@ -1,6 +1,6 @@
-package com.darientejedor.demo.domain.stores;
+package com.darientejedor.demo.domain.respositories;
 
-import com.darientejedor.demo.domain.users.User;
+import com.darientejedor.demo.domain.stores.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

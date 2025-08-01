@@ -1,5 +1,6 @@
-package com.darientejedor.demo.domain.inventory;
+package com.darientejedor.demo.domain.respositories;
 
+import com.darientejedor.demo.domain.inventory.Inventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

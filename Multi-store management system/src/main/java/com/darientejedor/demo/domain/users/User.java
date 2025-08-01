@@ -1,7 +1,7 @@
 package com.darientejedor.demo.domain.users;
 
+import com.darientejedor.demo.domain.dtos.UserData;
 import com.darientejedor.demo.domain.roles.Role;
-import com.darientejedor.demo.domain.roles.RoleData;
 import com.darientejedor.demo.domain.stores.Store;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,6 +32,7 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private Long document;
+    private boolean activo;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
@@ -39,13 +40,20 @@ public class User implements UserDetails {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    public User(UserData userData, Role role, Store store) {
+    public User(UserData userData, Role role, Store store, String hashedPassword) {
         this.loginUser = userData.loginUser();
         this.name = userData.name();
-        this.password = userData.password();
+        this.password = hashedPassword;
         this.document = userData.document();
+        this.activo = true;
         this.role = role;
         this.store = store;
+    }
+
+
+
+    public void deactiveUser(){
+        this.activo = false;
     }
 
 

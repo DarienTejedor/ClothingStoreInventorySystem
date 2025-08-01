@@ -1,6 +1,6 @@
-package com.darientejedor.demo.domain.stores;
+package com.darientejedor.demo.domain.dtos;
 
-import com.darientejedor.demo.address.Address;
+import com.darientejedor.demo.domain.address.Address;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

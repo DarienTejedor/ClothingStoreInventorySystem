@@ -1,5 +1,6 @@
 package com.darientejedor.demo.domain.roles;
 
+import com.darientejedor.demo.domain.dtos.RoleData;
 import jakarta.persistence.*;
 import lombok.*;
 

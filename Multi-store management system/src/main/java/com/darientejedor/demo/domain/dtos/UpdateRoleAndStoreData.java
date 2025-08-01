@@ -1,13 +1,11 @@
-package com.darientejedor.demo.domain.inventory;
+package com.darientejedor.demo.domain.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record InventoryData(
+public record UpdateRoleAndStoreData(
         @NotNull
-        Long stock,
-        @NotNull
-        Long productId,
+        Long roleId,
         @NotNull
         Long storeId
 ) {
