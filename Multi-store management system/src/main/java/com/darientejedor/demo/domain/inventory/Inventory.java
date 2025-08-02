@@ -1,6 +1,6 @@
 package com.darientejedor.demo.domain.inventory;
 
-import com.darientejedor.demo.domain.dtos.InventoryData;
+import com.darientejedor.demo.domain.inventory.dto.InventoryData;
 import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.stores.Store;
 import jakarta.persistence.*;

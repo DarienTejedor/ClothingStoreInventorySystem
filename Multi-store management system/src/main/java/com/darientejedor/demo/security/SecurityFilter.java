@@ -1,6 +1,6 @@
 package com.darientejedor.demo.security;
 
-import com.darientejedor.demo.domain.respositories.UserRepository;
+import com.darientejedor.demo.domain.users.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

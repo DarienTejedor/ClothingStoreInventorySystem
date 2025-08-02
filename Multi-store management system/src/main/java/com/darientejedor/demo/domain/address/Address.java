@@ -1,6 +1,6 @@
 package com.darientejedor.demo.domain.address;
 
-import com.darientejedor.demo.domain.dtos.AddressData;
+import com.darientejedor.demo.domain.address.dtos.AddressData;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

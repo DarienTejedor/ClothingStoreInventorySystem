@@ -1,6 +1,6 @@
 package com.darientejedor.demo.domain.products;
 
-import com.darientejedor.demo.domain.dtos.ProductData;
+import com.darientejedor.demo.domain.products.dtos.ProductData;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -2,9 +2,9 @@ package com.darientejedor.demo.config;
 
 
 import com.darientejedor.demo.domain.address.Address;
-import com.darientejedor.demo.domain.respositories.RoleRepository;
-import com.darientejedor.demo.domain.respositories.StoreRepository;
-import com.darientejedor.demo.domain.respositories.UserRepository;
+import com.darientejedor.demo.domain.roles.repository.RoleRepository;
+import com.darientejedor.demo.domain.stores.repository.StoreRepository;
+import com.darientejedor.demo.domain.users.repository.UserRepository;
 import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;

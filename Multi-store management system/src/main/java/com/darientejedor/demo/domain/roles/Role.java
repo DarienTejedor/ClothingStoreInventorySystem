@@ -1,6 +1,6 @@
 package com.darientejedor.demo.domain.roles;
 
-import com.darientejedor.demo.domain.dtos.RoleData;
+import com.darientejedor.demo.domain.roles.dto.RoleData;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +18,14 @@ public class Role {
     private Long id;
     @Column(unique = true, nullable = false)
     private String name;
+    private boolean active;
 
     public Role(RoleData rolesData) {
         this.name = rolesData.name();
+        this.active = true;
+    }
+
+    public void deactiveRole() {
+        this.active = false;
     }
 }

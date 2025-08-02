@@ -2,8 +2,8 @@ package com.darientejedor.demo.controller;
 
 
 import com.darientejedor.demo.domain.users.User;
-import com.darientejedor.demo.domain.dtos.UserAuthenticationData;
-import com.darientejedor.demo.domain.dtos.JWTokenData;
+import com.darientejedor.demo.domain.users.dto.UserAuthenticationData;
+import com.darientejedor.demo.security.dtos.JWTokenData;
 import com.darientejedor.demo.security.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
