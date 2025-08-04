@@ -4,12 +4,13 @@ import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.roles.dto.RoleData;
 import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import com.darientejedor.demo.domain.roles.repository.RoleRepository;
-import com.darientejedor.demo.domain.users.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RoleService {
 
     @Autowired
@@ -48,6 +49,9 @@ public class RoleService {
     public RoleResponse updateRole(Long id, @Valid RoleData roleData) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Role not found with ID: " + id));
+        if (!role.isActive()){
+            throw new IllegalArgumentException("Role not found or inactive with ID: " + id);
+        }
         role.setName(roleData.name());
         roleRepository.save(role);
         return new RoleResponse(role);
@@ -56,6 +60,9 @@ public class RoleService {
     public void deactiveRole(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Role not found with ID: " + id));
+        if (!role.isActive()){
+            throw new IllegalArgumentException("Role not found or already inactive with ID: " + id);
+        }
         role.deactiveRole();
         roleRepository.save(role);
     }

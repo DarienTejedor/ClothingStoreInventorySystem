@@ -1,6 +1,8 @@
 package com.darientejedor.demo.domain.stores.repository;
 
 import com.darientejedor.demo.domain.stores.Store;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -10,4 +12,6 @@ public interface StoreRepository extends JpaRepository<Store, Long>{
     Optional<Store> findByName(String name);
 
     Optional<Store> findByEmail(String email);
+
+    Page<Store> findByActivoTrue(Pageable pageable);
 }

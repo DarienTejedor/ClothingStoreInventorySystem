@@ -22,16 +22,22 @@ public class Store {
     @Embedded
     @Column(unique = true, nullable = false)
     private Address address;
-    @Column(name = "phone_number", unique = true, nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
+    private boolean active;
 
     public Store(StoreData storeData) {
         this.name = storeData.name();
-        this.address = storeData.address();
+        this.address = new Address(storeData.address());
         this.phoneNumber = storeData.phoneNumber();
         this.email = storeData.email();
+        this.active = true;
+    }
+
+    public void deactiveStore() {
+        this.active = false;
     }
 }
 

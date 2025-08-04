@@ -13,4 +13,5 @@ public record ProductData(
         @NotNull
         BigDecimal price
 ) {
+
 }

@@ -24,10 +24,16 @@ public class Product {
     private String description;
     @Column(nullable = false)
     private BigDecimal price;
+    private boolean active;
 
     public Product(ProductData productData){
         this.name = productData.name();
         this.description = productData.description();
         this.price = productData.price();
+        this.active = true;
+    }
+
+    public void deactiveProduct(){
+        this.active = false;
     }
 }
