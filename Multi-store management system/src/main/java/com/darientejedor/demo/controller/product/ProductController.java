@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Pageable;
 
-@Controller
+@RestController
 @RequestMapping("products")
 public class ProductController {
 
