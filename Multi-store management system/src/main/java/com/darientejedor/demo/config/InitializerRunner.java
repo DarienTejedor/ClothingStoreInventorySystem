@@ -56,7 +56,7 @@ public class InitializerRunner implements CommandLineRunner {
             //Crea el usuario con el rol
             User firstAdmin = new User();
             firstAdmin.setLoginUser("ADMIN");
-            firstAdmin.setActivo(true);
+            firstAdmin.setActive(true);
             firstAdmin.setPassword(passwordEncoder.encode("admin123"));
             firstAdmin.setRole(adminRole);
 

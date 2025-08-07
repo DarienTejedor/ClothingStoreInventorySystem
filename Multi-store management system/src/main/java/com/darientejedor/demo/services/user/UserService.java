@@ -54,7 +54,7 @@ public class UserService {
     public UserResponse userResponse(Long id){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActivo()) {
+        if (!user.isActive()) {
             throw new IllegalArgumentException("User not found or inactive with ID: " + id);
         }
         return new UserResponse(user.getId(),
@@ -68,7 +68,7 @@ public class UserService {
     public UserResponse updateUserInfo(Long id, UpdateUserInformation userInformation) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActivo()) {
+        if (!user.isActive()) {
             throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
         }
         user.setName(userInformation.name());
@@ -80,7 +80,7 @@ public class UserService {
     public UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActivo()) {
+        if (!user.isActive()) {
             throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
         }
         var roleId = updateRoleAndStoreData.roleId();
@@ -102,7 +102,7 @@ public class UserService {
     public UserResponse changePassword(Long id, PasswordUpdateData updatePassword){
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActivo()) {
+        if (!user.isActive()) {
             throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
         }
         var password = user.getPassword();
@@ -119,7 +119,7 @@ public class UserService {
     public void deactiveUser(Long id){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActivo()) {
+        if (!user.isActive()) {
             throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
         }
         user.deactiveUser();

@@ -32,7 +32,7 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private Long document;
-    private boolean activo;
+    private boolean active;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
@@ -45,7 +45,7 @@ public class User implements UserDetails {
         this.name = userData.name();
         this.password = hashedPassword;
         this.document = userData.document();
-        this.activo = true;
+        this.active = true;
         this.role = role;
         this.store = store;
     }
@@ -53,7 +53,7 @@ public class User implements UserDetails {
 
 
     public void deactiveUser(){
-        this.activo = false;
+        this.active = false;
     }
 
 

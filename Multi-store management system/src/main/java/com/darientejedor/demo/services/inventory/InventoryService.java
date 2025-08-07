@@ -93,9 +93,9 @@ public class InventoryService {
     }
 
 
-    //VAlIDADOR de tienda y producto existente y activo
+    //VAlIDADOR de tienda y producto existente y active
     private ProductAndStore validateActiveProductAndStore(Long productId, Long storeId) {
-        // Valida que el producto exista y esté activo
+        // Valida que el producto exista y esté active
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
         if (!product.isActive()){

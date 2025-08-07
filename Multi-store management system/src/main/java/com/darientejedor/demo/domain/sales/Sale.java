@@ -31,11 +31,27 @@ public class Sale {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    private boolean active;
 
     public Sale(SaleData saleData, Store store, User user){
-        this.saleDate = saleData.saleDate();
-        this.totalSale = saleData.totalSale();
+        this.saleDate = LocalDateTime.now();
+        this.totalSale = BigDecimal.ZERO;
         this.store = store;
         this.user = user;
+        this.active = true;
     }
+
+
+    public void deactiveSale(){
+        this.active = false;
+    }
+
 }
+
+
+
+
+
+
+
+
