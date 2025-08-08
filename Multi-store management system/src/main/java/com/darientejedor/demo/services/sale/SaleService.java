@@ -38,13 +38,7 @@ public class SaleService {
         if (!sale.isActive()){
             throw new IllegalArgumentException("Sale inactive");
         }
-        return new SaleResponse(
-                sale.getId(),
-                sale.getSaleDate(),
-                sale.getTotalSale(),
-                sale.getStore().getId(),
-                sale.getUser().getId()
-        );
+        return new SaleResponse(sale);
     }
 
     public SaleResponse createSale(@Valid SaleData saleData) {
@@ -59,7 +53,7 @@ public class SaleService {
             throw new IllegalArgumentException("User not found or inactive with ID: " + saleData.userId());
         }
 
-        Sale newSale = new Sale(saleData,store, user);
+        Sale newSale = new Sale(store, user);
         
         saleRepository.save(newSale);
         return new SaleResponse(newSale);

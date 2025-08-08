@@ -27,4 +27,5 @@ public record SaleResponse(
                        .map(SaleDetailResponse::new)
                        .collect(Collectors.toList()));
     }
+
 }

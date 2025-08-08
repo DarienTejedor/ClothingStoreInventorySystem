@@ -48,7 +48,7 @@ public class UserService {
 
     public Page<User> listActiveUsers(Pageable pageable){
 
-        return userRepository.findByActivoTrue(pageable);
+        return userRepository.findByActiveTrue(pageable);
     }
 
     public UserResponse userResponse(Long id){

@@ -33,7 +33,7 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private Long document;
     private boolean active;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
     @ManyToOne(fetch = FetchType.LAZY)

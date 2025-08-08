@@ -13,5 +13,5 @@ public interface StoreRepository extends JpaRepository<Store, Long>{
 
     Optional<Store> findByEmail(String email);
 
-    Page<Store> findByActivoTrue(Pageable pageable);
+    Page<Store> findByActiveTrue(Pageable pageable);
 }

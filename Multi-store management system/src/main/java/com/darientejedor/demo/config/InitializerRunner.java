@@ -58,6 +58,9 @@ public class InitializerRunner implements CommandLineRunner {
             firstAdmin.setLoginUser("ADMIN");
             firstAdmin.setActive(true);
             firstAdmin.setPassword(passwordEncoder.encode("admin123"));
+            firstAdmin.setDocument(1234567890L);
+            firstAdmin.setName("Darien");
+            firstAdmin.setStore(defaultStore);
             firstAdmin.setRole(adminRole);
 
             userRepository.save(firstAdmin);

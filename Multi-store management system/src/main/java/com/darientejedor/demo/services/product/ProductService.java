@@ -7,9 +7,9 @@ import com.darientejedor.demo.domain.products.repository.ProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 
 @Service
 public class ProductService {
@@ -18,7 +18,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
 
-    public Page<Product> listActiveProducts(Pageable pageable) { return productRepository.findByActivoTrue(pageable);
+    public Page<Product> listActiveProducts(Pageable pageable) { return productRepository.findByActiveTrue(pageable);
     }
 
 

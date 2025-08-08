@@ -13,8 +13,8 @@ import java.util.List;
 
 @Table(name = "sales")
 @Entity(name = "Sale")
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})

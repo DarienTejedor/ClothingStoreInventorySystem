@@ -6,8 +6,8 @@ import lombok.*;
 
 @Table(name = "roles")
 @Entity(name = "Role")
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
@@ -20,6 +20,7 @@ public class Role {
     private String name;
     private boolean active;
 
+
     public Role(RoleData rolesData) {
         this.name = rolesData.name();
         this.active = true;
@@ -28,4 +29,5 @@ public class Role {
     public void deactiveRole() {
         this.active = false;
     }
+
 }

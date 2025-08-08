@@ -18,7 +18,7 @@ public class StoreService {
 
     //Funcion Get, lista de stores
     public Page<Store> listActiveStores(Pageable pageable) {
-        return storeRepository.findByActivoTrue(pageable);
+        return storeRepository.findByActiveTrue(pageable);
     }
 
 

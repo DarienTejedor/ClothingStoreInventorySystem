@@ -18,7 +18,7 @@ public class RoleService {
 
     //Funcion Get, lista de roles
     public Page<Role> listActiveRoles(Pageable pageable) {
-        return roleRepository.findByActivoTrue(pageable);
+        return roleRepository.findByActiveTrue(pageable);
     }
 
     //Funcion Get, rol por id
