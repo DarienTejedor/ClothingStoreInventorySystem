@@ -1,17 +1,16 @@
 package com.darientejedor.demo.domain.salesdetails.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
 public record SaleDetailData(
         @NotNull
-        Long saleId,
-        @NotNull
+        @Positive
         Long productId,
         @NotNull
-        BigDecimal unitPrice,
-        @NotNull
+        @Positive
         Long quantity
 ) {
 }

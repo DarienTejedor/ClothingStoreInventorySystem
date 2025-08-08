@@ -37,10 +37,10 @@ public class SaleDetail {
     @Column(nullable = false)
     private Long quantity;
 
-    public SaleDetail(SaleDetailData saleDatailData, Sale sale, Product product){
+    public SaleDetail(Sale sale, Product product, Long quantity){
         this.sale = sale;
         this.product = product;
-        this.unitPrice = saleDatailData.unitPrice();
-        this.quantity = saleDatailData.quantity();
+        this.unitPrice = product.getPrice();
+        this.quantity = quantity;
     }
 }
