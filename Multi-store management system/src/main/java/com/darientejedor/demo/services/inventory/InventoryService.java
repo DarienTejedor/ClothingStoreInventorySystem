@@ -1,5 +1,6 @@
 package com.darientejedor.demo.services.inventory;
 
+import aj.org.objectweb.asm.commons.Remapper;
 import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.inventory.dto.InventoryData;
 import com.darientejedor.demo.domain.inventory.dto.InventoryResponse;
@@ -9,6 +10,7 @@ import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.products.repository.ProductRepository;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,10 @@ public class InventoryService {
 
     public Page<Inventory> listActiveInventories(Pageable pageable) {
         return inventoryRepository.findByActiveTrue(pageable);
+    }
+
+    public Page<Inventory> inventoryPerStore(Pageable pageable, Long id) {
+        return inventoryRepository.findByStoreId(pageable, id);
     }
 
     public InventoryResponse inventoryResponse(Long id) {
@@ -91,7 +97,6 @@ public class InventoryService {
         inventoryRepository.save(inventory);
 
     }
-
 
     //VAlIDADOR de tienda y producto existente y active
     private ProductAndStore validateActiveProductAndStore(Long productId, Long storeId) {
