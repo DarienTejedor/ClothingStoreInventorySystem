@@ -37,6 +37,10 @@ public class InventoryService {
         return inventoryRepository.findByStoreId(pageable, id);
     }
 
+    public Page<Inventory> inventoryPerProduct(Pageable pageable, Long id) {
+        return inventoryRepository.findByProductId(pageable, id);
+    }
+
     public InventoryResponse inventoryResponse(Long id) {
             Inventory inventory = inventoryRepository.findById(id)
                     .orElseThrow(()-> new IllegalArgumentException("Inventory not found with ID: " + id));
@@ -116,6 +120,7 @@ public class InventoryService {
 
         return new ProductAndStore(product, store);
     }
+
 
     private record ProductAndStore(Product product, Store store) {}
 }

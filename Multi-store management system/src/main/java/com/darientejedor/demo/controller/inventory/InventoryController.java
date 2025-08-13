@@ -37,6 +37,11 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.inventoryPerStore(pageable, id).map(InventoryResponse::new));
     }
 
+    @GetMapping("/inventory/product/{id}")
+    public ResponseEntity<Page<InventoryResponse>> inventoryPerProduct(@PageableDefault(size = 10) Pageable pageable,@PathVariable Long id){
+        return ResponseEntity.ok(inventoryService.inventoryPerProduct(pageable, id).map(InventoryResponse::new));
+    }
+
 
     @PostMapping
     public ResponseEntity<InventoryResponse> createInventory(@RequestBody @Valid InventoryData inventoryData){
