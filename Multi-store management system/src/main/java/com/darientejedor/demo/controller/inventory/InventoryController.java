@@ -32,13 +32,18 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.inventoryResponse(id));
     }
 
+    @GetMapping("/inventory/product/{name}")
+    public ResponseEntity<Page<InventoryResponse>> inventoryPerProductName(@PageableDefault(size = 10) Pageable pageable, @PathVariable("name") String productName){
+        return ResponseEntity.ok(inventoryService.inventoryPerProductName(pageable, productName).map(InventoryResponse::new));
+    }
+
     @GetMapping("/inventory/store/{id}")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerStore(@PageableDefault(size = 10) Pageable pageable, @PathVariable Long id){
         return ResponseEntity.ok(inventoryService.inventoryPerStore(pageable, id).map(InventoryResponse::new));
     }
 
     @GetMapping("/inventory/product/{id}")
-    public ResponseEntity<Page<InventoryResponse>> inventoryPerProduct(@PageableDefault(size = 10) Pageable pageable,@PathVariable Long id){
+    public ResponseEntity<Page<InventoryResponse>> inventoryPerProductId(@PageableDefault(size = 10) Pageable pageable,@PathVariable Long id){
         return ResponseEntity.ok(inventoryService.inventoryPerProduct(pageable, id).map(InventoryResponse::new));
     }
 

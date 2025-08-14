@@ -1,6 +1,5 @@
 package com.darientejedor.demo.services.inventory;
 
-import aj.org.objectweb.asm.commons.Remapper;
 import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.inventory.dto.InventoryData;
 import com.darientejedor.demo.domain.inventory.dto.InventoryResponse;
@@ -10,7 +9,6 @@ import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.products.repository.ProductRepository;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,12 +32,17 @@ public class InventoryService {
     }
 
     public Page<Inventory> inventoryPerStore(Pageable pageable, Long id) {
-        return inventoryRepository.findByStoreId(pageable, id);
+        return inventoryRepository.findByStoreId(id, pageable);
     }
 
     public Page<Inventory> inventoryPerProduct(Pageable pageable, Long id) {
-        return inventoryRepository.findByProductId(pageable, id);
+        return inventoryRepository.findByProductId(id, pageable);
     }
+
+    public Page<Inventory> inventoryPerProductName(Pageable pageable, String productName) {
+        return inventoryRepository.findByProduct_NameContainingIgnoreCase(productName, pageable);
+    }
+
 
     public InventoryResponse inventoryResponse(Long id) {
             Inventory inventory = inventoryRepository.findById(id)
@@ -51,7 +54,9 @@ public class InventoryService {
                     inventory.getId(),
                     inventory.getStock(),
                     inventory.getProduct().getId(),
-                    inventory.getStore().getId()
+                    inventory.getProduct().getName(),
+                    inventory.getStore().getId(),
+                    inventory.getStore().getName()
             );
     }
 
@@ -120,6 +125,7 @@ public class InventoryService {
 
         return new ProductAndStore(product, store);
     }
+
 
 
     private record ProductAndStore(Product product, Store store) {}

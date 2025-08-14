@@ -14,10 +14,11 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     Page<Inventory> findByActiveTrue(Pageable pageable);
 
-
     Optional<Inventory> findByProductAndStoreAndActiveTrue(Product product, Store store);
 
-    Page<Inventory> findByStoreId(Pageable pageable, Long id);
+    Page<Inventory> findByStoreId(Long id, Pageable pageable);
 
-    Page<Inventory> findByProductId(Pageable pageable, Long id);
+    Page<Inventory> findByProductId(Long id, Pageable pageable);
+
+    Page<Inventory> findByProduct_NameContainingIgnoreCase(String productName, Pageable pageable);
 }

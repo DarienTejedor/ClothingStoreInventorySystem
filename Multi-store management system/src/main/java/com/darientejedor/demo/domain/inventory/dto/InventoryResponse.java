@@ -6,14 +6,19 @@ public record InventoryResponse(
         Long id,
         Long stock,
         Long productId,
-        Long storeId
+        String productName,
+        Long storeId,
+        String storeName
 ) {
     public InventoryResponse(Inventory inventory){
         this(
                 inventory.getId(),
                 inventory.getStock(),
                 inventory.getProduct().getId(),
-                inventory.getStore().getId());
+                inventory.getProduct().getName(),
+                inventory.getStore().getId(),
+                inventory.getStore().getName()
+        );
     }
 
 }
