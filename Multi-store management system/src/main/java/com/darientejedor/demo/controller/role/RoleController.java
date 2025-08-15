@@ -1,7 +1,9 @@
 package com.darientejedor.demo.controller.role;
 
+import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.roles.dto.RoleData;
 import com.darientejedor.demo.domain.roles.dto.RoleResponse;
+import com.darientejedor.demo.domain.roles.repository.IRoleService;
 import com.darientejedor.demo.services.role.RoleService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -12,28 +14,31 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
 
+/*    @Autowired
+    private RoleService roleService;*/
     @Autowired
-    private RoleService roleService;
+    private IRoleService roleService;
 
     @GetMapping
     public ResponseEntity<Page<RoleResponse>> rolesList(@PageableDefault(size = 10) Pageable pageable){
-        return ResponseEntity.ok(roleService.listActiveRoles(pageable).map(RoleResponse::new));
+        return ResponseEntity.ok(roleService.listActiveRoles(pageable));
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<RoleResponse> roleResponse(@PathVariable Long id){
         return ResponseEntity.ok(roleService.roleResponse(id));
     }
 
-
     @PostMapping
-    public ResponseEntity<Void> createRole(@RequestBody @Valid RoleData roleData){
-        roleService.createRole(roleData);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<RoleResponse> createRole(@RequestBody @Valid RoleData roleData){
+        RoleResponse role = roleService.createRole(roleData);
+        URI ubication = URI.create("/roles/" + role.id());
+        return ResponseEntity.created(ubication).body(role);
     }
 
     @PutMapping("/{id}")
