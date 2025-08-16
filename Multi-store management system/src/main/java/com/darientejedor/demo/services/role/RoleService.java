@@ -1,9 +1,11 @@
 package com.darientejedor.demo.services.role;
 
+import com.darientejedor.demo.domain.exceptions.ValidationException;
 import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.roles.dto.RoleData;
 import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import com.darientejedor.demo.domain.roles.repository.RoleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,9 +29,9 @@ public class RoleService implements IRoleService {
     @Override
     public RoleResponse roleResponse(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("Role not found with ID: " + id));
+                .orElseThrow(()-> new EntityNotFoundException("Role not found with ID: " + id));
         if (!role.isActive()){
-            throw new IllegalArgumentException("Role not found or inactive with ID: " + id);
+            throw new ValidationException("Role not found or inactive with ID: " + id);
         }
         return new RoleResponse(
                 role.getId(),
@@ -41,7 +43,7 @@ public class RoleService implements IRoleService {
     @Override
     public RoleResponse createRole(@Valid RoleData roleData) {
         if (roleRepository.findByName(roleData.name()).isPresent()) {
-            throw new IllegalArgumentException("Role with this name already exists: " + roleData.name());
+            throw new ValidationException("Role with this name already exists: " + roleData.name());
         }
         var role = new Role(roleData);
         roleRepository.save(role);
@@ -51,9 +53,9 @@ public class RoleService implements IRoleService {
     @Override
     public RoleResponse updateRole(Long id, @Valid RoleData roleData) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Role not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
         if (!role.isActive()){
-            throw new IllegalArgumentException("Role not found or inactive with ID: " + id);
+            throw new ValidationException("Role not found or inactive with ID: " + id);
         }
         role.setName(roleData.name());
         roleRepository.save(role);
@@ -63,9 +65,9 @@ public class RoleService implements IRoleService {
     @Override
     public void deactiveRole(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Role not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
         if (!role.isActive()){
-            throw new IllegalArgumentException("Role not found or already inactive with ID: " + id);
+            throw new ValidationException("Role not found or already inactive with ID: " + id);
         }
         role.deactiveRole();
         roleRepository.save(role);

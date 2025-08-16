@@ -1,6 +1,7 @@
 package com.darientejedor.demo.services.user;
 
 
+import com.darientejedor.demo.domain.exceptions.ValidationException;
 import com.darientejedor.demo.domain.roles.repository.RoleRepository;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import com.darientejedor.demo.domain.users.dto.*;
@@ -8,6 +9,7 @@ import com.darientejedor.demo.domain.users.repository.UserRepository;
 import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,15 +32,15 @@ public class UserService implements IUserService{
     @Override
     public UserResponse createUser(UserData userData){
         if (userRepository.findByDocument(userData.document()).isPresent()){
-            throw new IllegalArgumentException("User with this document already exists: " + userData.document());
+            throw new ValidationException("User with this document already exists: " + userData.document());
         }
         var hashedPassword = passwordEncoder.encode(userData.password());
         Long roleId = userData.roleId();
         Long storeId = userData.storeId();
 
-        Role role = roleRepository.findById(userData.roleId()).orElseThrow(() -> new IllegalArgumentException("Role not found with ID: " + userData.roleId()));
+        Role role = roleRepository.findById(userData.roleId()).orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + userData.roleId()));
 
-        Store store = storeRepository.findById(userData.storeId()).orElseThrow(() -> new IllegalArgumentException("Store not found with ID: " + userData.storeId()));
+        Store store = storeRepository.findById(userData.storeId()).orElseThrow(() -> new ValidationException("Store not found with ID: " + userData.storeId()));
 
         var user = new User(userData, role, store, hashedPassword);
         userRepository.save(user);
@@ -52,11 +54,7 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse userResponse(Long id){
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActive()) {
-            throw new IllegalArgumentException("User not found or inactive with ID: " + id);
-        }
+        User user = validUser(id).user;
         return new UserResponse(user.getId(),
                 user.getLoginUser(),
                 user.getName(),
@@ -67,11 +65,7 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse updateUserInfo(Long id, UpdateUserInformation userInformation) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActive()) {
-            throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
-        }
+        User user = validUser(id).user;
         user.setName(userInformation.name());
         user.setDocument(userInformation.document());
         userRepository.save(user);
@@ -80,18 +74,15 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData){
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActive()) {
-            throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
-        }
+        User user = validUser(id).user;
+
         var roleId = updateRoleAndStoreData.roleId();
         var role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new IllegalArgumentException("Role not found with ID: "));
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: "));
 
         var storeId = updateRoleAndStoreData.storeId();
         var store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("Store not found with ID: "));
+                .orElseThrow(() -> new EntityNotFoundException("Store not found with ID: "));
 
         user.setRole(role);
         user.setStore(store);
@@ -102,15 +93,11 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse changePassword(Long id, PasswordUpdateData updatePassword){
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActive()) {
-            throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
-        }
+        var user = validUser(id).user;
         var password = user.getPassword();
         var passwordCorrect = passwordEncoder.matches(updatePassword.oldPassword(), password);
         if (!passwordCorrect){
-            throw new IllegalArgumentException("passwords do not match");
+            throw new ValidationException("passwords do not match");
         }
         var hashedPassword = passwordEncoder.encode(updatePassword.newPassword());
         user.setPassword(hashedPassword);
@@ -120,12 +107,20 @@ public class UserService implements IUserService{
 
     @Override
     public void deactiveUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-        if (!user.isActive()) {
-            throw new IllegalArgumentException("User not found or already inactive with ID: " + id);
-        }
+        User user = validUser(id).user;
         user.deactiveUser();
         userRepository.save(user);
     }
+
+    private ValidUser validUser(Long userId){
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        if (!user.isActive()) {
+            throw new ValidationException("User not found or already inactive with ID: " + userId);
+        }
+        return new ValidUser(user);
+    }
+
+    private record ValidUser(User user){}
+
 }
