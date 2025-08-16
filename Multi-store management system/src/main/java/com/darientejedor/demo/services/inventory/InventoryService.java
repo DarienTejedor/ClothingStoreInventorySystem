@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class InventoryService {
+public class InventoryService implements IInventoryService{
 
     @Autowired
     private InventoryRepository inventoryRepository;
@@ -27,23 +27,27 @@ public class InventoryService {
     @Autowired
     private StoreRepository storeRepository;
 
-    public Page<Inventory> listActiveInventories(Pageable pageable) {
-        return inventoryRepository.findByActiveTrue(pageable);
+    @Override
+    public Page<InventoryResponse> listActiveInventories(Pageable pageable) {
+        return inventoryRepository.findByActiveTrue(pageable).map(InventoryResponse::new);
     }
 
-    public Page<Inventory> inventoryPerStore(Pageable pageable, Long id) {
-        return inventoryRepository.findByStoreId(id, pageable);
+    @Override
+    public Page<InventoryResponse> inventoryPerProductName(Pageable pageable, String productName) {
+        return inventoryRepository.findByProduct_NameContainingIgnoreCase(productName, pageable).map(InventoryResponse::new);
     }
 
-    public Page<Inventory> inventoryPerProduct(Pageable pageable, Long id) {
-        return inventoryRepository.findByProductId(id, pageable);
+    @Override
+    public Page<InventoryResponse> inventoryPerStore(Long id, Pageable pageable) {
+        return inventoryRepository.findByStoreId(id, pageable).map(InventoryResponse::new);
     }
 
-    public Page<Inventory> inventoryPerProductName(Pageable pageable, String productName) {
-        return inventoryRepository.findByProduct_NameContainingIgnoreCase(productName, pageable);
+    @Override
+    public Page<InventoryResponse> inventoryPerProduct(Long id, Pageable pageable) {
+        return inventoryRepository.findByProductId(id, pageable).map(InventoryResponse::new);
     }
 
-
+    @Override
     public InventoryResponse inventoryResponse(Long id) {
             Inventory inventory = inventoryRepository.findById(id)
                     .orElseThrow(()-> new IllegalArgumentException("Inventory not found with ID: " + id));
@@ -60,7 +64,7 @@ public class InventoryService {
             );
     }
 
-
+    @Override
     public InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData) {
         //Busca las entidades Product y Store po Id
         ProductAndStore validated = validateActiveProductAndStore(inventoryData.productId(), inventoryData.storeId());
@@ -80,7 +84,7 @@ public class InventoryService {
         return new InventoryResponse(inventory);
     }
 
-
+    @Override
     public InventoryResponse updateStock(Long productId, Long storeId, @Valid InventoryUpdateData inventoryUpdateData) {
         //Valida que el producto y tienda existan y estén activos
         ProductAndStore validated = validateActiveProductAndStore(productId, storeId);
@@ -94,7 +98,7 @@ public class InventoryService {
         return new InventoryResponse(inventory);
     }
 
-
+    @Override
     public void deactiveInventory(Long productId, Long storeId) {
         //Valida que el producto y tienda existan y estén activos
         ProductAndStore validated = validateActiveProductAndStore(productId, storeId);

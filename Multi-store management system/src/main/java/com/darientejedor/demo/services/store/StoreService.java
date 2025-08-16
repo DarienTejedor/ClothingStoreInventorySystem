@@ -11,17 +11,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StoreService {
+public class StoreService implements ISotreService{
 
     @Autowired
     private StoreRepository storeRepository;
 
     //Funcion Get, lista de stores
-    public Page<Store> listActiveStores(Pageable pageable) {
-        return storeRepository.findByActiveTrue(pageable);
+    @Override
+    public Page<StoreResponse> listActiveStores(Pageable pageable) {
+        return storeRepository.findByActiveTrue(pageable).map(StoreResponse::new);
     }
 
-
+    @Override
     public StoreResponse storeResponse(Long id) {
         Store store = storeRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("Store not found with ID: " + id));
@@ -37,15 +38,17 @@ public class StoreService {
         );
     }
 
-
-    public void createStore(@Valid StoreData storeData) {
+    @Override
+    public StoreResponse createStore(@Valid StoreData storeData) {
         if (storeRepository.findByName(storeData.name()).isPresent()){
             throw new IllegalArgumentException("Store with this name already exists: " + storeData.name());
         }
         var store = new Store(storeData);
         storeRepository.save(store);
+        return new StoreResponse(store);
     }
 
+    @Override
     public StoreResponse updateStore(Long id, @Valid StoreData storeData) {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Store not found with ID: " + id));
@@ -60,7 +63,7 @@ public class StoreService {
         return new StoreResponse(store);
     }
 
-
+    @Override
     public void deactiveStore(Long id) {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Store not found with ID: " + id));

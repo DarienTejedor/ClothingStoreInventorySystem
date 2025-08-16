@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SaleDetailService{
+public class SaleDetailService implements ISaleDetailService{
 
 
     @Autowired
@@ -27,7 +27,7 @@ public class SaleDetailService{
     @Autowired
     private SaleDetailsRepository saleDetailRepository;
 
-
+    @Override
     public SaleDetailResponse addSaleDetail(Long saleId,  SaleDetailData saleDetailData){
         //Validar el sale y product
         Sale sale = saleRepository.findById(saleId)

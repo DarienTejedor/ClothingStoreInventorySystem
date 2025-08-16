@@ -1,10 +1,8 @@
 package com.darientejedor.demo.controller.role;
 
-import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.roles.dto.RoleData;
 import com.darientejedor.demo.domain.roles.dto.RoleResponse;
-import com.darientejedor.demo.domain.roles.repository.IRoleService;
-import com.darientejedor.demo.services.role.RoleService;
+import com.darientejedor.demo.services.role.IRoleService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +18,6 @@ import java.net.URI;
 @RequestMapping("/roles")
 public class RoleController {
 
-/*    @Autowired
-    private RoleService roleService;*/
     @Autowired
     private IRoleService roleService;
 

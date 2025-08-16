@@ -13,6 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/stores    ")
 public class StoreController {
@@ -23,7 +25,7 @@ public class StoreController {
 
     @GetMapping
     private ResponseEntity<Page<StoreResponse>> storeList(@PageableDefault(size = 10) Pageable pageable){
-        return ResponseEntity.ok(storeService.listActiveStores(pageable).map(StoreResponse::new));
+        return ResponseEntity.ok(storeService.listActiveStores(pageable));
     }
 
     @GetMapping("/{id}")
@@ -32,9 +34,10 @@ public class StoreController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createStore(@RequestBody @Valid StoreData storeData){
-        storeService.createStore(storeData);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<StoreResponse> createStore(@RequestBody @Valid StoreData storeData){
+        StoreResponse store = storeService.createStore(storeData);
+        URI ubication = URI.create("/stores/" + store.id());
+        return ResponseEntity.created(ubication).body(store);
     }
 
     @PutMapping("/{id}")
@@ -50,5 +53,4 @@ public class StoreController {
         storeService.deactiveStore(id);
         return ResponseEntity.noContent().build();
     }
-
 }

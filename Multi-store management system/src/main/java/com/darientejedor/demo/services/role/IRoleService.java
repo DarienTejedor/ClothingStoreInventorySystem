@@ -1,4 +1,4 @@
-package com.darientejedor.demo.domain.roles.repository;
+package com.darientejedor.demo.services.role;
 
 
 import com.darientejedor.demo.domain.roles.dto.RoleData;

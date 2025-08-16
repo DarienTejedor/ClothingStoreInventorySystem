@@ -12,6 +12,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("products")
 public class ProductController {
@@ -21,7 +23,7 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Page<ProductResponse>> productList(@PageableDefault(size = 10) Pageable pageable){
-        return ResponseEntity.ok(productService.listActiveProducts(pageable).map(ProductResponse::new));
+        return ResponseEntity.ok(productService.listActiveProducts(pageable));
     }
 
     @GetMapping("/{id}")
@@ -30,9 +32,10 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createProduct(@RequestBody @Valid ProductData productData){
-        productService.createProduct(productData);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductData productData){
+        ProductResponse product = productService.createProduct(productData);
+        URI ubication = URI.create("/products/" + product.id());
+        return ResponseEntity.created(ubication).body(product);
     }
 
     @PutMapping("/{id}")

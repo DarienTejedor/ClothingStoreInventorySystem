@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements IUserService{
 
     @Autowired
     private UserRepository userRepository;
@@ -27,7 +27,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     //Funcion POST
-    public void createUser(UserData userData){
+    @Override
+    public UserResponse createUser(UserData userData){
         if (userRepository.findByDocument(userData.document()).isPresent()){
             throw new IllegalArgumentException("User with this document already exists: " + userData.document());
         }
@@ -41,16 +42,15 @@ public class UserService {
 
         var user = new User(userData, role, store, hashedPassword);
         userRepository.save(user);
+        return new UserResponse(user);
     }
 
-
-
-
-    public Page<User> listActiveUsers(Pageable pageable){
-
-        return userRepository.findByActiveTrue(pageable);
+    @Override
+    public Page<UserResponse> listActiveUsers(Pageable pageable){
+        return userRepository.findByActiveTrue(pageable).map(UserResponse::new);
     }
 
+    @Override
     public UserResponse userResponse(Long id){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
@@ -65,6 +65,7 @@ public class UserService {
                 user.getStore().getId());
     }
 
+    @Override
     public UserResponse updateUserInfo(Long id, UpdateUserInformation userInformation) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
@@ -77,6 +78,7 @@ public class UserService {
         return new UserResponse(user);
     }
 
+    @Override
     public UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
@@ -98,7 +100,7 @@ public class UserService {
         return new UserResponse(user);
     }
 
-
+    @Override
     public UserResponse changePassword(Long id, PasswordUpdateData updatePassword){
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
@@ -116,7 +118,8 @@ public class UserService {
         return new UserResponse(user);
     }
 
-    public void deactiveUser(Long id){
+    @Override
+    public void deactiveUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
         if (!user.isActive()) {
@@ -125,7 +128,4 @@ public class UserService {
         user.deactiveUser();
         userRepository.save(user);
     }
-
-
-
 }

@@ -3,7 +3,6 @@ package com.darientejedor.demo.services.role;
 import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.roles.dto.RoleData;
 import com.darientejedor.demo.domain.roles.dto.RoleResponse;
-import com.darientejedor.demo.domain.roles.repository.IRoleService;
 import com.darientejedor.demo.domain.roles.repository.RoleRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class SaleService {
+public class SaleService implements ISaleService{
 
     @Autowired
     private SaleRepository saleRepository;
@@ -28,10 +28,12 @@ public class SaleService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<Sale> listActiveSales(Pageable pageable) {
-        return saleRepository.findByActiveTrue(pageable);
+    @Override
+    public Page<SaleResponse> listActiveSales(Pageable pageable) {
+        return saleRepository.findByActiveTrue(pageable).map(SaleResponse::new);
     }
 
+    @Override
     public SaleResponse saleResponse(Long id) {
         Sale sale = saleRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("Sale not found with ID: " + id));
@@ -41,6 +43,7 @@ public class SaleService {
         return new SaleResponse(sale);
     }
 
+    @Override
     public SaleResponse createSale(@Valid SaleData saleData) {
         Store store = storeRepository.findById(saleData.storeId())
                 .orElseThrow(() -> new IllegalArgumentException("Store not found with ID: " + saleData.storeId()));
@@ -59,7 +62,7 @@ public class SaleService {
         return new SaleResponse(newSale);
     }
 
-
+    @Override
     public void deactiveSale(Long id) {
         Sale sale = saleRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Sale not found with ID:" + id));
         if (!sale.isActive()){

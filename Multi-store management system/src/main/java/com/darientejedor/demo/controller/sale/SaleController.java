@@ -3,6 +3,7 @@ package com.darientejedor.demo.controller.sale;
 
 import com.darientejedor.demo.domain.sales.dto.SaleData;
 import com.darientejedor.demo.domain.sales.dto.SaleResponse;
+import com.darientejedor.demo.services.sale.ISaleService;
 import com.darientejedor.demo.services.sale.SaleService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -13,16 +14,18 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/sales")
 public class SaleController {
 
     @Autowired
-    private SaleService saleService;
+    private ISaleService saleService;
 
     @GetMapping
     public ResponseEntity<Page<SaleResponse>> saleList(@PageableDefault(size = 10)Pageable pageable){
-        return ResponseEntity.ok(saleService.listActiveSales(pageable).map(SaleResponse::new));
+        return ResponseEntity.ok(saleService.listActiveSales(pageable));
     }
 
     @GetMapping("/{id}")
@@ -32,8 +35,9 @@ public class SaleController {
 
     @PostMapping
     public ResponseEntity<SaleResponse> createSale(@RequestBody @Valid SaleData saleData){
-        SaleResponse saleResponse = saleService.createSale(saleData);
-        return ResponseEntity.ok(saleResponse);
+        SaleResponse sale = saleService.createSale(saleData);
+        URI ubication = URI.create("/sales/" + sale.id());
+        return ResponseEntity.created(ubication).body(sale);
     }
 
     @DeleteMapping("/{id}")

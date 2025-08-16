@@ -1,7 +1,9 @@
 package com.darientejedor.demo.controller.user;
 
+import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.domain.users.dto.*;
 import com.darientejedor.demo.domain.users.repository.UserRepository;
+import com.darientejedor.demo.services.user.IUserService;
 import com.darientejedor.demo.services.user.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -13,20 +15,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/users")
 //@SecurityRequirement(name = "bearer-key")
 public class UserController {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
+    private IUserService userService;
 
     @GetMapping
     public ResponseEntity<Page<UserResponse>> userList(@PageableDefault(size = 10)Pageable pageable){
-        return ResponseEntity.ok(userService.listActiveUsers(pageable).map(UserResponse::new));
+        return ResponseEntity.ok(userService.listActiveUsers(pageable));
     }
 
     @GetMapping("/{id}")
@@ -34,11 +35,11 @@ public class UserController {
         return ResponseEntity.ok(userService.userResponse(id));
     }
 
-
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody @Valid UserData userData){
-        userService.createUser(userData);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserData userData){
+        UserResponse user = userService.createUser(userData);
+        URI uri = URI.create("/users/" + user.id());
+        return ResponseEntity.created(uri).body(user);
     }
 
     @PutMapping("/{id}")
@@ -69,7 +70,5 @@ public class UserController {
         userService.deactiveUser(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }
 

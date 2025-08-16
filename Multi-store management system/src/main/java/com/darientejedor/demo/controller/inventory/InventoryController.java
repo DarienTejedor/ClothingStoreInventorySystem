@@ -14,6 +14,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/inventory")
 public class InventoryController {
@@ -24,7 +26,7 @@ public class InventoryController {
 
     @GetMapping
     public ResponseEntity<Page<InventoryResponse>> inventoryList(@PageableDefault(size = 20) Pageable pageable){
-        return ResponseEntity.ok(inventoryService.listActiveInventories(pageable).map(InventoryResponse::new));
+        return ResponseEntity.ok(inventoryService.listActiveInventories(pageable));
     }
 
     @GetMapping("/{id}")
@@ -32,26 +34,27 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.inventoryResponse(id));
     }
 
-    @GetMapping("/inventory/product/{name}")
+    @GetMapping("/product/{name}")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerProductName(@PageableDefault(size = 10) Pageable pageable, @PathVariable("name") String productName){
-        return ResponseEntity.ok(inventoryService.inventoryPerProductName(pageable, productName).map(InventoryResponse::new));
+        return ResponseEntity.ok(inventoryService.inventoryPerProductName(pageable, productName));
     }
 
-    @GetMapping("/inventory/store/{id}")
+    @GetMapping("/store/{id}")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerStore(@PageableDefault(size = 10) Pageable pageable, @PathVariable Long id){
-        return ResponseEntity.ok(inventoryService.inventoryPerStore(pageable, id).map(InventoryResponse::new));
+        return ResponseEntity.ok(inventoryService.inventoryPerStore(id, pageable));
     }
 
-    @GetMapping("/inventory/product/{id}")
+    @GetMapping("/product/{id}")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerProductId(@PageableDefault(size = 10) Pageable pageable,@PathVariable Long id){
-        return ResponseEntity.ok(inventoryService.inventoryPerProduct(pageable, id).map(InventoryResponse::new));
+        return ResponseEntity.ok(inventoryService.inventoryPerProduct(id, pageable));
     }
 
 
     @PostMapping
     public ResponseEntity<InventoryResponse> createInventory(@RequestBody @Valid InventoryData inventoryData){
-        InventoryResponse inventoryResponse = inventoryService.createOrUpdateInventory(inventoryData);
-        return ResponseEntity.ok(inventoryResponse);
+        InventoryResponse inventory = inventoryService.createOrUpdateInventory(inventoryData);
+        URI ubication = URI.create("/inventory/" + inventory.id());
+        return ResponseEntity.created(ubication).body(inventory);
     }
 
     @PutMapping("/{productId}/{storeId}")
