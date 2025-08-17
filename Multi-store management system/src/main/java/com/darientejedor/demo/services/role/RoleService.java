@@ -7,7 +7,6 @@ import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import com.darientejedor.demo.domain.roles.repository.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleService implements IRoleService {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+
+    public RoleService(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     //Funcion Get, lista de roles
     @Override
@@ -28,16 +30,11 @@ public class RoleService implements IRoleService {
     //Funcion Get, rol por id
     @Override
     public RoleResponse roleResponse(Long id) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Role not found with ID: " + id));
-        if (!role.isActive()){
-            throw new ValidationException("Role not found or inactive with ID: " + id);
-        }
+        Role role = validRole(id);
         return new RoleResponse(
                 role.getId(),
                 role.getName());
     }
-
 
     //Funcion POST
     @Override
@@ -52,11 +49,7 @@ public class RoleService implements IRoleService {
 
     @Override
     public RoleResponse updateRole(Long id, @Valid RoleData roleData) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
-        if (!role.isActive()){
-            throw new ValidationException("Role not found or inactive with ID: " + id);
-        }
+        Role role = validRole(id);
         role.setName(roleData.name());
         roleRepository.save(role);
         return new RoleResponse(role);
@@ -64,13 +57,21 @@ public class RoleService implements IRoleService {
 
     @Override
     public void deactiveRole(Long id) {
+        Role role = validRole(id);
+        role.deactiveRole();
+        roleRepository.save(role);
+    }
+
+    @Override
+    public Role validRole(Long id){
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
         if (!role.isActive()){
             throw new ValidationException("Role not found or already inactive with ID: " + id);
         }
-        role.deactiveRole();
-        roleRepository.save(role);
+        return role;
     }
+
+
 }
 

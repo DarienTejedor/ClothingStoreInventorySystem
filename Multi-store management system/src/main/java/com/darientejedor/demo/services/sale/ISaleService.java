@@ -15,4 +15,6 @@ public interface ISaleService {
     public SaleResponse createSale(@Valid SaleData saleData);
 
     public void deactiveSale(Long id);
+
+    public Sale validSale(Long id);
 }

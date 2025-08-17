@@ -20,4 +20,6 @@ public interface IUserService {
     public UserResponse changePassword(Long id, PasswordUpdateData updatePassword);
 
     public void deactiveUser(Long id);
+
+    public User validUser(Long userId);
 }

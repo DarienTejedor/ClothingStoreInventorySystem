@@ -1,5 +1,6 @@
 package com.darientejedor.demo.services.saledetail;
 
+import com.darientejedor.demo.domain.exceptions.ValidationException;
 import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import com.darientejedor.demo.domain.products.Product;
@@ -11,6 +12,8 @@ import com.darientejedor.demo.domain.salesdetails.dto.SaleDetailData;
 import com.darientejedor.demo.domain.salesdetails.dto.SaleDetailResponse;
 import com.darientejedor.demo.domain.salesdetails.repository.SaleDetailsRepository;
 import com.darientejedor.demo.domain.stores.Store;
+import com.darientejedor.demo.services.product.IProductService;
+import com.darientejedor.demo.services.sale.ISaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,34 +21,31 @@ import org.springframework.stereotype.Service;
 public class SaleDetailService implements ISaleDetailService{
 
 
-    @Autowired
-    private SaleRepository saleRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private InventoryRepository inventoryRepository;
-    @Autowired
-    private SaleDetailsRepository saleDetailRepository;
+    private final SaleRepository saleRepository;
+    private final InventoryRepository inventoryRepository;
+    private final SaleDetailsRepository saleDetailRepository;
+    private final ISaleService saleService;
+    private final IProductService productService;
+
+    public SaleDetailService(SaleRepository saleRepository, ProductRepository productRepository, InventoryRepository inventoryRepository, SaleDetailsRepository saleDetailRepository, ISaleService saleService, IProductService productService) {
+        this.saleRepository = saleRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.saleDetailRepository = saleDetailRepository;
+        this.saleService = saleService;
+        this.productService = productService;
+    }
 
     @Override
     public SaleDetailResponse addSaleDetail(Long saleId,  SaleDetailData saleDetailData){
         //Validar el sale y product
-        Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new IllegalArgumentException("Sale not found with ID: " + saleId));
-        if (!sale.isActive()){
-            throw new IllegalArgumentException("Sale inactive with ID: " + saleId);
-        }
-        Product product = productRepository.findById(saleDetailData.productId())
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + saleDetailData.productId()));
-                if (!product.isActive()){
-                throw new IllegalArgumentException("Product not found or already inactive with ID: " + saleDetailData.productId());
-                }
+        Sale sale = saleService.validSale(saleId);
+        Product product = productService.validProduct(saleDetailData.productId());
         //Buscar inventory
         Inventory inventory = inventoryRepository.findByProductAndStore(product, sale.getStore())
-                .orElseThrow(()-> new IllegalArgumentException("Inventory not found for this product and store."));
+                .orElseThrow(()-> new ValidationException("Inventory not found for this product and store."));
         //Validar stock
         if (inventory.getStock() < saleDetailData.quantity()) {
-            throw new IllegalArgumentException("Not enough stock for product with ID: " + product.getId());
+            throw new ValidationException("Not enough stock for product with ID: " + product.getId());
         }
         //Crear el SaleDetail con el precio unitario del producto.
         SaleDetail newSaleDetail = new SaleDetail(sale, product, saleDetailData.quantity());

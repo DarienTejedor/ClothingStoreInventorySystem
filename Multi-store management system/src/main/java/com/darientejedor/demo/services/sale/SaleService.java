@@ -8,7 +8,11 @@ import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.domain.users.repository.UserRepository;
+import com.darientejedor.demo.services.store.IStoreService;
+import com.darientejedor.demo.services.user.IUserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,14 +23,15 @@ import java.util.Optional;
 @Service
 public class SaleService implements ISaleService{
 
-    @Autowired
-    private SaleRepository saleRepository;
+    private final SaleRepository saleRepository;
+    private final IUserService userService;
+    private final IStoreService storeService;
 
-    @Autowired
-    private StoreRepository storeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    public SaleService(SaleRepository saleRepository, IUserService userService, IStoreService storeService) {
+        this.saleRepository = saleRepository;
+        this.userService = userService;
+        this.storeService = storeService;
+    }
 
     @Override
     public Page<SaleResponse> listActiveSales(Pageable pageable) {
@@ -35,42 +40,35 @@ public class SaleService implements ISaleService{
 
     @Override
     public SaleResponse saleResponse(Long id) {
-        Sale sale = saleRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("Sale not found with ID: " + id));
-        if (!sale.isActive()){
-            throw new IllegalArgumentException("Sale inactive");
-        }
+        Sale sale = validSale(id);
         return new SaleResponse(sale);
     }
 
     @Override
     public SaleResponse createSale(@Valid SaleData saleData) {
-        Store store = storeRepository.findById(saleData.storeId())
-                .orElseThrow(() -> new IllegalArgumentException("Store not found with ID: " + saleData.storeId()));
-        if (!store.isActive()){
-            throw new IllegalArgumentException("Store not found or inactive with ID: " + saleData.storeId());
-        }
-        User user = userRepository.findById(saleData.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + saleData.userId()));
-        if (!user.isActive()){
-            throw new IllegalArgumentException("User not found or inactive with ID: " + saleData.userId());
-        }
-
+        Store store = storeService.validStore(saleData.storeId());
+        User user = userService.validUser(saleData.userId());
         Sale newSale = new Sale(store, user);
-        
         saleRepository.save(newSale);
         return new SaleResponse(newSale);
     }
 
     @Override
     public void deactiveSale(Long id) {
-        Sale sale = saleRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Sale not found with ID:" + id));
-        if (!sale.isActive()){
-            throw new IllegalArgumentException("Sale inactive");
-        }
+        Sale sale = validSale(id);
         sale.deactiveSale();
         saleRepository.save(sale);
     }
+
+    @Override
+    public Sale validSale(Long id){
+        Sale sale = saleRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Sale not found with ID:" + id));
+        if (!sale.isActive()){
+            throw new ValidationException("Sale inactive");
+        }
+        return sale;
+    }
+
 }
 
 

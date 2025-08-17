@@ -9,7 +9,11 @@ import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.products.repository.ProductRepository;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
+import com.darientejedor.demo.services.product.IProductService;
+import com.darientejedor.demo.services.store.IStoreService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +24,15 @@ import java.util.Optional;
 @Service
 public class InventoryService implements IInventoryService{
 
-    @Autowired
-    private InventoryRepository inventoryRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private StoreRepository storeRepository;
+    private final InventoryRepository inventoryRepository;
+    private final IProductService productService;
+    private final IStoreService storeService;
+
+    public InventoryService(InventoryRepository inventoryRepository, ProductRepository productRepository, StoreRepository storeRepository, IProductService productService, IStoreService storeService) {
+        this.inventoryRepository = inventoryRepository;
+        this.productService = productService;
+        this.storeService = storeService;
+    }
 
     @Override
     public Page<InventoryResponse> listActiveInventories(Pageable pageable) {
@@ -50,9 +57,9 @@ public class InventoryService implements IInventoryService{
     @Override
     public InventoryResponse inventoryResponse(Long id) {
             Inventory inventory = inventoryRepository.findById(id)
-                    .orElseThrow(()-> new IllegalArgumentException("Inventory not found with ID: " + id));
+                    .orElseThrow(()-> new EntityNotFoundException("Inventory not found with ID: " + id));
             if (!inventory.isActive()){
-                throw new IllegalArgumentException("Inventory not found or inactive with ID: " + id);
+                throw new ValidationException("Inventory not found or inactive with ID: " + id);
             }
             return new InventoryResponse(
                     inventory.getId(),
@@ -90,7 +97,7 @@ public class InventoryService implements IInventoryService{
         ProductAndStore validated = validateActiveProductAndStore(productId, storeId);
 
         Inventory inventory = inventoryRepository.findByProductAndStoreAndActiveTrue(validated.product, validated.store)
-                .orElseThrow(()-> new IllegalArgumentException("Inventory not found"));
+                .orElseThrow(()-> new ValidationException("Inventory not found"));
 
         inventory.setStock(inventoryUpdateData.stock());
         inventoryRepository.save(inventory);
@@ -104,33 +111,21 @@ public class InventoryService implements IInventoryService{
         ProductAndStore validated = validateActiveProductAndStore(productId, storeId);
         //Buscar el inventario por la clave compuesta
         Inventory inventory = inventoryRepository.findByProductAndStoreAndActiveTrue(validated.product,validated.store)
-                .orElseThrow(() -> new IllegalArgumentException("Inventory not found"));
+                .orElseThrow(() -> new ValidationException("Inventory not found"));
         //Desactivar y guardar los cambios
         inventory.deactiveInventory();
         inventoryRepository.save(inventory);
 
     }
 
-    //VAlIDADOR de tienda y producto existente y active
+    //VAlIDADOR de tienda y producto existenten y activos
     private ProductAndStore validateActiveProductAndStore(Long productId, Long storeId) {
-        // Valida que el producto exista y esté active
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
-        if (!product.isActive()){
-            throw new IllegalArgumentException("Product not found or already inactive with ID: " + productId);
-        }
-
+        // Valida que el producto exista y esté activo
+        Product product = productService.validProduct(productId);
         // Valida que la tienda exista y esté activa
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("Store not found with ID: " + storeId));
-        if (!store.isActive()){
-            throw new IllegalArgumentException("Store not found or already inactive with ID: " + storeId);
-        }
-
+        Store store = storeService.validStore(storeId);
         return new ProductAndStore(product, store);
     }
-
-
 
     private record ProductAndStore(Product product, Store store) {}
 }

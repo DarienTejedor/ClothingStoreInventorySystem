@@ -9,6 +9,8 @@ import com.darientejedor.demo.domain.users.repository.UserRepository;
 import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;
+import com.darientejedor.demo.services.role.IRoleService;
+import com.darientejedor.demo.services.store.IStoreService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,14 +21,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements IUserService{
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private StoreRepository storeRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final StoreRepository storeRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final IStoreService storeService;
+    private final IRoleService roleService;
+
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, StoreRepository storeRepository, PasswordEncoder passwordEncoder, IStoreService storeService, IRoleService roleService) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.storeRepository = storeRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.storeService = storeService;
+        this.roleService = roleService;
+    }
 
     //Funcion POST
     @Override
@@ -35,13 +44,8 @@ public class UserService implements IUserService{
             throw new ValidationException("User with this document already exists: " + userData.document());
         }
         var hashedPassword = passwordEncoder.encode(userData.password());
-        Long roleId = userData.roleId();
-        Long storeId = userData.storeId();
-
-        Role role = roleRepository.findById(userData.roleId()).orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + userData.roleId()));
-
-        Store store = storeRepository.findById(userData.storeId()).orElseThrow(() -> new ValidationException("Store not found with ID: " + userData.storeId()));
-
+        Role role = roleService.validRole(userData.roleId());
+        Store store = storeService.validStore(userData.storeId());
         var user = new User(userData, role, store, hashedPassword);
         userRepository.save(user);
         return new UserResponse(user);
@@ -54,7 +58,7 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse userResponse(Long id){
-        User user = validUser(id).user;
+        User user = validUser(id);
         return new UserResponse(user.getId(),
                 user.getLoginUser(),
                 user.getName(),
@@ -65,7 +69,7 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse updateUserInfo(Long id, UpdateUserInformation userInformation) {
-        User user = validUser(id).user;
+        User user = validUser(id);
         user.setName(userInformation.name());
         user.setDocument(userInformation.document());
         userRepository.save(user);
@@ -74,26 +78,18 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData){
-        User user = validUser(id).user;
-
-        var roleId = updateRoleAndStoreData.roleId();
-        var role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: "));
-
-        var storeId = updateRoleAndStoreData.storeId();
-        var store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("Store not found with ID: "));
-
+        User user = validUser(id);
+        Role role = roleService.validRole(updateRoleAndStoreData.roleId());
+        Store store = storeService.validStore(updateRoleAndStoreData.storeId());
         user.setRole(role);
         user.setStore(store);
         userRepository.save(user);
-
         return new UserResponse(user);
     }
 
     @Override
     public UserResponse changePassword(Long id, PasswordUpdateData updatePassword){
-        var user = validUser(id).user;
+        var user = validUser(id);
         var password = user.getPassword();
         var passwordCorrect = passwordEncoder.matches(updatePassword.oldPassword(), password);
         if (!passwordCorrect){
@@ -107,20 +103,19 @@ public class UserService implements IUserService{
 
     @Override
     public void deactiveUser(Long id) {
-        User user = validUser(id).user;
+        User user = validUser(id);
         user.deactiveUser();
         userRepository.save(user);
     }
 
-    private ValidUser validUser(Long userId){
-        var user = userRepository.findById(userId)
+    @Override
+    public User validUser(Long userId){
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         if (!user.isActive()) {
             throw new ValidationException("User not found or already inactive with ID: " + userId);
         }
-        return new ValidUser(user);
+        return user;
     }
-
-    private record ValidUser(User user){}
 
 }

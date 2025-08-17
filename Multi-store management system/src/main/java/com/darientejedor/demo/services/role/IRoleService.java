@@ -1,6 +1,7 @@
 package com.darientejedor.demo.services.role;
 
 
+import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.roles.dto.RoleData;
 import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import jakarta.validation.Valid;
@@ -18,4 +19,6 @@ public interface IRoleService {
     public RoleResponse updateRole(Long id, @Valid RoleData roleData);
 
     public void deactiveRole(Long id);
+
+    public Role validRole(Long id);
 }

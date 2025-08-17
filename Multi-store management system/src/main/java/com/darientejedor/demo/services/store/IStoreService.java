@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface ISotreService {
+public interface IStoreService {
     public Page<StoreResponse> listActiveStores(Pageable pageable);
 
     public StoreResponse storeResponse(Long id);
@@ -17,5 +17,7 @@ public interface ISotreService {
     public StoreResponse updateStore(Long id, @Valid StoreData storeData);
 
     public void deactiveStore(Long id);
+
+    Store validStore(Long storeId);
 
 }
