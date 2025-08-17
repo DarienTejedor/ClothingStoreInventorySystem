@@ -18,8 +18,12 @@ import java.net.URI;
 @RequestMapping("products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<ProductResponse>> productList(@PageableDefault(size = 10) Pageable pageable){

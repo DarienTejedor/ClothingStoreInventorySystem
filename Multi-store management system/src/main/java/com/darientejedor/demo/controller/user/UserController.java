@@ -22,8 +22,12 @@ import java.net.URI;
 //@SecurityRequirement(name = "bearer-key")
 public class UserController {
 
-    @Autowired
-    private IUserService userService;
+
+    private final IUserService userService;
+
+    public UserController(IUserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<UserResponse>> userList(@PageableDefault(size = 10)Pageable pageable){

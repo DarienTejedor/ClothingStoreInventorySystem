@@ -20,8 +20,12 @@ import java.net.URI;
 public class StoreController {
 
 
-    @Autowired
-    private StoreService storeService;
+
+    private final StoreService storeService;
+
+    public StoreController(StoreService storeService) {
+        this.storeService = storeService;
+    }
 
     @GetMapping
     private ResponseEntity<Page<StoreResponse>> storeList(@PageableDefault(size = 10) Pageable pageable){

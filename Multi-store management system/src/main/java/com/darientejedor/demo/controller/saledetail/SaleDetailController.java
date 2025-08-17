@@ -18,8 +18,12 @@ import java.net.URI;
 @RequestMapping("/sale/{saleId}/details")
 public class SaleDetailController {
 
-    @Autowired
-    private ISaleDetailService saleDetailService;
+
+    private final ISaleDetailService saleDetailService;
+
+    public SaleDetailController(ISaleDetailService saleDetailService) {
+        this.saleDetailService = saleDetailService;
+    }
 
     @PostMapping
     @Transactional

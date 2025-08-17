@@ -18,8 +18,12 @@ import java.net.URI;
 @RequestMapping("/roles")
 public class RoleController {
 
-    @Autowired
-    private IRoleService roleService;
+
+    private final IRoleService roleService;
+
+    public RoleController(IRoleService roleService) {
+        this.roleService = roleService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<RoleResponse>> rolesList(@PageableDefault(size = 10) Pageable pageable){

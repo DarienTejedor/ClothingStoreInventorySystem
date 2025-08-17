@@ -20,8 +20,12 @@ import java.net.URI;
 @RequestMapping("/sales")
 public class SaleController {
 
-    @Autowired
-    private ISaleService saleService;
+
+    private final ISaleService saleService;
+
+    public SaleController(ISaleService saleService) {
+        this.saleService = saleService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<SaleResponse>> saleList(@PageableDefault(size = 10)Pageable pageable){
