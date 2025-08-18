@@ -1,10 +1,16 @@
 package com.darientejedor.demo.controller.sale;
 
 
+import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import com.darientejedor.demo.domain.sales.dto.SaleData;
 import com.darientejedor.demo.domain.sales.dto.SaleResponse;
 import com.darientejedor.demo.services.sale.ISaleService;
 import com.darientejedor.demo.services.sale.SaleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +24,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/sales")
+@Tag(name = "Sales", description = "Endpoints for managing sales in the system.")
 public class SaleController {
 
 
@@ -27,16 +34,70 @@ public class SaleController {
         this.saleService = saleService;
     }
 
+    /// GET
+    @Operation(
+            summary = "Lista all active sales.",
+            description = "Returns a paginated list of all active sales in the system.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful operation",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not active sales found",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @GetMapping
     public ResponseEntity<Page<SaleResponse>> saleList(@PageableDefault(size = 10)Pageable pageable){
         return ResponseEntity.ok(saleService.listActiveSales(pageable));
     }
 
+    /// GET ID
+    @Operation(
+            summary = "Get a sale by id.",
+            description = "Returns a sale by id if it's active .",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful operation",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = SaleResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Sale not found or is inactive.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<SaleResponse> saleResponse(@PathVariable Long id){
         return ResponseEntity.ok(saleService.saleResponse(id));
     }
 
+    /// POST
+    @Operation(
+            summary = "Create a new sale",
+            description = "Creates a new sale and returns the created sale.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Sale created successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = SaleResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @PostMapping
     public ResponseEntity<SaleResponse> createSale(@RequestBody @Valid SaleData saleData){
         SaleResponse sale = saleService.createSale(saleData);
@@ -44,6 +105,28 @@ public class SaleController {
         return ResponseEntity.created(ubication).body(sale);
     }
 
+    /// DELETE
+    @Operation(
+            summary = "Deactivate a sale.",
+            description = "Deactivates an existing sale by its ID.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Sale deactivated successfully.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Sale not found with the provided ID.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "The sale is already inactive.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> deactiveSale(@PathVariable Long id){
