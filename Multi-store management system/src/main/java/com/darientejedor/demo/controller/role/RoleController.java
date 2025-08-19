@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/roles")
+@SecurityRequirement(name = "bearer-key")
 @Tag(name = "Roles", description = "Endpoints for managing roles in the system.")
 public class RoleController {
 
@@ -32,7 +34,7 @@ public class RoleController {
     }
 
     @Operation(
-            summary = "Lista all active roles.",
+            summary = "List all active roles.",
             description = "Returns a paginated list of all active roles in the system.",
             responses = {
                     @ApiResponse(
@@ -54,7 +56,7 @@ public class RoleController {
     }
 
     @Operation(
-            summary = "Get a role by id.",
+            summary = "Get a role by ID.",
             description = "Returns a role by id if it's active .",
             responses = {
                     @ApiResponse(

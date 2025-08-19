@@ -1,13 +1,15 @@
 package com.darientejedor.demo.controller.user;
 
-import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.domain.users.dto.*;
-import com.darientejedor.demo.domain.users.repository.UserRepository;
 import com.darientejedor.demo.services.user.IUserService;
-import com.darientejedor.demo.services.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,7 +21,8 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/users")
-//@SecurityRequirement(name = "bearer-key")
+@SecurityRequirement(name = "bearer-key")
+@Tag(name = "Users", description = "Endpoints for managing users in the system.")
 public class UserController {
 
 
@@ -29,16 +32,67 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(
+            summary = "List all active users.",
+            description = "Returns a paginated list of all active users in the system.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful operation",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not active users found",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @GetMapping
     public ResponseEntity<Page<UserResponse>> userList(@PageableDefault(size = 10)Pageable pageable){
         return ResponseEntity.ok(userService.listActiveUsers(pageable));
     }
 
+    @Operation(
+            summary = "Get a user by ID.",
+            description = "Returns a user by id if it's active .",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful operation",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found or is inactive.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> userResponser (@PathVariable  Long id){
+    public ResponseEntity<UserResponse> userResponse (@PathVariable  Long id){
         return ResponseEntity.ok(userService.userResponse(id));
     }
 
+    @Operation(
+            summary = "Create a new user",
+            description = "Creates a new user and returns the created user.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "User created successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input or a user with this name already exists.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserData userData){
         UserResponse user = userService.createUser(userData);
@@ -46,6 +100,28 @@ public class UserController {
         return ResponseEntity.created(uri).body(user);
     }
 
+    @Operation(
+            summary = "Update a user information",
+            description = "Updates a user's information (except password, role, and store) and returns the updated user.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User updated successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found with the provided ID",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input or the user is already inactive.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UpdateUserInformation userInformation, @PathVariable Long id){
@@ -53,6 +129,28 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
+    @Operation(
+            summary = "Update a user password ",
+            description = "Update a user password and returns its response.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Password updated successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found with the provided ID",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input or the user is already inactive.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @PutMapping("/{id}/password")
     @Transactional
     public ResponseEntity<UserResponse> updatePassword(@PathVariable Long id, @RequestBody @Valid PasswordUpdateData updatePassword){
@@ -60,6 +158,28 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
+    @Operation(
+            summary = "Update a user role and store",
+            description = "Updates a user's role and store.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User updated successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found with the provided ID",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input or the user is already inactive.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @PutMapping("/{id}/role-store")
     @Transactional
     @PreAuthorize("hasRole('ADMIN_GENERAL')")
@@ -68,6 +188,27 @@ public class UserController {
         return  ResponseEntity.ok(userResponse);
     }
 
+    @Operation(
+            summary = "Deactivate a user.",
+            description = "Deactivates an existing user by its ID.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "User deactivated successfully.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found with the provided ID.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "The user is already inactive.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){

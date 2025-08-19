@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/sales")
+@SecurityRequirement(name = "bearer-key")
 @Tag(name = "Sales", description = "Endpoints for managing sales in the system.")
 public class SaleController {
 
