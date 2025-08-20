@@ -158,23 +158,23 @@ DetalleVentas
         }  
 
 ### GET/api/stores
-**Descripción**: obtiene la lista de tiendas del sistema  
+**Descripción**: Obtiene la lista de tiendas del sistema.  
 **ROLES**: ADMIN_GENERAL  
 
 ### GET /api/stores/{id}**
-**Descripción**: obtiene una tienda en especifico del sistema  
+**Descripción**: Obtiene una tienda en especifico del sistema.  
 **ROLES**: ADMIN_GENRAL, ADMIN_TIENDA
 
 ### POST /api/stores
-**Descripción**: Crea una tienda   users
+**Descripción**: Crea una tienda   users.
 **ROLES**: ADMIN_GENRAL  
 
 ### PUT /api/stores/{id}
-**Descripción**: Actualiza datos de una tienda    
+**Descripción**: Actualiza datos de una tienda.    
 **ROLES**: ADMIN\_GENRAL  
 
 ### DELETE /api/stores/{id}**
-**Descripción**: Actualiza datos de una tienda  
+**Descripción**: Desactiva a una tienda.  
 **ROLES**: ADMIN_GENRAL
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,7 +240,7 @@ DetalleVentas
 **Descripción**: Obtiene una lista paginada del inventario.  
 **ROLES**: ADMIN_GENERAL, ADMIN_TIENDA, CAJERO  
 
-### GET /api/inventory
+### GET /api/inventory/{id}
 **Descripción**: Obtiene un inventario en especifico  
 **ROLES**: ADMIN_GENERAL, ADMIN_TIENDA, CAJERO  
 
@@ -374,7 +374,7 @@ DetalleVentas
 
 ### DELETE /api/ventas/{id}
 **Descripción**: Elimina una venta.  
-**ROLES**: ADMIN_GENERAL, ADMIN_TIENDA
+**ROLES**: ADMIN_GENERAL
 
 ## /SaleDetails:
 ### RESPONSE:
@@ -389,9 +389,9 @@ DetalleVentas
         "precio_unitario": 90000,
         "subtotal": 180000.00
     }
-POST /api/sale/{saleId}/details
+### POST /api/sale/{saleId}/details  ###
 **Descripción**: Registra los detalles de una venta.  
-**ROLES**: CEJERO
+**ROLES**: CAJERO
 
 
 
