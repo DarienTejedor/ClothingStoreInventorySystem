@@ -64,7 +64,7 @@ public class InitializerRunner implements CommandLineRunner {
             firstAdmin.setRole(adminRole);
 
             userRepository.save(firstAdmin);
-            System.out.println("First user created, user: 'ADMIN_GENERAL', password: 'admin123'");
+            System.out.println("First user created, user: 'GENERAL_ADMIN', password: 'admin123'");
 
             //
 
