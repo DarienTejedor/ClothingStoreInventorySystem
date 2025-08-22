@@ -10,11 +10,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -33,26 +35,38 @@ public class UserController {
     }
 
     @Operation(
-            summary = "List all active users.",
-            description = "Returns a paginated list of all active users in the system.",
+            summary = "List users based on authentication role and store ID.",
+            description = "Returns a paginated list of active users. The list depends on the user's role: " +
+                    "• 'ADMIN_GENERAL' can get a list of all users or filter by storeId. " +
+                    "• 'ADMIN_STORE' can only get users from their own store. " +
+                    "The storeId parameter is optional and only applies to 'ADMIN_GENERAL'.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Successful operation",
+                            description = "Successful operation. Returns a paginated list of users.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = Page.class))
                     ),
                     @ApiResponse(
-                            responseCode = "404",
-                            description = "Not active users found",
+                            responseCode = "403",
+                            description = "Forbidden. The authenticated user does not have the required permissions.",
                             content = @Content(schema = @Schema(hidden = true))
                     )
             }
     )
     @GetMapping
-    public ResponseEntity<Page<UserResponse>> userList(@PageableDefault(size = 10)Pageable pageable){
-        return ResponseEntity.ok(userService.listActiveUsers(pageable));
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
+    public ResponseEntity<Page<UserResponse>> userList(
+            Authentication authentication,
+            @RequestParam (required = false) Long storeId,
+            @PageableDefault(size = 10)Pageable pageable){
+        String role = authentication.getAuthorities().stream()
+                .findFirst()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .orElseThrow(()-> new ValidationException("User role not found. "));
+        return ResponseEntity.ok(userService.listActiveUsers(role, storeId, pageable));
     }
+
 
     @Operation(
             summary = "Get a user by ID.",

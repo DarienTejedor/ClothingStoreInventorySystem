@@ -11,8 +11,10 @@ import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.services.role.IRoleService;
 import com.darientejedor.demo.services.store.IStoreService;
+import com.darientejedor.demo.services.user.strategies.getlist.GeneralAdminUsersList;
+import com.darientejedor.demo.services.user.strategies.getlist.GetUsersListStrategyFactory;
+import com.darientejedor.demo.services.user.strategies.getlist.IGetUserListStrategy;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,15 +29,43 @@ public class UserService implements IUserService{
     private final PasswordEncoder passwordEncoder;
     private final IStoreService storeService;
     private final IRoleService roleService;
+    private final GetUsersListStrategyFactory listUsersStrategyFactory;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, StoreRepository storeRepository, PasswordEncoder passwordEncoder, IStoreService storeService, IRoleService roleService) {
+    public UserService(UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       StoreRepository storeRepository,
+                       PasswordEncoder passwordEncoder,
+                       IStoreService storeService,
+                       IRoleService roleService,
+                       GetUsersListStrategyFactory listUsersStrategyFactory) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.storeRepository = storeRepository;
         this.passwordEncoder = passwordEncoder;
         this.storeService = storeService;
         this.roleService = roleService;
+        this.listUsersStrategyFactory = listUsersStrategyFactory;
     }
+
+
+    @Override
+    public Page<UserResponse> listActiveUsers(String role, Long storeId,Pageable pageable){
+        IGetUserListStrategy strategy = listUsersStrategyFactory.userListStrategy(role, storeId);
+        if (!(strategy instanceof GeneralAdminUsersList)){
+                storeService.validStore(storeId);
+        }
+        return strategy.listUsers(storeId, pageable);
+//        return userRepository.findByActiveTrue(pageable).map(UserResponse::new);
+    }
+
+
+
+
+
+
+
+
+
 
     //Funcion POST
     @Override
@@ -51,10 +81,6 @@ public class UserService implements IUserService{
         return new UserResponse(user);
     }
 
-    @Override
-    public Page<UserResponse> listActiveUsers(Pageable pageable){
-        return userRepository.findByActiveTrue(pageable).map(UserResponse::new);
-    }
 
     @Override
     public UserResponse userResponse(Long id){

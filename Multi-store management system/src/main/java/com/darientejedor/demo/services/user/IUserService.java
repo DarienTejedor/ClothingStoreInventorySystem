@@ -9,7 +9,7 @@ public interface IUserService {
 
     public UserResponse createUser(UserData userData);
 
-    public Page<UserResponse> listActiveUsers(Pageable pageable);
+    public Page<UserResponse> listActiveUsers(String role, Long id,Pageable pageable);
 
     public UserResponse userResponse(Long id);
 
