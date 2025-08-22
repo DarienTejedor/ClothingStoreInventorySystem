@@ -37,8 +37,8 @@ public class UserController {
     @Operation(
             summary = "List users based on authentication role and store ID.",
             description = "Returns a paginated list of active users. The list depends on the user's role: " +
-                    "• 'ADMIN_GENERAL' can get a list of all users or filter by storeId. " +
-                    "• 'ADMIN_STORE' can only get users from their own store. " +
+                    "• 'GENERAL_ADMIN' can get a list of all users or filter by storeId. " +
+                    "• 'STORE_ADMIN' can only get users from their own store. " +
                     "The storeId parameter is optional and only applies to 'ADMIN_GENERAL'.",
             responses = {
                     @ApiResponse(
@@ -57,26 +57,30 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
     public ResponseEntity<Page<UserResponse>> userList(
-            Authentication authentication,
-            @RequestParam (required = false) Long storeId,
-            @PageableDefault(size = 10)Pageable pageable){
-        String role = authentication.getAuthorities().stream()
-                .findFirst()
-                .map(grantedAuthority -> grantedAuthority.getAuthority())
-                .orElseThrow(()-> new ValidationException("User role not found. "));
-        return ResponseEntity.ok(userService.listActiveUsers(role, storeId, pageable));
+                Authentication authentication,
+                @RequestParam (required = false) Long storeId,
+                @PageableDefault(size = 10)Pageable pageable){
+        return ResponseEntity.ok(userService.listActiveUsers(authentication, storeId, pageable));
     }
 
 
     @Operation(
-            summary = "Get a user by ID.",
-            description = "Returns a user by id if it's active .",
+            summary = "Get a user by ID based on authentication role.",
+            description = "Returns a user by id if it's active, The responser depends on the user's role:" +
+                    "'GENERAL_ADMIN' can get any user." +
+                    "'STORE_ADMIN' can only get users from their own store." +
+                    "'CASHIER' can only get their own user profile",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful operation",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -86,13 +90,16 @@ public class UserController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> userResponse (@PathVariable  Long id){
-        return ResponseEntity.ok(userService.userResponse(id));
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER')")
+    public ResponseEntity<UserResponse> userResponse (@PathVariable  Long id, Authentication authentication){
+        return ResponseEntity.ok(userService.userResponse(id, authentication));
     }
 
     @Operation(
-            summary = "Create a new user",
-            description = "Creates a new user and returns the created user.",
+            summary = "Create a new user based on authentication role",
+            description = "Creates a new user and returns the created user, the responser depend on the user's role:" +
+                    "'GENERAL_ADMIN' can create any user." +
+                    "'STORE_ADMIN' can only create users from their own store",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -104,25 +111,38 @@ public class UserController {
                             responseCode = "400",
                             description = "Invalid input or a user with this name already exists.",
                             content = @Content(schema = @Schema(hidden = true))
-                    )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
             }
     )
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserData userData){
-        UserResponse user = userService.createUser(userData);
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserData userData, Authentication authentication){
+        UserResponse user = userService.createUser(userData, authentication);
         URI uri = URI.create("/users/" + user.id());
         return ResponseEntity.created(uri).body(user);
     }
 
     @Operation(
-            summary = "Update a user information",
-            description = "Updates a user's information (except password, role, and store) and returns the updated user.",
+            summary = "Update a user information based on authentication role",
+            description = "Updates a user's information (except password, role, and store) and returns the updated user. the responser depend on the user's role:" +
+                    "'GENERAL_ADMIN' can update any user" +
+                    "'STORE_ADMIN' can only update users from their own store",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "User updated successfully",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -138,13 +158,16 @@ public class UserController {
     )
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UpdateUserInformation userInformation, @PathVariable Long id){
-        UserResponse userResponse = userService.updateUserInfo(id, userInformation);
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
+    public ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UpdateUserInformation userInformation,
+                                                   @PathVariable Long id,
+                                                   Authentication authentication){
+        UserResponse userResponse = userService.updateUserInfo(id, userInformation, authentication);
         return ResponseEntity.ok(userResponse);
     }
 
     @Operation(
-            summary = "Update a user password ",
+            summary = "Update a user password based on authentication",
             description = "Update a user password and returns its response.",
             responses = {
                     @ApiResponse(
@@ -152,6 +175,11 @@ public class UserController {
                             description = "Password updated successfully",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -167,20 +195,28 @@ public class UserController {
     )
     @PutMapping("/{id}/password")
     @Transactional
-    public ResponseEntity<UserResponse> updatePassword(@PathVariable Long id, @RequestBody @Valid PasswordUpdateData updatePassword){
-        UserResponse userResponse = userService.changePassword(id, updatePassword);
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER')")
+    public ResponseEntity<UserResponse> updatePassword(@PathVariable Long id,
+                                                       @RequestBody @Valid PasswordUpdateData updatePassword,
+                                                       Authentication authentication){
+        UserResponse userResponse = userService.changePassword(id, updatePassword, authentication);
         return ResponseEntity.ok(userResponse);
     }
 
     @Operation(
             summary = "Update a user role and store",
-            description = "Updates a user's role and store.",
+            description = "Updates a user's role and store. but only by GENERAL_ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "User updated successfully",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -196,19 +232,27 @@ public class UserController {
     )
     @PutMapping("/{id}/role-store")
     @Transactional
-    @PreAuthorize("hasRole('ADMIN_GENERAL')")
-    public ResponseEntity<UserResponse> updateRoleAndStore(@PathVariable Long id, @RequestBody @Valid UpdateRoleAndStoreData updateRoleAndStore){
+    @PreAuthorize("hasRole('GENERAL_ADMIN')")
+    public ResponseEntity<UserResponse> updateRoleAndStore(@PathVariable Long id,
+                                                           @RequestBody @Valid UpdateRoleAndStoreData updateRoleAndStore){
         UserResponse userResponse = userService.updateRoleAndStore(id, updateRoleAndStore);
         return  ResponseEntity.ok(userResponse);
     }
 
     @Operation(
             summary = "Deactivate a user.",
-            description = "Deactivates an existing user by its ID.",
+            description = "Deactivates an existing user by its ID. " +
+                    "'GENERAL_ADMIN' can deactivate any user." +
+                    "'STORE_ADMIN' can only deactivated users from their own store",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
                             description = "User deactivated successfully.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
                             content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
@@ -225,8 +269,10 @@ public class UserController {
     )
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
-        userService.deactiveUser(id);
+    @PreAuthorize("hasRole('GENERAL_ADMIN', 'STORE_ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id,
+                                           Authentication authentication){
+        userService.deactiveUser(id, authentication);
         return ResponseEntity.noContent().build();
     }
 }

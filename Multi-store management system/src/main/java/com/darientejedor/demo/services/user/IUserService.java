@@ -4,22 +4,22 @@ import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.domain.users.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 public interface IUserService {
 
-    public UserResponse createUser(UserData userData);
+    public Page<UserResponse> listActiveUsers(Authentication authentication, Long id,Pageable pageable);
 
-    public Page<UserResponse> listActiveUsers(String role, Long id,Pageable pageable);
+    public UserResponse userResponse(Long id, Authentication authentication);
 
-    public UserResponse userResponse(Long id);
+    public UserResponse createUser(UserData userData, Authentication authentication);
 
-    public UserResponse updateUserInfo(Long id, UpdateUserInformation userInformation);
+    public UserResponse updateUserInfo(Long id, UpdateUserInformation userInformation, Authentication authentication);
+
+    public UserResponse changePassword(Long id, PasswordUpdateData updatePassword, Authentication authentication);
 
     public UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData);
 
-    public UserResponse changePassword(Long id, PasswordUpdateData updatePassword);
+    public void deactiveUser(Long id, Authentication authentication);
 
-    public void deactiveUser(Long id);
-
-    public User validUser(Long userId);
 }
