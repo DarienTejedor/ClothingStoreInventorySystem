@@ -5,20 +5,26 @@ import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.dto.StoreData;
 import com.darientejedor.demo.domain.stores.dto.StoreResponse;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
+import com.darientejedor.demo.domain.users.User;
+import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StoreService implements IStoreService {
 
     private final StoreRepository storeRepository;
+    private final IUserAuthentications userAuthentications;
 
-    public StoreService(StoreRepository storeRepository) {
+    public StoreService(StoreRepository storeRepository, IUserAuthentications userAuthentications) {
         this.storeRepository = storeRepository;
+        this.userAuthentications = userAuthentications;
     }
 
     //Funcion Get, lista de stores
@@ -28,7 +34,25 @@ public class StoreService implements IStoreService {
     }
 
     @Override
-    public StoreResponse storeResponse(Long id) {
+    public StoreResponse storeResponse(Long id, Authentication authentication) {
+        User authUser = userAuthentications.authUser(authentication);
+        String authRole = userAuthentications.authRole(authentication);
+        switch (authRole) {
+            case "ROLE_GENERAL_ADMIN":
+                break;
+            case "ROLE_STORE_ADMIN":
+                if (!authUser.getStore().getId().equals(id)) {
+                    throw new AccessDeniedException("You can only view your own store.");
+                }
+                break;
+            case "ROLE_CASHIER":
+                if (!authUser.getStore().getId().equals(id)) {
+                    throw new IllegalArgumentException("You can only view your own store.");
+                }
+                break;
+            default:
+                throw new ValidationException("Invalid user role: " + authRole);
+        }
         Store store = validStore(id);
         return new StoreResponse(
                 store.getId(),
