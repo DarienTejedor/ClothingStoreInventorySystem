@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -35,13 +36,18 @@ public class RoleController {
 
     @Operation(
             summary = "List all active roles.",
-            description = "Returns a paginated list of all active roles in the system.",
+            description = "Returns a paginated list of all active roles in the system. but only by GENERAL_ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful operation",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = Page.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -51,19 +57,25 @@ public class RoleController {
             }
     )
     @GetMapping
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<Page<RoleResponse>> rolesList(@PageableDefault(size = 10) Pageable pageable){
         return ResponseEntity.ok(roleService.listActiveRoles(pageable));
     }
 
     @Operation(
             summary = "Get a role by ID.",
-            description = "Returns a role by id if it's active .",
+            description = "Returns a role by id if it's active. but only by GENERAL_ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful operation",
                             content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = RoleResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -73,19 +85,26 @@ public class RoleController {
             }
     )
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<RoleResponse> roleResponse(@PathVariable Long id){
         return ResponseEntity.ok(roleService.roleResponse(id));
     }
 
     @Operation(
             summary = "Create a new role",
-            description = "Creates a new role and returns the created role.",
+            description = "Creates a new role and returns the created role. but only by GENERAL_ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
                             description = "Role created successfully",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = RoleResponse.class))
+                    ),
+
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -95,6 +114,7 @@ public class RoleController {
             }
     )
     @PostMapping
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<RoleResponse> createRole(@RequestBody @Valid RoleData roleData){
         RoleResponse role = roleService.createRole(roleData);
         URI ubication = URI.create("/roles/" + role.id());
@@ -103,13 +123,18 @@ public class RoleController {
 
     @Operation(
             summary = "Update a role",
-            description = "Update a role and returns its response.",
+            description = "Update a role and returns its response. but only by GENERAL_ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Role updated successfully",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = RoleResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -125,6 +150,7 @@ public class RoleController {
     )
     @PutMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<RoleResponse> updateRole(@PathVariable Long id, @RequestBody @Valid RoleData roleData){
         RoleResponse roleResponse = roleService.updateRole(id, roleData);
         return ResponseEntity.ok(roleResponse);
@@ -133,11 +159,17 @@ public class RoleController {
 
     @Operation(
             summary = "Deactivate a role.",
-            description = "Deactivates an existing role by its ID.",
+            description = "Deactivates an existing role by its ID. but only by GENERAL_ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
                             description = "Role deactivated successfully.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
                             content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
@@ -154,6 +186,7 @@ public class RoleController {
     )
     @DeleteMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<Void> deleteRole(@PathVariable Long id){
         roleService.deactiveRole(id);
         return ResponseEntity.noContent().build();
