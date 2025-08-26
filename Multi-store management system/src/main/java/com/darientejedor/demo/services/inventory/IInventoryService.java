@@ -7,10 +7,11 @@ import com.darientejedor.demo.domain.inventory.dto.InventoryUpdateData;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 public interface IInventoryService {
 
-    public Page<InventoryResponse> listActiveInventories(Pageable pageable);
+    public Page<InventoryResponse> listActiveInventories(Authentication authentication, Pageable pageable);
 
     public Page<InventoryResponse> inventoryPerProductName(Pageable pageable, String productName);
 

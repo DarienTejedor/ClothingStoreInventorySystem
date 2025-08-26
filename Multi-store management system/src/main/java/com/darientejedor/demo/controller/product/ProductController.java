@@ -58,8 +58,8 @@ public class ProductController {
     )
     @GetMapping
     @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
-    public ResponseEntity<Page<ProductResponse>> productList(@PageableDefault(size = 10) Pageable pageable, Authentication authentication){
-        return ResponseEntity.ok(productService.listActiveProducts(authentication, pageable));
+    public ResponseEntity<Page<ProductResponse>> productList(@PageableDefault(size = 10) Pageable pageable){
+        return ResponseEntity.ok(productService.listActiveProducts(pageable));
     }
 
     @Operation(

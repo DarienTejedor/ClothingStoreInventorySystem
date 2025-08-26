@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 public interface IProductService {
-    public Page<ProductResponse> listActiveProducts(Authentication authentication, Pageable pageable);
+    public Page<ProductResponse> listActiveProducts(Pageable pageable);
 
     public ProductResponse createProduct(@Valid ProductData productData);
 

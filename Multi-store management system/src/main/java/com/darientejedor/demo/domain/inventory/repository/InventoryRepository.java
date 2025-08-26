@@ -16,6 +16,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     Optional<Inventory> findByProductAndStoreAndActiveTrue(Product product, Store store);
 
+    Optional<Inventory> findByProductIdAndStoreIdAndActiveTrue(Long productId, Long storeId);
+
     Page<Inventory> findByStoreId(Long id, Pageable pageable);
 
     Page<Inventory> findByProductId(Long id, Pageable pageable);
