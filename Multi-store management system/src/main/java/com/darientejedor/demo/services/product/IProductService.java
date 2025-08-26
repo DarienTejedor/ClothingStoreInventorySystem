@@ -6,11 +6,10 @@ import com.darientejedor.demo.domain.products.dtos.ProductResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 public interface IProductService {
-    public Page<ProductResponse> listActiveProducts(Pageable pageable);
-
-    public ProductResponse productResponse(Long id);
+    public Page<ProductResponse> listActiveProducts(Authentication authentication, Pageable pageable);
 
     public ProductResponse createProduct(@Valid ProductData productData);
 

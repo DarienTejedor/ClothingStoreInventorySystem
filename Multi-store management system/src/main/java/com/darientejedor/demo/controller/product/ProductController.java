@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -43,6 +45,11 @@ public class ProductController {
                                     schema = @Schema(implementation = Page.class))
                     ),
                     @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
                             responseCode = "404",
                             description = "Not active products found",
                             content = @Content(schema = @Schema(hidden = true))
@@ -50,30 +57,9 @@ public class ProductController {
             }
     )
     @GetMapping
-    public ResponseEntity<Page<ProductResponse>> productList(@PageableDefault(size = 10) Pageable pageable){
-        return ResponseEntity.ok(productService.listActiveProducts(pageable));
-    }
-
-    @Operation(
-            summary = "Get a product by ID.",
-            description = "Returns a product by its ID if it's active .",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successful operation",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ProductResponse.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Product not found or is inactive.",
-                            content = @Content(schema = @Schema(hidden = true))
-                    )
-            }
-    )
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> productResponse(@PathVariable Long id){
-        return ResponseEntity.ok(productService.productResponse(id));
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
+    public ResponseEntity<Page<ProductResponse>> productList(@PageableDefault(size = 10) Pageable pageable, Authentication authentication){
+        return ResponseEntity.ok(productService.listActiveProducts(authentication, pageable));
     }
 
     @Operation(
@@ -87,6 +73,11 @@ public class ProductController {
                                     schema = @Schema(implementation = ProductResponse.class))
                     ),
                     @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
                             responseCode = "400",
                             description = "Invalid input or a product with this name already exists.",
                             content = @Content(schema = @Schema(hidden = true))
@@ -94,6 +85,7 @@ public class ProductController {
             }
     )
     @PostMapping
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductData productData){
         ProductResponse product = productService.createProduct(productData);
         URI ubication = URI.create("/products/" + product.id());
@@ -111,6 +103,11 @@ public class ProductController {
                                     schema = @Schema(implementation = ProductResponse.class))
                     ),
                     @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
                             responseCode = "404",
                             description = "Product not found with the provided ID",
                             content = @Content(schema = @Schema(hidden = true))
@@ -124,6 +121,7 @@ public class ProductController {
     )
     @PutMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductData productData){
         ProductResponse productResponse = productService.updateProduct(id, productData);
         return ResponseEntity.ok(productResponse);
@@ -136,6 +134,11 @@ public class ProductController {
                     @ApiResponse(
                             responseCode = "204",
                             description = "Product deactivated successfully.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
                             content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
@@ -152,6 +155,7 @@ public class ProductController {
     )
     @DeleteMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
         productService.deactiveProduct(id);
         return ResponseEntity.noContent().build();

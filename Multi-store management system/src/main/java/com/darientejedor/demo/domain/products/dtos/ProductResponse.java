@@ -1,5 +1,6 @@
 package com.darientejedor.demo.domain.products.dtos;
 
+import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.products.Product;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
