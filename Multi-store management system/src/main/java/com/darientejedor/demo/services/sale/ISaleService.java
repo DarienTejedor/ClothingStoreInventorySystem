@@ -1,6 +1,5 @@
 package com.darientejedor.demo.services.sale;
 
-import com.darientejedor.demo.domain.sales.Sale;
 import com.darientejedor.demo.domain.sales.dto.SaleData;
 import com.darientejedor.demo.domain.sales.dto.SaleResponse;
 import jakarta.validation.Valid;
@@ -16,6 +15,4 @@ public interface ISaleService {
     public SaleResponse createSale(@Valid SaleData saleData);
 
     public void deactiveSale(Long id);
-
-    public Sale validSale(Long id);
 }

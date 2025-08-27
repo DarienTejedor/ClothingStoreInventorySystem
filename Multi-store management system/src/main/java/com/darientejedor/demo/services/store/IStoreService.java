@@ -19,6 +19,4 @@ public interface IStoreService {
 
     public void deactiveStore(Long id);
 
-    Store validStore(Long storeId);
-
 }

@@ -2,26 +2,22 @@ package com.darientejedor.demo.services.user;
 
 
 import com.darientejedor.demo.domain.exceptions.ValidationException;
-import com.darientejedor.demo.domain.roles.repository.RoleRepository;
-import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import com.darientejedor.demo.domain.users.dto.*;
 import com.darientejedor.demo.domain.users.repository.UserRepository;
 import com.darientejedor.demo.domain.roles.Role;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.services.role.IRoleService;
-import com.darientejedor.demo.services.store.IStoreService;
+import com.darientejedor.demo.services.store.validations.IStoreValidations;
 import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
 import com.darientejedor.demo.services.user.strategies.getlist.GeneralAdminUsersList;
 import com.darientejedor.demo.services.user.strategies.getlist.GetUsersListStrategyFactory;
 import com.darientejedor.demo.services.user.strategies.getlist.IGetUserListStrategy;
 import com.darientejedor.demo.services.user.validations.IUserValidations;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,34 +26,27 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService{
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final StoreRepository storeRepository;
     private final PasswordEncoder passwordEncoder;
-    private final IStoreService storeService;
     private final IRoleService roleService;
     private final GetUsersListStrategyFactory listUsersStrategyFactory;
     private final IUserValidations userValidations;
     private final IUserAuthentications userAuthentications;
+    private final IStoreValidations storeValidations;
 
     public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository,
-                       StoreRepository storeRepository,
                        PasswordEncoder passwordEncoder,
-                       IStoreService storeService,
                        IRoleService roleService,
                        GetUsersListStrategyFactory listUsersStrategyFactory,
                        IUserValidations userValidations,
-                       IUserAuthentications userAuthentications) {
+                       IUserAuthentications userAuthentications, IStoreValidations storeValidations) {
 
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.storeRepository = storeRepository;
         this.passwordEncoder = passwordEncoder;
-        this.storeService = storeService;
         this.roleService = roleService;
         this.listUsersStrategyFactory = listUsersStrategyFactory;
         this.userValidations = userValidations;
         this.userAuthentications = userAuthentications;
+        this.storeValidations = storeValidations;
     }
 
 
@@ -66,7 +55,7 @@ public class UserService implements IUserService{
         String authRole = userAuthentications.authRole(authentication);
         IGetUserListStrategy strategy = listUsersStrategyFactory.userListStrategy(authRole, storeId);
         if (!(strategy instanceof GeneralAdminUsersList)){
-                storeService.validStore(storeId);
+                storeValidations.validStore(storeId);
         }
         return strategy.listUsers(storeId, pageable);
     }
@@ -117,7 +106,7 @@ public class UserService implements IUserService{
 
         var hashedPassword = passwordEncoder.encode(userData.password());
         Role role = roleService.validRole(userData.roleId());
-        Store store = storeService.validStore(userData.storeId());
+        Store store = storeValidations.validStore(userData.storeId());
         var user = new User(userData, role, store, hashedPassword);
         userRepository.save(user);
         return new UserResponse(user);
@@ -170,7 +159,7 @@ public class UserService implements IUserService{
     public UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData){
         User user = userValidations.validUser(id);
         Role role = roleService.validRole(updateRoleAndStoreData.roleId());
-        Store store = storeService.validStore(updateRoleAndStoreData.storeId());
+        Store store = storeValidations.validStore(updateRoleAndStoreData.storeId());
         user.setRole(role);
         user.setStore(store);
         userRepository.save(user);

@@ -1,6 +1,5 @@
 package com.darientejedor.demo.services.user;
 
-import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.domain.users.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

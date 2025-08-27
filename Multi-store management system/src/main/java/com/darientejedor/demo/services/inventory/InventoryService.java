@@ -6,17 +6,14 @@ import com.darientejedor.demo.domain.inventory.dto.InventoryResponse;
 import com.darientejedor.demo.domain.inventory.dto.InventoryUpdateData;
 import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import com.darientejedor.demo.domain.products.Product;
-import com.darientejedor.demo.domain.products.repository.ProductRepository;
 import com.darientejedor.demo.domain.stores.Store;
-import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.services.product.IProductService;
-import com.darientejedor.demo.services.store.IStoreService;
+import com.darientejedor.demo.services.store.validations.IStoreValidations;
 import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -29,19 +26,17 @@ public class InventoryService implements IInventoryService{
 
     private final InventoryRepository inventoryRepository;
     private final IProductService productService;
-    private final IStoreService storeService;
     private final IUserAuthentications userAuthentications;
+    private final IStoreValidations storeValidations;
 
     public InventoryService(InventoryRepository inventoryRepository,
-                            ProductRepository productRepository,
-                            StoreRepository storeRepository,
                             IProductService productService,
-                            IStoreService storeService,
-                            IUserAuthentications userAuthentications) {
+                            IUserAuthentications userAuthentications,
+                            IStoreValidations storeValidations) {
         this.inventoryRepository = inventoryRepository;
         this.productService = productService;
-        this.storeService = storeService;
         this.userAuthentications = userAuthentications;
+        this.storeValidations = storeValidations;
     }
 
     @Override
@@ -140,7 +135,7 @@ public class InventoryService implements IInventoryService{
         // Valida que el producto exista y esté activo
         Product product = productService.validProduct(productId);
         // Valida que la tienda exista y esté activa
-        Store store = storeService.validStore(storeId);
+        Store store = storeValidations.validStore(storeId);
         return new ProductAndStore(product, store);
     }
 

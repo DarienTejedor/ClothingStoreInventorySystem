@@ -6,10 +6,10 @@ import com.darientejedor.demo.domain.stores.dto.StoreData;
 import com.darientejedor.demo.domain.stores.dto.StoreResponse;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import com.darientejedor.demo.domain.users.User;
+import com.darientejedor.demo.services.sale.validations.ISaleValidations;
+import com.darientejedor.demo.services.store.validations.IStoreValidations;
 import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,10 +21,14 @@ public class StoreService implements IStoreService {
 
     private final StoreRepository storeRepository;
     private final IUserAuthentications userAuthentications;
+    private final IStoreValidations storeValidations;
 
-    public StoreService(StoreRepository storeRepository, IUserAuthentications userAuthentications) {
+    public StoreService(StoreRepository storeRepository,
+                        IUserAuthentications userAuthentications,
+                        IStoreValidations storeValidations) {
         this.storeRepository = storeRepository;
         this.userAuthentications = userAuthentications;
+        this.storeValidations = storeValidations;
     }
 
     //Funcion Get, lista de stores
@@ -48,7 +52,7 @@ public class StoreService implements IStoreService {
             default:
                 throw new ValidationException("Invalid user role: " + authRole);
         }
-        Store store = validStore(id);
+        Store store = storeValidations.validStore(id);
         return new StoreResponse(
                 store.getId(),
                 store.getName(),
@@ -70,7 +74,7 @@ public class StoreService implements IStoreService {
 
     @Override
     public StoreResponse updateStore(Long id, @Valid StoreData storeData) {
-        Store store = validStore(id);
+        Store store = storeValidations.validStore(id);
         store.setName(storeData.name());
         store.setEmail(storeData.email());
         store.setPhoneNumber(storeData.phoneNumber());
@@ -81,19 +85,9 @@ public class StoreService implements IStoreService {
 
     @Override
     public void deactiveStore(Long id) {
-        Store store = validStore(id);
+        Store store = storeValidations.validStore(id);
         store.deactiveStore();
         storeRepository.save(store);
-    }
-
-    @Override
-    public Store validStore(Long storeId) {
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("Store not found with ID: " + storeId));
-        if (!store.isActive()) {
-            throw new ValidationException("Store not found or already inactive with ID: " + storeId);
-        }
-        return store;
     }
 
 }
