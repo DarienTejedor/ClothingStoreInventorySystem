@@ -1,6 +1,5 @@
 package com.darientejedor.demo.services.inventory;
 
-import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.inventory.dto.InventoryData;
 import com.darientejedor.demo.domain.inventory.dto.InventoryResponse;
 import com.darientejedor.demo.domain.inventory.dto.InventoryUpdateData;
@@ -11,21 +10,21 @@ import org.springframework.security.core.Authentication;
 
 public interface IInventoryService {
 
-    public Page<InventoryResponse> listActiveInventories(Authentication authentication, Pageable pageable);
+    Page<InventoryResponse> listActiveInventories(Authentication authentication, Pageable pageable);
 
-    public Page<InventoryResponse> inventoryPerProductName(Pageable pageable, String productName);
+    Page<InventoryResponse> inventoryPerProductName(Pageable pageable, String productName);
 
-    public Page<InventoryResponse> inventoryPerStore(Long id, Pageable pageable);
+    Page<InventoryResponse> inventoryPerStore(Long id, Pageable pageable);
 
-    public Page<InventoryResponse> inventoryPerProduct(Long id, Pageable pageable);
+    Page<InventoryResponse> inventoryPerProduct(Long id, Pageable pageable);
 
-    public InventoryResponse inventoryResponse(Long id);
+    InventoryResponse inventoryResponse(Long id);
 
-    public InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData);
+    InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData);
 
-    public InventoryResponse updateStock(Long productId, Long storeId, @Valid InventoryUpdateData inventoryUpdateData);
+    InventoryResponse updateStock(Long productId, Long storeId, @Valid InventoryUpdateData inventoryUpdateData);
 
-    public void deactiveInventory(Long productId, Long storeId);
+    void deactiveInventory(Long productId, Long storeId);
 
 
 }

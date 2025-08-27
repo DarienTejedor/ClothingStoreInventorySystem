@@ -5,5 +5,5 @@ import com.darientejedor.demo.domain.salesdetails.dto.SaleDetailResponse;
 
 public interface ISaleDetailService {
 
-    public SaleDetailResponse addSaleDetail(Long saleId, SaleDetailData saleDetailData);
+    SaleDetailResponse addSaleDetail(Long saleId, SaleDetailData saleDetailData);
 }

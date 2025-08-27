@@ -8,11 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 public interface ISaleService {
-    public Page<SaleResponse> listActiveSales(Authentication authentication, Pageable pageable);
+    Page<SaleResponse> listActiveSales(Authentication authentication, Pageable pageable);
 
-    public SaleResponse saleResponse(Long id, Authentication authentication);
+    SaleResponse saleResponse(Long id, Authentication authentication);
 
-    public SaleResponse createSale(@Valid SaleData saleData);
+    SaleResponse createSale(@Valid SaleData saleData);
 
-    public void deactiveSale(Long id);
+    void deactiveSale(Long id);
 }

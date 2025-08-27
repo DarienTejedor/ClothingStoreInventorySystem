@@ -10,15 +10,15 @@ import org.springframework.data.domain.Pageable;
 
 public interface IRoleService {
 
-    public Page<RoleResponse> listActiveRoles(Pageable pageable);
+    Page<RoleResponse> listActiveRoles(Pageable pageable);
 
-    public RoleResponse roleResponse(Long id);
+    RoleResponse roleResponse(Long id);
 
-    public RoleResponse createRole(@Valid RoleData roleData);
+    RoleResponse createRole(@Valid RoleData roleData);
 
-    public RoleResponse updateRole(Long id, @Valid RoleData roleData);
+    RoleResponse updateRole(Long id, @Valid RoleData roleData);
 
-    public void deactiveRole(Long id);
+    void deactiveRole(Long id);
 
-    public Role validRole(Long id);
+    Role validRole(Long id);
 }
