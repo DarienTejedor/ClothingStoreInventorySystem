@@ -40,14 +40,9 @@ public class StoreService implements IStoreService {
         switch (authRole) {
             case "ROLE_GENERAL_ADMIN":
                 break;
-            case "ROLE_STORE_ADMIN":
+            case "ROLE_STORE_ADMIN", "ROLE_CASHIER":
                 if (!authUser.getStore().getId().equals(id)) {
                     throw new AccessDeniedException("You can only view your own store.");
-                }
-                break;
-            case "ROLE_CASHIER":
-                if (!authUser.getStore().getId().equals(id)) {
-                    throw new IllegalArgumentException("You can only view your own store.");
                 }
                 break;
             default:

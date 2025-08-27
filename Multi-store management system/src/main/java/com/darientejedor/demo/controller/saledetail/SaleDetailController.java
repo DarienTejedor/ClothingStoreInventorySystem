@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -60,6 +61,7 @@ public class SaleDetailController {
     )
     @PostMapping
     @Transactional
+    @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<SaleDetailResponse> addSaleDetail(@PathVariable Long saleId, @RequestBody @Valid SaleDetailData saleDetailData) {
         SaleDetailResponse saleDetail = saleDetailService.addSaleDetail(saleId, saleDetailData);
         URI ubication = ServletUriComponentsBuilder.fromCurrentRequest()

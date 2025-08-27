@@ -1,19 +1,14 @@
 package com.darientejedor.demo.services.product;
 
-import com.darientejedor.demo.domain.inventory.Inventory;
-import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.products.dtos.ProductData;
 import com.darientejedor.demo.domain.products.dtos.ProductResponse;
 import com.darientejedor.demo.domain.products.repository.ProductRepository;
-import com.darientejedor.demo.domain.users.User;
-import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 
