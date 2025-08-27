@@ -4,17 +4,14 @@ import com.darientejedor.demo.domain.exceptions.ValidationException;
 import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import com.darientejedor.demo.domain.products.Product;
-import com.darientejedor.demo.domain.products.repository.ProductRepository;
 import com.darientejedor.demo.domain.sales.Sale;
 import com.darientejedor.demo.domain.sales.repository.SaleRepository;
 import com.darientejedor.demo.domain.salesdetails.SaleDetail;
 import com.darientejedor.demo.domain.salesdetails.dto.SaleDetailData;
 import com.darientejedor.demo.domain.salesdetails.dto.SaleDetailResponse;
 import com.darientejedor.demo.domain.salesdetails.repository.SaleDetailsRepository;
-import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.services.product.IProductService;
-import com.darientejedor.demo.services.sale.ISaleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.darientejedor.demo.services.sale.validations.ISaleValidations;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,21 +21,25 @@ public class SaleDetailService implements ISaleDetailService{
     private final SaleRepository saleRepository;
     private final InventoryRepository inventoryRepository;
     private final SaleDetailsRepository saleDetailRepository;
-    private final ISaleService saleService;
     private final IProductService productService;
+    private final ISaleValidations saleValidations;
 
-    public SaleDetailService(SaleRepository saleRepository, ProductRepository productRepository, InventoryRepository inventoryRepository, SaleDetailsRepository saleDetailRepository, ISaleService saleService, IProductService productService) {
+    public SaleDetailService(SaleRepository saleRepository,
+                             InventoryRepository inventoryRepository,
+                             SaleDetailsRepository saleDetailRepository,
+                             IProductService productService,
+                             ISaleValidations saleValidations) {
         this.saleRepository = saleRepository;
         this.inventoryRepository = inventoryRepository;
         this.saleDetailRepository = saleDetailRepository;
-        this.saleService = saleService;
         this.productService = productService;
+        this.saleValidations = saleValidations;
     }
 
     @Override
     public SaleDetailResponse addSaleDetail(Long saleId,  SaleDetailData saleDetailData){
         //Validar el sale y product
-        Sale sale = saleService.validSale(saleId);
+        Sale sale = saleValidations.validSale(saleId);
         Product product = productService.validProduct(saleDetailData.productId());
         //Buscar inventory
         Inventory inventory = inventoryRepository.findByProductAndStore(product, sale.getStore())

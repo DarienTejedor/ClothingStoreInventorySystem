@@ -1,10 +1,9 @@
 package com.darientejedor.demo.controller.store;
 
 
-import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import com.darientejedor.demo.domain.stores.dto.StoreData;
 import com.darientejedor.demo.domain.stores.dto.StoreResponse;
-import com.darientejedor.demo.services.store.StoreService;
+import com.darientejedor.demo.services.store.IStoreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,9 +30,9 @@ public class StoreController {
 
 
 
-    private final StoreService storeService;
+    private final IStoreService storeService;
 
-    public StoreController(StoreService storeService) {
+    public StoreController(IStoreService storeService) {
         this.storeService = storeService;
     }
 

@@ -2,7 +2,7 @@ package com.darientejedor.demo.controller.product;
 
 import com.darientejedor.demo.domain.products.dtos.ProductData;
 import com.darientejedor.demo.domain.products.dtos.ProductResponse;
-import com.darientejedor.demo.services.product.ProductService;
+import com.darientejedor.demo.services.product.IProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -28,9 +27,9 @@ import java.net.URI;
 public class ProductController {
 
 
-    private final ProductService productService;
+    private final IProductService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(IProductService productService) {
         this.productService = productService;
     }
 

@@ -1,11 +1,9 @@
 package com.darientejedor.demo.controller.sale;
 
 
-import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import com.darientejedor.demo.domain.sales.dto.SaleData;
 import com.darientejedor.demo.domain.sales.dto.SaleResponse;
 import com.darientejedor.demo.services.sale.ISaleService;
-import com.darientejedor.demo.services.sale.SaleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

@@ -6,7 +6,6 @@ import com.darientejedor.demo.domain.stores.dto.StoreData;
 import com.darientejedor.demo.domain.stores.dto.StoreResponse;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import com.darientejedor.demo.domain.users.User;
-import com.darientejedor.demo.services.sale.validations.ISaleValidations;
 import com.darientejedor.demo.services.store.validations.IStoreValidations;
 import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
 import jakarta.validation.Valid;

@@ -4,7 +4,7 @@ package com.darientejedor.demo.controller.inventory;
 import com.darientejedor.demo.domain.inventory.dto.InventoryData;
 import com.darientejedor.demo.domain.inventory.dto.InventoryResponse;
 import com.darientejedor.demo.domain.inventory.dto.InventoryUpdateData;
-import com.darientejedor.demo.services.inventory.InventoryService;
+import com.darientejedor.demo.services.inventory.IInventoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,9 +30,9 @@ import java.net.URI;
 public class InventoryController {
 
 
-    private final InventoryService inventoryService;
+    private final IInventoryService inventoryService;
 
-    public InventoryController(InventoryService inventoryService) {
+    public InventoryController(IInventoryService inventoryService) {
         this.inventoryService = inventoryService;
     }
 
