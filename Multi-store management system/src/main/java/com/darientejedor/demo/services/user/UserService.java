@@ -10,7 +10,6 @@ import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.services.role.IRoleService;
 import com.darientejedor.demo.services.store.validations.IStoreValidations;
 import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
-import com.darientejedor.demo.services.user.strategies.getlist.GeneralAdminUsersList;
 import com.darientejedor.demo.services.user.strategies.getlist.GetUsersListStrategyFactory;
 import com.darientejedor.demo.services.user.strategies.getlist.IGetUserListStrategy;
 import com.darientejedor.demo.services.user.validations.IUserValidations;
@@ -53,11 +52,9 @@ public class UserService implements IUserService{
     @Override
     public Page<UserResponse> listActiveUsers(Authentication authentication, Long storeId,Pageable pageable){
         String authRole = userAuthentications.authRole(authentication);
-        IGetUserListStrategy strategy = listUsersStrategyFactory.userListStrategy(authRole, storeId);
-        if (!(strategy instanceof GeneralAdminUsersList)){
-                storeValidations.validStore(storeId);
-        }
-        return strategy.listUsers(storeId, pageable);
+        IGetUserListStrategy strategy = listUsersStrategyFactory.userListStrategy(authRole, storeId, authentication);
+        Long effectiveStoreId = listUsersStrategyFactory.resolveStoreId(authRole, storeId, authentication);
+        return strategy.listUsers(effectiveStoreId, pageable);
     }
 
     @Override

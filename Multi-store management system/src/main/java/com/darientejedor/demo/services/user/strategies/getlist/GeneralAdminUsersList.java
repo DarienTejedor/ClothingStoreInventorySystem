@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("generalAdminUsersList")
 public class GeneralAdminUsersList implements IGetUserListStrategy{
     private final UserRepository userRepository;
 

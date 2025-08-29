@@ -2,11 +2,11 @@ package com.darientejedor.demo.services.sale.validations;
 
 import com.darientejedor.demo.domain.sales.Sale;
 import com.darientejedor.demo.domain.sales.repository.SaleRepository;
-import com.darientejedor.demo.domain.stores.Store;
-import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SaleValidations implements ISaleValidations{
     private final SaleRepository saleRepository;
 

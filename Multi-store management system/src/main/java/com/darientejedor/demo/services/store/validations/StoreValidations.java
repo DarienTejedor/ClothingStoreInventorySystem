@@ -4,7 +4,9 @@ import com.darientejedor.demo.domain.exceptions.ValidationException;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class StoreValidations implements IStoreValidations{
 
     private final StoreRepository storeRepository;

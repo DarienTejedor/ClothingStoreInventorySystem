@@ -21,6 +21,3 @@ public class AuthenticationService implements UserDetailsService {
 }
 
 
-
-//Implementa la interfaz UserDetailsService, que Spring Security usa para obtener los datos de un usuario como el login
-//userRepository.findByLoginUser(user) busca al usuario en la base de datos usando el repositorio y su nombre de usuario (user).

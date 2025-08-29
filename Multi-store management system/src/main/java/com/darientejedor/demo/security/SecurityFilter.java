@@ -44,19 +44,3 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 }
 
-
-
-
-//Intercepta las peticiones y verifica el token
-//
-//Extrae el encabezado Authorization.
-//
-//Si el token existe y es válido:
-//
-//Extrae el usuario (subject) desde el token.
-//
-//Busca el usuario en la base de datos.
-//
-//Crea una instancia de UsernamePasswordAuthenticationToken y lo pone en el contexto de seguridad, indicando que el usuario está autenticado.
-//
-//Si no hay token o no es válido, la solicitud sigue sin autenticar.
