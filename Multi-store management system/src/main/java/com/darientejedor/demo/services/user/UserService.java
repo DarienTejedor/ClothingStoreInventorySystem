@@ -185,6 +185,4 @@ public class UserService implements IUserService{
         user.deactiveUser();
         userRepository.save(user);
     }
-
-
 }

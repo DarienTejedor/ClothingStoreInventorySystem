@@ -12,13 +12,13 @@ public interface IInventoryService {
 
     Page<InventoryResponse> listActiveInventories(Authentication authentication, Pageable pageable);
 
-    Page<InventoryResponse> inventoryPerProductName(Pageable pageable, String productName);
+    Page<InventoryResponse> inventoryByProductName(Pageable pageable, String productName);
 
-    Page<InventoryResponse> inventoryPerStore(Long id, Pageable pageable);
+    Page<InventoryResponse> inventoryByStore(Long id, Pageable pageable);
 
-    Page<InventoryResponse> inventoryPerProduct(Long id, Pageable pageable);
+    Page<InventoryResponse> inventoryByProduct(Long id, Pageable pageable);
 
-    InventoryResponse inventoryResponse(Long id);
+    InventoryResponse inventoryResponse(Long id, Authentication authentication);
 
     InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData);
 

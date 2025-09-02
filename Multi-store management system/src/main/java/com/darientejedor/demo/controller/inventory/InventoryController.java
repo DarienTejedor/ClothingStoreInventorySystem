@@ -65,14 +65,22 @@ public class InventoryController {
     }
 
     @Operation(
-            summary = "Get an inventory by ID.",
-            description = "Returns an inventory by its ID if it is active.",
+            summary = "Get an inventory by ID, authentication role and store ID.",
+            description = "Returns an inventory by its ID if it is active. The response depends on the user's role and store: " +
+                    "'GENERAL_ADMIN can view all inventories" +
+                    "'STORE_ADMIN' can only view inventories from their own store" +
+                    "'CASHIER' can only view inventories from their own store",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Successful operation",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = InventoryResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -82,8 +90,9 @@ public class InventoryController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<InventoryResponse> inventoryResponse(@PathVariable Long id){
-        return ResponseEntity.ok(inventoryService.inventoryResponse(id));
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER')")
+    public ResponseEntity<InventoryResponse> inventoryResponse(@PathVariable Long id, Authentication authentication){
+        return ResponseEntity.ok(inventoryService.inventoryResponse(id, authentication));
     }
 
     @Operation(
@@ -105,7 +114,7 @@ public class InventoryController {
     )
     @GetMapping("/product/by-name/{name}")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerProductName(@PageableDefault(size = 10) Pageable pageable, @PathVariable("name") String productName){
-        return ResponseEntity.ok(inventoryService.inventoryPerProductName(pageable, productName));
+        return ResponseEntity.ok(inventoryService.inventoryByProductName(pageable, productName));
     }
 
     @Operation(
@@ -127,7 +136,7 @@ public class InventoryController {
     )
     @GetMapping("/store/by-id/{id}")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerStore(@PageableDefault(size = 10) Pageable pageable, @PathVariable Long id){
-        return ResponseEntity.ok(inventoryService.inventoryPerStore(id, pageable));
+        return ResponseEntity.ok(inventoryService.inventoryByStore(id, pageable));
     }
 
     @Operation(
@@ -149,7 +158,7 @@ public class InventoryController {
     )
     @GetMapping("/product/by-id/{id}")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerProductId(@PageableDefault(size = 10) Pageable pageable,@PathVariable Long id){
-        return ResponseEntity.ok(inventoryService.inventoryPerProduct(id, pageable));
+        return ResponseEntity.ok(inventoryService.inventoryByProduct(id, pageable));
     }
 
     @Operation(

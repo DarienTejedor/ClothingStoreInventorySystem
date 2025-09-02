@@ -8,7 +8,9 @@ import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;
+import com.darientejedor.demo.services.inventory.validations.IIventoryValidations;
 import com.darientejedor.demo.services.product.IProductService;
+import com.darientejedor.demo.services.product.validations.IProductValidations;
 import com.darientejedor.demo.services.store.validations.IStoreValidations;
 import com.darientejedor.demo.services.user.authentications.IUserAuthentications;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,6 +18,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -25,18 +28,21 @@ import java.util.Optional;
 public class InventoryService implements IInventoryService{
 
     private final InventoryRepository inventoryRepository;
-    private final IProductService productService;
+    private final IProductValidations productValidations;
     private final IUserAuthentications userAuthentications;
     private final IStoreValidations storeValidations;
+    private final IIventoryValidations inventoryValidations;
 
     public InventoryService(InventoryRepository inventoryRepository,
-                            IProductService productService,
+                            IProductValidations productValidations,
                             IUserAuthentications userAuthentications,
-                            IStoreValidations storeValidations) {
+                            IStoreValidations storeValidations,
+                            IIventoryValidations inventoryValidations) {
         this.inventoryRepository = inventoryRepository;
-        this.productService = productService;
+        this.productValidations = productValidations;
         this.userAuthentications = userAuthentications;
         this.storeValidations = storeValidations;
+        this.inventoryValidations = inventoryValidations;
     }
 
     @Override
@@ -52,41 +58,43 @@ public class InventoryService implements IInventoryService{
     }
 
     @Override
-    public Page<InventoryResponse> inventoryPerProductName(Pageable pageable, String productName) {
+    public Page<InventoryResponse> inventoryByProductName(Pageable pageable, String productName) {
         return inventoryRepository.findByProduct_NameContainingIgnoreCase(productName, pageable).map(InventoryResponse::new);
     }
 
     @Override
-    public Page<InventoryResponse> inventoryPerStore(Long id, Pageable pageable) {
+    public Page<InventoryResponse> inventoryByStore(Long id, Pageable pageable) {
         return inventoryRepository.findByStoreId(id, pageable).map(InventoryResponse::new);
     }
 
     @Override
-    public Page<InventoryResponse> inventoryPerProduct(Long id, Pageable pageable) {
+    public Page<InventoryResponse> inventoryByProduct(Long id, Pageable pageable) {
         return inventoryRepository.findByProductId(id, pageable).map(InventoryResponse::new);
     }
 
     @Override
-    public InventoryResponse inventoryResponse(Long id) {
-            Inventory inventory = inventoryRepository.findById(id)
-                    .orElseThrow(()-> new EntityNotFoundException("Inventory not found with ID: " + id));
-            if (!inventory.isActive()){
-                throw new ValidationException("Inventory not found or inactive with ID: " + id);
-            }
-            return new InventoryResponse(
-                    inventory.getId(),
-                    inventory.getStock(),
-                    inventory.getProduct().getId(),
-                    inventory.getProduct().getName(),
-                    inventory.getStore().getId(),
-                    inventory.getStore().getName()
-            );
+    public InventoryResponse inventoryResponse(Long id, Authentication authentication) {
+        Inventory inventory = inventoryValidations.validInventory(id);
+        User authUser = userAuthentications.authUser(authentication);
+        String role = userAuthentications.authRole(authentication);
+        switch (role){
+            case "ROLE_GENERAL_ADMIN":
+                break;
+            case "ROLE_STORE_ADMIN", "ROLE_CASHIER":
+                if (!authUser.getStore().getId().equals(inventory.getStore().getId())){
+                    throw new AccessDeniedException("You can only view inventories from your own store");
+                }
+                break;
+            default:
+                throw new ValidationException("Invalid user role: " + role);
+        }
+        return new InventoryResponse(inventory);
     }
 
     @Override
     public InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData) {
         //Busca las entidades Product y Store po Id
-        ProductAndStore validated = validateActiveProductAndStore(inventoryData.productId(), inventoryData.storeId());
+        var validated = validateActiveProductAndStore(inventoryData.productId(), inventoryData.storeId());
         //Busca y valida si ya existe un inventario de ese producto en esa tienda
         Optional<Inventory> existingInventory = inventoryRepository.findByProductAndStore(validated.product, validated.store);
         Inventory inventory;
@@ -133,7 +141,7 @@ public class InventoryService implements IInventoryService{
     //VAlIDADOR de tienda y producto existenten y activos
     private ProductAndStore validateActiveProductAndStore(Long productId, Long storeId) {
         // Valida que el producto exista y esté activo
-        Product product = productService.validProduct(productId);
+        Product product = productValidations.validProduct(productId);
         // Valida que la tienda exista y esté activa
         Store store = storeValidations.validStore(storeId);
         return new ProductAndStore(product, store);
