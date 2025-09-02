@@ -15,6 +15,4 @@ public interface IProductService {
     ProductResponse updateProduct(Long id, @Valid ProductData productData);
 
     void deactiveProduct(Long id);
-
-    Product validProduct(Long id);
 }

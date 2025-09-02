@@ -4,7 +4,7 @@ import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.products.dtos.ProductData;
 import com.darientejedor.demo.domain.products.dtos.ProductResponse;
 import com.darientejedor.demo.domain.products.repository.ProductRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.darientejedor.demo.services.product.validations.IProductValidations;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
@@ -16,9 +16,12 @@ import org.springframework.stereotype.Service;
 public class ProductService implements IProductService{
 
     private final ProductRepository productRepository;
+    private final IProductValidations productValidations;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository,
+                          IProductValidations productValidations) {
         this.productRepository = productRepository;
+        this.productValidations = productValidations;
     }
 
     @Override
@@ -26,7 +29,6 @@ public class ProductService implements IProductService{
         return productRepository.findByActiveTrue(pageable).map(ProductResponse::new);
 
     }
-
 
 
     @Override
@@ -41,7 +43,7 @@ public class ProductService implements IProductService{
 
     @Override
     public ProductResponse updateProduct(Long id, @Valid ProductData productData) {
-        Product product = validProduct(id);
+        Product product = productValidations.validProduct(id);
         product.setName(productData.name());
         product.setDescription(productData.description());
         product.setPrice(productData.price());
@@ -51,18 +53,10 @@ public class ProductService implements IProductService{
 
     @Override
     public void deactiveProduct(Long id) {
-        Product product = validProduct(id);
+        Product product = productValidations.validProduct(id);
         product.deactiveProduct();
         productRepository.save(product);
     }
 
-    @Override
-    public Product validProduct(Long id){
-        Product product = productRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException(("Product not found with ID: " + id)));
-        if (!product.isActive()){
-            throw new ValidationException("Product not found or inactive with ID: " + id);
-        }
-        return product;
-    }
+
 }

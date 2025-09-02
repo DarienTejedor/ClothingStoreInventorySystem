@@ -10,7 +10,7 @@ import com.darientejedor.demo.domain.salesdetails.SaleDetail;
 import com.darientejedor.demo.domain.salesdetails.dto.SaleDetailData;
 import com.darientejedor.demo.domain.salesdetails.dto.SaleDetailResponse;
 import com.darientejedor.demo.domain.salesdetails.repository.SaleDetailsRepository;
-import com.darientejedor.demo.services.product.IProductService;
+import com.darientejedor.demo.services.product.validations.IProductValidations;
 import com.darientejedor.demo.services.sale.validations.ISaleValidations;
 import org.springframework.stereotype.Service;
 
@@ -21,26 +21,26 @@ public class SaleDetailService implements ISaleDetailService{
     private final SaleRepository saleRepository;
     private final InventoryRepository inventoryRepository;
     private final SaleDetailsRepository saleDetailRepository;
-    private final IProductService productService;
     private final ISaleValidations saleValidations;
+    private final IProductValidations productValidations;
 
     public SaleDetailService(SaleRepository saleRepository,
                              InventoryRepository inventoryRepository,
                              SaleDetailsRepository saleDetailRepository,
-                             IProductService productService,
-                             ISaleValidations saleValidations) {
+                             ISaleValidations saleValidations,
+                             IProductValidations productValidations) {
         this.saleRepository = saleRepository;
         this.inventoryRepository = inventoryRepository;
         this.saleDetailRepository = saleDetailRepository;
-        this.productService = productService;
         this.saleValidations = saleValidations;
+        this.productValidations = productValidations;
     }
 
     @Override
     public SaleDetailResponse addSaleDetail(Long saleId,  SaleDetailData saleDetailData){
         //Validar el sale y product
         Sale sale = saleValidations.validSale(saleId);
-        Product product = productService.validProduct(saleDetailData.productId());
+        Product product = productValidations.validProduct(saleDetailData.productId());
         //Buscar inventory
         Inventory inventory = inventoryRepository.findByProductAndStore(product, sale.getStore())
                 .orElseThrow(()-> new ValidationException("Inventory not found for this product and store."));
