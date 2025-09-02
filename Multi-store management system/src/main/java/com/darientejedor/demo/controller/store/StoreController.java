@@ -66,7 +66,7 @@ public class StoreController {
     }
 
     @Operation(
-            summary = "Get a store by ID authentication role and store ID.",
+            summary = "Get a store by ID, authentication role and store ID.",
             description = "Returns a store by id if it's active. The response depends on the user's role and store: " +
                     "'GENERAL_ADMIN' can view all stores" +
                     "'STORE_ADMIN' can only view their own store" +
