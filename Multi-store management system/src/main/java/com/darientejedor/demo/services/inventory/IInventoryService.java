@@ -12,7 +12,7 @@ public interface IInventoryService {
 
     Page<InventoryResponse> listActiveInventories(Authentication authentication, Pageable pageable);
 
-    Page<InventoryResponse> inventoryByProductName(Pageable pageable, String productName);
+    Page<InventoryResponse> inventoryByProductName(Authentication authentication, String productName, Pageable pageable);
 
     Page<InventoryResponse> inventoryByStore(Long id, Pageable pageable);
 

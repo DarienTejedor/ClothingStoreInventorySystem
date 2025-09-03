@@ -58,8 +58,22 @@ public class InventoryService implements IInventoryService{
     }
 
     @Override
-    public Page<InventoryResponse> inventoryByProductName(Pageable pageable, String productName) {
-        return inventoryRepository.findByProduct_NameContainingIgnoreCase(productName, pageable).map(InventoryResponse::new);
+    public Page<InventoryResponse> inventoryByProductName(Authentication authentication,
+                                                          String productName,
+                                                          Pageable pageable ) {
+        User authUser = userAuthentications.authUser(authentication);
+        String role = userAuthentications.authRole(authentication);
+        Page<Inventory> inventory;
+        if (("ROLE_GENERAL_ADMIN").equals(role)){
+            inventory = inventoryRepository.findByProduct_NameContainingIgnoreCase(productName, pageable);
+        } else {
+            Long storeId = authUser.getStore().getId();
+            inventory = inventoryRepository.findByProduct_NameContainingIgnoreCaseAndStoreIdAndActiveTrue(productName, storeId, pageable);
+        }
+        if (inventory.isEmpty()){
+            throw new EntityNotFoundException("inventory not found: " + productName);
+        }
+        return inventory.map(InventoryResponse::new);
     }
 
     @Override

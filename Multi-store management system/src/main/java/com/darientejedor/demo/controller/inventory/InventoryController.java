@@ -96,8 +96,11 @@ public class InventoryController {
     }
 
     @Operation(
-            summary = "Get inventories by product name.",
-            description = "Returns a paginated list of inventories for a specific product name if they are active.",
+            summary = "Get inventories by product name and user' role.",
+            description = "Returns a paginated list of inventories for a specific product name if they are active and by user's role: " +
+                    "'GENERAL_ADMIN' can view all products by its name" +
+                    "'STORE_ADMIN' can only views products by its name from their own store" +
+                    "'CASHIER' can only views products by its name from their own store.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -113,8 +116,9 @@ public class InventoryController {
             }
     )
     @GetMapping("/product/by-name/{name}")
-    public ResponseEntity<Page<InventoryResponse>> inventoryPerProductName(@PageableDefault(size = 10) Pageable pageable, @PathVariable("name") String productName){
-        return ResponseEntity.ok(inventoryService.inventoryByProductName(pageable, productName));
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER')")
+    public ResponseEntity<Page<InventoryResponse>> inventoryPerProductName(@PageableDefault(size = 10) Pageable pageable, @PathVariable("name") String productName, Authentication authentication){
+        return ResponseEntity.ok(inventoryService.inventoryByProductName(authentication, productName, pageable));
     }
 
     @Operation(
