@@ -14,7 +14,7 @@ public interface IInventoryService {
 
     Page<InventoryResponse> inventoryByProductName(Authentication authentication, String productName, Pageable pageable);
 
-    Page<InventoryResponse> inventoryByStore(Long id, Pageable pageable);
+    Page<InventoryResponse> inventoryByStore(Long id, Authentication authentication,Pageable pageable);
 
     Page<InventoryResponse> inventoryByProduct(Long id, Pageable pageable);
 
