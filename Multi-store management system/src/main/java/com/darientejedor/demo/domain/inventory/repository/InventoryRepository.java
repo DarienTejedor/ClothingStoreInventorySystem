@@ -22,6 +22,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     Page<Inventory> findByProductId(Long id, Pageable pageable);
 
+    Page<Inventory> findByProductIdAndStoreId(Long id, Long storeId,Pageable pageable);
+
     Page<Inventory> findByProduct_NameContainingIgnoreCase(String productName, Pageable pageable);
 
     Page<Inventory> findByProduct_NameContainingIgnoreCaseAndStoreIdAndActiveTrue(String productName, Long storeId, Pageable pageable);

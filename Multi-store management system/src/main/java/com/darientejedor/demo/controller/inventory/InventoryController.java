@@ -151,7 +151,10 @@ public class InventoryController {
 
     @Operation(
             summary = "Get inventories by product ID.",
-            description = "Returns a paginated list of inventories for a specific product ID if they are active.",
+            description = "Returns a paginated list of inventories for a specific product ID if they are active. The response depends on the user's role and store: " +
+                    "'GENERAL_ADMIN' can view all products" +
+                    "'STORE_ADMIN' can only view products from their own store" +
+                    "'CASHIER' can only view products from their own store",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -167,8 +170,8 @@ public class InventoryController {
             }
     )
     @GetMapping("/product/by-id/{id}")
-    public ResponseEntity<Page<InventoryResponse>> inventoryPerProductId(@PageableDefault(size = 10) Pageable pageable,@PathVariable Long id){
-        return ResponseEntity.ok(inventoryService.inventoryByProduct(id, pageable));
+    public ResponseEntity<Page<InventoryResponse>> inventoryPerProductId(@PageableDefault(size = 10) Pageable pageable, @PathVariable Long id, Authentication authentication){
+        return ResponseEntity.ok(inventoryService.inventoryByProduct(id, authentication, pageable));
     }
 
     @Operation(

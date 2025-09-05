@@ -94,8 +94,20 @@ public class InventoryService implements IInventoryService{
     }
 
     @Override
-    public Page<InventoryResponse> inventoryByProduct(Long id, Pageable pageable) {
-        return inventoryRepository.findByProductId(id, pageable).map(InventoryResponse::new);
+    public Page<InventoryResponse> inventoryByProduct(Long id, Authentication authentication,Pageable pageable) {
+        User authUser = userAuthentications.authUser(authentication);
+        String role = userAuthentications.authRole(authentication);
+        Page<Inventory> inventory;
+        if (("ROLE_GENERAL_ADMIN").equals(role)){
+            inventory = inventoryRepository.findByProductId(id, pageable);
+        } else {
+            Long storeId = authUser.getStore().getId();
+            inventory = inventoryRepository.findByProductIdAndStoreId(id, storeId, pageable);
+        }
+        if (inventory.isEmpty()){
+            throw new EntityNotFoundException("inventory not found with ID: " + id);
+        }
+        return inventory.map(InventoryResponse::new);
     }
 
     @Override
