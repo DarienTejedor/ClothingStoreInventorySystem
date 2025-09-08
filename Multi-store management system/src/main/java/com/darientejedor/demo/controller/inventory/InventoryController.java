@@ -170,19 +170,27 @@ public class InventoryController {
             }
     )
     @GetMapping("/product/by-id/{id}")
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER')")
     public ResponseEntity<Page<InventoryResponse>> inventoryPerProductId(@PageableDefault(size = 10) Pageable pageable, @PathVariable Long id, Authentication authentication){
         return ResponseEntity.ok(inventoryService.inventoryByProduct(id, authentication, pageable));
     }
 
     @Operation(
             summary = "Create or update an inventory.",
-            description = "Creates a new inventory or updates an existing one if it already exists, and returns its details.",
+            description = "Creates a new inventory or updates an existing one if it already exists, and returns its details.The response depends on the user's role and store: " +
+                    "'GENERAL_ADMIN' can create any inventory" +
+                    "'STORE_ADMIN' can only create a inventory in their own store",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
                             description = "Inventory created or updated successfully",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = InventoryResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden. The authenticated user does not have the required permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -192,8 +200,9 @@ public class InventoryController {
             }
     )
     @PostMapping
-    public ResponseEntity<InventoryResponse> createInventory(@RequestBody @Valid InventoryData inventoryData){
-        InventoryResponse inventory = inventoryService.createOrUpdateInventory(inventoryData);
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
+    public ResponseEntity<InventoryResponse> createInventory(@RequestBody @Valid InventoryData inventoryData, Authentication authentication){
+        InventoryResponse inventory = inventoryService.createOrUpdateInventory(inventoryData, authentication);
         URI ubication = URI.create("/inventory/" + inventory.id());
         return ResponseEntity.created(ubication).body(inventory);
     }
@@ -250,6 +259,7 @@ public class InventoryController {
     )
     @DeleteMapping("/{productId}/{storeId}")
     @Transactional
+    @PreAuthorize("hasRole('GENERAL_ADMIN')")
     public ResponseEntity<Void> deleteInventory(@PathVariable Long productId, @PathVariable Long storeId){
         inventoryService.deactiveInventory(productId,storeId);
         return ResponseEntity.noContent().build();

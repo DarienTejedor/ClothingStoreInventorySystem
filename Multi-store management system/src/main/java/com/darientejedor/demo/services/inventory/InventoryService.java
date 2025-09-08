@@ -130,24 +130,30 @@ public class InventoryService implements IInventoryService{
     }
 
     @Override
-    public InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData) {
-        //Busca las entidades Product y Store po Id
-        var validated = validateActiveProductAndStore(inventoryData.productId(), inventoryData.storeId());
-        //Busca y valida si ya existe un inventario de ese producto en esa tienda
-        Optional<Inventory> existingInventory = inventoryRepository.findByProductAndStore(validated.product, validated.store);
-        Inventory inventory;
-        if (existingInventory.isPresent()) {
+    public InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData, Authentication authentication) {
+        User authUser = userAuthentications.authUser(authentication);
+        String role = userAuthentications.authRole(authentication);
 
-            //Si existe actualiza stok
-            inventory = existingInventory.get();
-            inventory.setStock(inventoryData.stock());
-        } else {
-            //sino crea un nuevo inventario
-            inventory = new Inventory(validated.product, validated.store, inventoryData.stock());
+        if (!"ROLE_GENERAL_ADMIN".equals(role)) {
+            if (!authUser.getStore().getId().equals(inventoryData.storeId())) {
+                throw new AccessDeniedException("You can only create/update inventories in your own store.");
+            }
         }
+
+        var validated = validateActiveProductAndStore(inventoryData.productId(), inventoryData.storeId());
+
+        // 3. Buscar el inventario de forma segura y clara.
+        Optional<Inventory> existingInventory = inventoryRepository.findByProductAndStore(validated.product(), validated.store());
+
+        Inventory inventory = existingInventory.orElseGet(() -> new Inventory(validated.product(), validated.store(), 0L));
+        inventory.setStock(inventoryData.stock());
+
         inventoryRepository.save(inventory);
         return new InventoryResponse(inventory);
     }
+
+
+
 
     @Override
     public InventoryResponse updateStock(Long productId, Long storeId, @Valid InventoryUpdateData inventoryUpdateData) {

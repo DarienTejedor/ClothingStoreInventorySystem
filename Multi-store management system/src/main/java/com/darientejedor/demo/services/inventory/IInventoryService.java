@@ -20,7 +20,7 @@ public interface IInventoryService {
 
     InventoryResponse inventoryResponse(Long id, Authentication authentication);
 
-    InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData);
+    InventoryResponse createOrUpdateInventory(@Valid InventoryData inventoryData, Authentication authentication);
 
     InventoryResponse updateStock(Long productId, Long storeId, @Valid InventoryUpdateData inventoryUpdateData);
 
