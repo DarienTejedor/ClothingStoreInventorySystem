@@ -218,6 +218,11 @@ public class InventoryController {
                                     schema = @Schema(implementation = InventoryResponse.class))
                     ),
                     @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden. The authenticated user does not have the required permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
                             responseCode = "404",
                             description = "Inventory not found with the provided IDs.",
                             content = @Content(schema = @Schema(hidden = true))
@@ -231,18 +236,28 @@ public class InventoryController {
     )
     @PutMapping("/{productId}/{storeId}")
     @Transactional
-    public ResponseEntity<InventoryResponse> updateStock(@PathVariable Long productId, @PathVariable Long storeId, @RequestBody @Valid InventoryUpdateData inventoryUpdateData){
+    @PreAuthorize("hasRole('GENERAL_ADMIN') or " +
+            "(hasAnyRole('STORE_ADMIN') and @userAuthentications.authUser(authentication).getStore().getId() == #id)")
+    public ResponseEntity<InventoryResponse> updateStock(@PathVariable Long productId,
+                                                         @PathVariable Long storeId,
+                                                         @RequestBody @Valid InventoryUpdateData inventoryUpdateData
+                                                         ){
         InventoryResponse inventoryResponse = inventoryService.updateStock(productId, storeId, inventoryUpdateData);
         return ResponseEntity.ok(inventoryResponse);
     }
 
     @Operation(
             summary = "Deactivate an inventory.",
-            description = "Deactivates an existing inventory by its product and store IDs.",
+            description = "Deactivates an existing inventory by its product and store IDs. but only by GENERAL_ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
                             description = "Inventory deactivated successfully.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden. The authenticated user does not have the required permissions.",
                             content = @Content(schema = @Schema(hidden = true))
                     ),
                     @ApiResponse(

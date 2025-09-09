@@ -139,7 +139,6 @@ public class InventoryService implements IInventoryService{
                 throw new AccessDeniedException("You can only create/update inventories in your own store.");
             }
         }
-
         var validated = validateActiveProductAndStore(inventoryData.productId(), inventoryData.storeId());
 
         // 3. Buscar el inventario de forma segura y clara.
@@ -156,10 +155,9 @@ public class InventoryService implements IInventoryService{
 
 
     @Override
-    public InventoryResponse updateStock(Long productId, Long storeId, @Valid InventoryUpdateData inventoryUpdateData) {
+    public InventoryResponse updateStock(Long productId, Long storeId, @Valid InventoryUpdateData inventoryUpdateData ) {
         //Valida que el producto y tienda existan y estén activos
         ProductAndStore validated = validateActiveProductAndStore(productId, storeId);
-
         Inventory inventory = inventoryRepository.findByProductAndStoreAndActiveTrue(validated.product, validated.store)
                 .orElseThrow(()-> new ValidationException("Inventory not found"));
 
