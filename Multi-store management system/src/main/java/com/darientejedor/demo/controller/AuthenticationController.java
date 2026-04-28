@@ -5,6 +5,7 @@ import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.domain.users.dto.UserAuthenticationData;
 import com.darientejedor.demo.security.dtos.JWTokenData;
 import com.darientejedor.demo.security.TokenService;
+import com.darientejedor.demo.security.dtos.JWTokenResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,13 @@ public class AuthenticationController {
     public ResponseEntity userAuth(@RequestBody @Valid UserAuthenticationData userAuthData){
         Authentication tokenAuth = new UsernamePasswordAuthenticationToken(userAuthData.loginUser(), userAuthData.password());
 
-        var AuthenthicatedUser = authenticationManager.authenticate(tokenAuth);
-        var JWToken = tokenService.generateToken((User)AuthenthicatedUser.getPrincipal());
-        return ResponseEntity.ok(new JWTokenData(JWToken));
+        var authenthicatedUser = authenticationManager.authenticate(tokenAuth);
+
+        User user = (User) authenthicatedUser.getPrincipal();
+        var JWToken = tokenService.generateToken(user);
+
+        String role = user.getAuthorities().iterator().next().getAuthority();
+
+        return ResponseEntity.ok(new JWTokenResponse(JWToken, user.getName(), role));
     }
 }

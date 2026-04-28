@@ -8,7 +8,7 @@ import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.users.User;
-import com.darientejedor.demo.services.inventory.validations.IIventoryValidations;
+import com.darientejedor.demo.services.inventory.validations.IInventoryValidations;
 import com.darientejedor.demo.services.product.IProductService;
 import com.darientejedor.demo.services.product.validations.IProductValidations;
 import com.darientejedor.demo.services.store.validations.IStoreValidations;
@@ -31,13 +31,13 @@ public class InventoryService implements IInventoryService{
     private final IProductValidations productValidations;
     private final IUserAuthentications userAuthentications;
     private final IStoreValidations storeValidations;
-    private final IIventoryValidations inventoryValidations;
+    private final IInventoryValidations inventoryValidations;
 
     public InventoryService(InventoryRepository inventoryRepository,
                             IProductValidations productValidations,
                             IUserAuthentications userAuthentications,
                             IStoreValidations storeValidations,
-                            IIventoryValidations inventoryValidations) {
+                            IInventoryValidations inventoryValidations) {
         this.inventoryRepository = inventoryRepository;
         this.productValidations = productValidations;
         this.userAuthentications = userAuthentications;

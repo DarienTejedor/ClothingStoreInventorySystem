@@ -4,7 +4,9 @@ import com.darientejedor.demo.domain.products.Product;
 import com.darientejedor.demo.domain.products.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProductValidations implements IProductValidations{
 
     private final ProductRepository productRepository;

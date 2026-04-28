@@ -4,8 +4,10 @@ import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
+import org.springframework.stereotype.Service;
 
-public class InventoryValidations implements IIventoryValidations{
+@Service
+public class InventoryValidations implements IInventoryValidations{
 
     private final InventoryRepository inventoryRepository;
 
