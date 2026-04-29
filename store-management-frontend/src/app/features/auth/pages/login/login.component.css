@@ -1,0 +1,48 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Centrado vertical en toda la pantalla */
+}
+
+.login-card {
+  background-color: var(--white);
+  padding: 2.5rem;
+  border-radius: var(--radius-main);
+  box-shadow: var(--shadow-soft);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--dark-pink);
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-sizing: border-box; /* Para que el padding no ensanche el input */
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 5px var(--primary-pink);
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 1rem;
+}

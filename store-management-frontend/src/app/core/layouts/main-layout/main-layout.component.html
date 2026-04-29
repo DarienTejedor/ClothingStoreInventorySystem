@@ -1,0 +1,28 @@
+<div class="layout-wrapper">
+  
+ <aside class="sidebar">
+  <div class="logo">POS COSMÉTICOS</div>
+  <nav>
+    @for (option of menuOptions; track option.label) {
+      @if (canSee(option.roles)) {
+        <a [routerLink]="option.path" routerLinkActive="active">
+          {{ option.label }}
+        </a>
+      }
+    }
+  </nav>
+</aside>
+
+  <div class="content-area">
+    
+    <header class="top-bar">
+      <span>Bienvenido, Usuario</span>
+      <button>Cerrar Sesión</button>
+    </header>
+
+    <main class="main-view">
+      <router-outlet></router-outlet>
+    </main>
+    
+  </div>
+</div>

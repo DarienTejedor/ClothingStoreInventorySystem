@@ -1,1 +1,47 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  /* Paleta para Cosméticos (Elegante y Soft) */
+  --primary-pink: #f8bbd0;
+  --dark-pink: #7e5f69;
+  --accent-gold: #d4af37;
+  --bg-soft: #fff5f8;
+  --text-dark: #2c2c2c;
+  --error-red: #da4b4b;
+  --white: #ffffff;
+  
+  /* Fuentes y Sombras */
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --radius-main: 12px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-soft);
+  color: var(--text-dark);
+}
+
+/* Estilo global para todos los botones de la app */
+button {
+  cursor: pointer;
+  border-radius: var(--radius-main);
+  border: none;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+button:disabled {
+  background-color: #ccc !important;
+  cursor: not-allowed;
+}
+
+/* El botón principal de la tienda */
+.btn-primary {
+  background-color: var(--primary-pink);
+  color: var(--text-dark);
+}
+
+.btn-primary:hover {
+  background-color: var(--dark-pink);
+  transform: translateY(-2px);
+}

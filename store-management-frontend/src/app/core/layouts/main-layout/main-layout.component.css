@@ -1,0 +1,33 @@
+.layout-wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--text-dark); /* Usando tus variables */
+  color: white;
+  padding: 20px;
+}
+
+.content-area {
+  flex: 1; /* Esto hace que ocupe el resto de la pantalla */
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  height: 60px;
+  background-color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.main-view {
+  padding: 20px;
+  flex: 1;
+  background-color: var(--bg-soft);
+}
