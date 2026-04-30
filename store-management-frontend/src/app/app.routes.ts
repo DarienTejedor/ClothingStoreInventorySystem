@@ -3,6 +3,7 @@ import { LoginComponent } from './features/auth/pages/login/login.component';
 import { HomeComponent } from './features/dashboard/pages/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
+import { StoreListComponent } from './features/stores/pages/store-list/store-list.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent},
@@ -16,6 +17,7 @@ export const routes: Routes = [
             { path: 'dashboard', component: HomeComponent },
             
             // Cuando se creen mas componentes, irán aquí:
+            { path: 'stores', component: StoreListComponent},
             
             // Redirección inicial dentro del layout
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

@@ -34,7 +34,7 @@ export class LoginComponent{
             next: (response) => {
                 localStorage.setItem('token', response.token);
                 //PRUEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                localStorage.setItem('role', 'CASHIER')
+                localStorage.setItem('role', 'GENERAL_ADMIN')
                 //
                 console.log('Login exitoso', response);
                 this.router.navigate(['/dashboard']);

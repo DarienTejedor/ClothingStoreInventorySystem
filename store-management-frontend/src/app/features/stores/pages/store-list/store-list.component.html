@@ -1,0 +1,48 @@
+<div class="page-header">
+  <h2>Gestión de Tiendas</h2>
+  <button class="btn-primary"> + Nueva Tienda </button>
+</div>
+
+@if (isLoading) {
+  <div class="loading">Cargando tiendas...</div>
+} @else {
+  <div class="table-container">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (store of stores; track store.id) {
+          <tr>
+            <td>{{ store.id }}</td>
+            <td>{{ store.name }}</td>
+            <td>
+                {{ store.address.street }}, 
+                {{ store.address.locality }} 
+                ({{ store.address.city }})
+            </td>
+            <td>{{ store.phoneNumber }}</td>
+            <td>{{ store.email }}</td>
+            <td>
+              <button class="btn-icon edit">✏️</button>
+              <button class="btn-icon delete" (click)="deleteStore(store.id)">🗑️</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 2rem;">
+              No hay tiendas registradas.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

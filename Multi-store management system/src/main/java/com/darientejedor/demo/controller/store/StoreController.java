@@ -29,7 +29,6 @@ import java.net.URI;
 public class StoreController {
 
 
-
     private final IStoreService storeService;
 
     public StoreController(IStoreService storeService) {
@@ -61,7 +60,7 @@ public class StoreController {
     )
     @GetMapping
     @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
-    private ResponseEntity<Page<StoreResponse>> storeList(@PageableDefault(size = 10) Pageable pageable){
+    public ResponseEntity<Page<StoreResponse>> storeList(@PageableDefault(size = 10) Pageable pageable){
         return ResponseEntity.ok(storeService.listActiveStores(pageable));
     }
 
@@ -87,7 +86,7 @@ public class StoreController {
     )
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER')")
-    private ResponseEntity<StoreResponse> storeResponse(@PathVariable Long id, Authentication authentication){
+    public ResponseEntity<StoreResponse> storeResponse(@PathVariable Long id, Authentication authentication){
         return ResponseEntity.ok(storeService.storeResponse(id, authentication));
     }
 
