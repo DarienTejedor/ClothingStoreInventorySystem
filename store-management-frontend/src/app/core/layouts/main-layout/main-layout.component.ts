@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 
 @Component({
@@ -10,6 +10,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './main-layout.component.css'
 })
 export class MainLayoutComponent {
+  private router = inject(Router);
 // 1. Obtenemos el rol del almacenamiento
   userRole: string = localStorage.getItem('role') || '';
 
@@ -26,5 +27,14 @@ export class MainLayoutComponent {
   // 3. Función que decide si se muestra o no el ítem
   canSee(rolesPermitidos: string[]): boolean {
     return rolesPermitidos.includes(this.userRole);
+  }
+
+  logout(): void {
+    if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+      // Limpiamos todo el almacenamiento
+      localStorage.clear();
+      // Redirigimos al login
+      this.router.navigate(['/login']);
+    }
   }
 }

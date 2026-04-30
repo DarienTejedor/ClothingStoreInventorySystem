@@ -1,33 +1,120 @@
 .layout-wrapper {
   display: flex;
   height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
+/* SIDEBAR STYLES */
 .sidebar {
-  width: 250px;
-  background-color: var(--text-dark); /* Usando tus variables */
+  width: 260px;
+  min-width: 260px; /* Evita que el sidebar se encoja */
+  background-color: var(--text-dark);
   color: white;
-  padding: 20px;
-}
-
-.content-area {
-  flex: 1; /* Esto hace que ocupe el resto de la pantalla */
   display: flex;
   flex-direction: column;
+  padding: 0;
 }
 
+.logo {
+  padding: 30px 20px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--primary-pink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 1px;
+}
+
+.nav-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  text-decoration: none;
+  color: #b0b0b0;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--primary-pink);
+}
+
+.nav-item.active {
+  background-color: rgba(248, 187, 208, 0.1);
+  color: var(--primary-pink);
+  border-left: 4px solid var(--primary-pink);
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.role-badge {
+  font-size: 0.7rem;
+  background: var(--dark-pink);
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  text-transform: lowercase;
+}
+
+/* CONTENT AREA STYLES */
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Vital para que el contenido no desborde el flex */
+  background-color: var(--bg-soft);
+}
+
+/* TOP BAR STYLES */
 .top-bar {
-  height: 60px;
+  width: 100%;
+  height: 70px;
+  min-height: 70px;
   background-color: var(--white);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  border-bottom: 1px solid #ddd;
+  padding: 0 30px;
+  box-shadow: var(--shadow-soft);
+  box-sizing: border-box;
+  z-index: 10;
 }
 
+.user-info .welcome { color: #888; margin-right: 5px; }
+.user-info .user-name { font-weight: 700; color: var(--text-dark); }
+
+.btn-logout {
+  background-color: transparent;
+  color: var(--error-red);
+  border: 1px solid var(--error-red);
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: var(--error-red);
+  color: white;
+}
+
+/* MAIN VIEW STYLES */
 .main-view {
-  padding: 20px;
+  width: 100%;
   flex: 1;
-  background-color: var(--bg-soft);
+  padding: 30px;
+  box-sizing: border-box;
+  overflow-y: auto; /* Permite scroll solo en el contenido, no en toda la página */
 }
