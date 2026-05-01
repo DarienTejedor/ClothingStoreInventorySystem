@@ -5,7 +5,7 @@ export interface Address{
 }
 
 export interface Store {
-    id?: number;
+    id: number;
     name: string;
     address: Address;
     phoneNumber: string;

@@ -33,8 +33,8 @@ export class LoginComponent{
         this.authService.login(this.loginData).subscribe({
             next: (response) => {
                 localStorage.setItem('token', response.token);
-                //PRUEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                localStorage.setItem('role', 'GENERAL_ADMIN')
+                localStorage.setItem('role',response.role);
+                localStorage.setItem('name',response.name)
                 //
                 console.log('Login exitoso', response);
                 this.router.navigate(['/dashboard']);

@@ -1,8 +1,23 @@
 <div class="page-header">
   <h2>Gestión de Tiendas</h2>
-  <button class="btn-primary"> + Nueva Tienda </button>
+  <button class="btn-primary" (click)="openModal()"> + Nueva Tienda </button>
 </div>
 
+
+  <div class="header-actions">
+    <!-- Barra de búsqueda  -->
+    <div class="search-container">
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre, dirección o ID..." 
+        (input)="onSearch($event)"
+        class="search-input"
+      >
+      <span class="search-icon">🔍</span>
+    </div>
+  </div>
+
+<!-- tabla -->
 @if (isLoading) {
   <div class="loading">Cargando tiendas...</div>
 } @else {
@@ -31,7 +46,7 @@
             <td>{{ store.phoneNumber }}</td>
             <td>{{ store.email }}</td>
             <td>
-              <button class="btn-icon edit">✏️</button>
+              <button class="btn-icon edit" (click)="openedEditModal(store)">✏️</button>
               <button class="btn-icon delete" (click)="deleteStore(store.id)">🗑️</button>
             </td>
           </tr>
@@ -45,4 +60,70 @@
       </tbody>
     </table>
   </div>
+
+  @if (isModalOpen) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ isEditing ? 'Editar Tienda' : 'Registrar Nueva Tienda' }}</h3>
+        <button class="close-btn" (click)="closeModal()">×</button>
+      </div>
+      
+      <form [formGroup]="storeForm" (ngSubmit)="saveStore()" class="store-form">
+
+  <div class="form-group">
+    <label>Nombre de la Tienda</label>
+    <input type="text" formControlName="name" placeholder="Ej: Tienda Sur 1">
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Teléfono</label>
+      <input type="text" formControlName="phoneNumber" placeholder="300...">
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" formControlName="email" placeholder="correo@tienda.com">
+      @if (storeForm.get('email')?.invalid && storeForm.get('email')?.touched) {
+        <small class="error-text">Por favor, ingresa un correo válido.</small>
+      }
+    </div>
+  </div>
+  <!-- ADDRESS -->
+  <fieldset formGroupName="address" class="address-section">
+
+    <legend>Dirección</legend>
+
+    <div class="form-group">
+      <label>Calle/Avenida</label>
+      <input type="text" formControlName="street" placeholder="Calle 10 #20-30">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Localidad</label>
+        <input type="text" formControlName="locality" placeholder="Chapinero">
+      </div>
+
+      <div class="form-group">
+        <label>Ciudad</label>
+        <input type="text" formControlName="city">
+      </div>
+    </div>
+
+  </fieldset>
+
+  <div class="modal-actions">
+    <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+
+    <button type="submit" class="btn-save" [disabled]="storeForm.invalid">
+      Guardar Tienda
+    </button>
+  </div>
+
+</form>
+    </div>
+  </div>
+}
 }

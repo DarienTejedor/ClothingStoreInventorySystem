@@ -10,24 +10,24 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
   styleUrl: './main-layout.component.css'
 })
 export class MainLayoutComponent {
+  
   private router = inject(Router);
-// 1. Obtenemos el rol del almacenamiento
-  userRole: string = localStorage.getItem('role') || '';
+  
+  userRole = localStorage.getItem('role') || '';
+  userName = localStorage.getItem('name') || '';
 
   // 2. Definimos el menú con sus permisos
-  // Esto hace que el sistema sea MUTABLE para cualquier negocio
   menuOptions = [
-    { label: 'Inicio', path: '/dashboard', roles: ['GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER'] },
-    { label: 'Usuarios', path: '/users', roles: ['GENERAL_ADMIN'] },
-    { label: 'Tiendas', path: '/stores', roles: ['GENERAL_ADMIN'] },
-    { label: 'Productos', path: '/products', roles: ['GENERAL_ADMIN', 'STORE_ADMIN'] },
-    { label: 'Ventas', path: '/sales', roles: ['GENERAL_ADMIN', 'STORE_ADMIN', 'CASHIER'] }
+    { label: 'Inicio', path: '/dashboard', roles: ['ROLE_GENERAL_ADMIN', 'ROLE_STORE_ADMIN', 'ROLE_CASHIER'] },
+    { label: 'Usuarios', path: '/users', roles: ['ROLE_GENERAL_ADMIN'] },
+    { label: 'Tiendas', path: '/stores', roles: ['ROLE_GENERAL_ADMIN'] },
+    { label: 'Productos', path: '/products', roles: ['ROLE_GENERAL_ADMIN', 'ROLE_STORE_ADMIN'] },
+    { label: 'Ventas', path: '/sales', roles: ['ROLE_GENERAL_ADMIN', 'ROLE_STORE_ADMIN', 'ROLE_CASHIER'] }
   ];
 
   // 3. Función que decide si se muestra o no el ítem
-  canSee(rolesPermitidos: string[]): boolean {
-    return rolesPermitidos.includes(this.userRole);
-  }
+
+  filteredMenu = this.menuOptions.filter(option => option.roles.includes(this.userRole));
 
   logout(): void {
     if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
@@ -37,4 +37,5 @@ export class MainLayoutComponent {
       this.router.navigate(['/login']);
     }
   }
+
 }

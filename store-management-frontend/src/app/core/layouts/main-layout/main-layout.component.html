@@ -7,14 +7,11 @@
     </div>
     
     <nav class="nav-menu">
-      @for (option of menuOptions; track option.label) {
-        @if (canSee(option.roles)) {
-          <a [routerLink]="option.path" routerLinkActive="active" class="nav-item">
-            
+      @for (option of filteredMenu; track option.label) {  
+          <a [routerLink]="option.path" routerLinkActive="active" class="nav-item">            
             <span class="nav-label">{{ option.label }}</span>
           </a>
         }
-      }
     </nav>
 
     <div class="sidebar-footer">
@@ -26,7 +23,7 @@
     <header class="top-bar">
       <div class="user-info">
         <span class="welcome">Bienvenido,</span>
-        <span class="user-name">Usuario</span>
+        <span class="user-name">{{ userName }}</span>
       </div>
       <button class="btn-logout" (click)="logout()">
         Cerrar Sesión 🚪

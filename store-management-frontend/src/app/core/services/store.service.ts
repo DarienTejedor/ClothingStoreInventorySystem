@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Store } from "../models/store.model";
@@ -12,17 +12,23 @@ export class StoreService {
   constructor(private http: HttpClient) { }
 
   // Obtener todas las tiendas
-  getStores(): Observable<Store[]> {
-    return this.http.get<Store[]>(this.apiUrl);
-  }
+  getStores(searchTerm: string = ''): Observable<any> {
+    let params = new HttpParams;
 
-  getStore(idStore: number): Observable<Store> {
-    return this.http.get<Store>(`${this.apiUrl}/${idStore}`)
+    if(searchTerm){
+      params = params.set('search', searchTerm);
+    }
+
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
   // Crear una tienda
-  createStore(store: Store): Observable<Store> {
-    return this.http.post<Store>(this.apiUrl, store);
+  createStore(storeData: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, storeData);
+  }
+
+  updateStore(id: number, storeData: any): Observable<any>{
+    return this.http.put<any>(`${this.apiUrl}/${id}`, storeData)
   }
 
   // Eliminar una tienda
