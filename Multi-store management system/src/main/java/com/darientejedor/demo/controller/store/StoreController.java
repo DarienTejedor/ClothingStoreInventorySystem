@@ -60,8 +60,11 @@ public class StoreController {
     )
     @GetMapping
     @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
-    public ResponseEntity<Page<StoreResponse>> storeList(@PageableDefault(size = 10) Pageable pageable){
-        return ResponseEntity.ok(storeService.listActiveStores(pageable));
+    public ResponseEntity<Page<StoreResponse>> storeList(
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(required = false) String search
+    ){
+        return ResponseEntity.ok(storeService.listActiveStores(search, pageable));
     }
 
     @Operation(

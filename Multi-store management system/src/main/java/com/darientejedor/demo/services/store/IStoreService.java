@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 public interface IStoreService {
-    Page<StoreResponse> listActiveStores(Pageable pageable);
+    Page<StoreResponse> listActiveStores(String searchTerm, Pageable pageable);
 
     StoreResponse storeResponse(Long id, Authentication authentication);
 

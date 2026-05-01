@@ -32,7 +32,12 @@ public class StoreService implements IStoreService {
 
     //Funcion Get, lista de stores
     @Override
-    public Page<StoreResponse> listActiveStores(Pageable pageable) {
+    public Page<StoreResponse> listActiveStores(String searchTerm,Pageable pageable) {
+        if (searchTerm != null && !searchTerm.trim().isEmpty()){
+            System.out.println("DEBUG: busqueda perzonalida....");
+            return storeRepository.searchStores(searchTerm, pageable).map(StoreResponse::new);
+        }
+            System.out.println("DEBUG: lista general");
         return storeRepository.findByActiveTrue(pageable).map(StoreResponse::new);
     }
 
