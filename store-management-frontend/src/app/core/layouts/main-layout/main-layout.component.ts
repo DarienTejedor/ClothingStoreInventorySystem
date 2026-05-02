@@ -16,6 +16,18 @@ export class MainLayoutComponent {
   userRole = localStorage.getItem('role') || '';
   userName = localStorage.getItem('name') || '';
 
+  isSidebarOpen = true;
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  ngOnInit() {
+  if (window.innerWidth < 768) {
+    this.isSidebarOpen = false;
+  }
+}
+
   // 2. Definimos el menú con sus permisos
   menuOptions = [
     { label: 'Inicio', path: '/dashboard', roles: ['ROLE_GENERAL_ADMIN', 'ROLE_STORE_ADMIN', 'ROLE_CASHIER'] },

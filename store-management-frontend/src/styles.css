@@ -1,5 +1,5 @@
 :root {
-  /* Paleta para Cosméticos (Elegante y Soft) */
+  /* 🎨 Paleta */
   --primary-pink: #f8bbd0;
   --dark-pink: #7e5f69;
   --accent-gold: #d4af37;
@@ -7,27 +7,62 @@
   --text-dark: #2c2c2c;
   --error-red: #da4b4b;
   --white: #ffffff;
-  
-  /* Fuentes y Sombras */
+
+  /* 🧱 UI */
   --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
   --radius-main: 12px;
+
+  /* 📏 Espaciados (CLAVE para consistencia) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* 🔤 Tipografía */
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 🔄 Reset básico (muy importante) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-main);
   background-color: var(--bg-soft);
   color: var(--text-dark);
+  line-height: 1.5;
 }
 
-/* Estilo global para todos los botones de la app */
+/* 🖼️ Imágenes responsivas */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 🔗 Links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 🔘 Botones globales */
 button {
   cursor: pointer;
   border-radius: var(--radius-main);
   border: none;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   padding: 10px 20px;
   font-weight: 600;
+  font-family: inherit;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
 
 button:disabled {
@@ -35,7 +70,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* El botón principal de la tienda */
+/* 🎯 Botón principal */
 .btn-primary {
   background-color: var(--primary-pink);
   color: var(--text-dark);
@@ -43,5 +78,39 @@ button:disabled {
 
 .btn-primary:hover {
   background-color: var(--dark-pink);
-  transform: translateY(-2px);
+}
+
+/* ⚠️ Botón secundario (te va a servir después) */
+.btn-secondary {
+  background-color: #eee;
+  color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+  background-color: #ddd;
+}
+
+/* ❌ Botón peligro */
+.btn-danger {
+  background-color: var(--error-red);
+  color: white;
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+/* 📦 Contenedor reutilizable */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+/* 📱 Responsive base */
+@media (max-width: 768px) {
+  button {
+    width: 100%; /* botones full en móvil */
+  }
 }

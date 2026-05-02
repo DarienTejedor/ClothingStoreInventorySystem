@@ -1,17 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '../../../../core/models/store.model';
 import { StoreService } from '../../../../core/services/store.service';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { StoreFormComponent } from '../../components/store-form/store-form.component';
 
 @Component({
   selector: 'app-store-list',
-  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, StoreFormComponent],
   templateUrl: './store-list.component.html',
   styleUrl: './store-list.component.css',
 })
 export class StoreListComponent implements OnInit{
+  @ViewChild(StoreFormComponent) storeFormChild!: StoreFormComponent;
   isModalOpen = false;
   isEditing = false;
   isLoading: boolean = true;
@@ -19,17 +22,6 @@ export class StoreListComponent implements OnInit{
   selectedStoreId: number | null = null;
   stores: Store[] = [];
 
-  
-storeForm = new FormGroup({
-  name: new FormControl('', Validators.required),
-  phoneNumber: new FormControl('', Validators.required),
-  email: new FormControl('', [Validators.required, Validators.email]),
-  address: new FormGroup({
-    street: new FormControl('', Validators.required),
-    locality: new FormControl('', Validators.required),
-    city: new FormControl('Bogotá', Validators.required)
-  })
-});
   
   
   onSearch(event: any): void {
@@ -55,71 +47,52 @@ storeForm = new FormGroup({
   
   //MODAL ---------------------------------------------------------
 
-  openModal(){
+openModal() {
     this.isEditing = false;
-    //Limpia el form
-    this.storeForm.reset({
-      address: { city: 'Bogotá' }
-      });
     this.isModalOpen = true;
+    this.storeFormChild.resetForm(); // Le decimos al hijo que limpie
   }
 
   closeModal(){
     this.isModalOpen = false;
   }
-
+  
   //EDITAR ---------------------------------------------------------
-
-  openedEditModal(store: Store){
-
+  
+  openedEditModal(store: Store) {
     this.isEditing = true;
     this.selectedStoreId = store.id;
     this.isModalOpen = true;
-
-    // CARGA LOS DATOS EN EL FORM
-    this.storeForm.patchValue({
-      name: store.name,
-      phoneNumber: store.phoneNumber,
-      email: store.email,
-      address: {
-        street: store.address.street,
-        locality: store.address.locality,
-        city: store.address.city
-      }
-    });
+    // Le pasamos los datos al hijo
+    setTimeout(() => this.storeFormChild.setData(store), 0); 
   }
 
-//GUARDAR ---------------------------------------------------------
-
-saveStore() {
-  if (this.storeForm.invalid) return;
-
-  const storeData = this.storeForm.value;
-
-  if (this.isEditing && this.selectedStoreId) {
-    this.storeService.updateStore(this.selectedStoreId, storeData).subscribe({
-      next: () => {
-        alert('Tienda actualizada');
-        this.finishProcess();
-      }
-    });
-  } else {
-    this.storeService.createStore(storeData).subscribe({
-      next: () => {
-        alert('Tienda creada');
-        this.finishProcess();
-      }
-    });
-  }
-}
-
-private finishProcess() {
-    this.isModalOpen = false;
-    this.isEditing = false;
-    this.selectedStoreId = null;
-    this.loadStores();
+  handleSave(storeData: any) {
+    if (this.isEditing && this.selectedStoreId) {
+      this.storeService.updateStore(this.selectedStoreId, storeData).subscribe({
+        next: () => {
+          alert('Tienda actualizada');
+          this.finishProcess();
+        }
+      });
+    } else {
+      this.storeService.createStore(storeData).subscribe({
+        next: () => {
+          alert('Tienda creada');
+          this.finishProcess();
+        }
+      });
+    }
   }
   
+  private finishProcess() {
+      this.isModalOpen = false;
+      this.isEditing = false;
+      this.selectedStoreId = null;
+      this.loadStores();
+    }
+
+
   //LISTAR ---------------------------------------------------------
   
   loadStores(term: string = ''): void {

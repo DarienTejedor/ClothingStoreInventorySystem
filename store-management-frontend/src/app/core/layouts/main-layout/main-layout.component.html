@@ -1,12 +1,13 @@
 <div class="layout-wrapper">
   
-  <aside class="sidebar">
+  <aside class="sidebar" [class.hidden]="!isSidebarOpen">
     <div class="logo">
       <span class="logo-icon">✨</span>
       <span>POS COSMÉTICOS</span>
     </div>
     
     <nav class="nav-menu">
+      
       @for (option of filteredMenu; track option.label) {  
           <a [routerLink]="option.path" routerLinkActive="active" class="nav-item">            
             <span class="nav-label">{{ option.label }}</span>
@@ -21,6 +22,7 @@
 
   <div class="content-area">
     <header class="top-bar">
+      <button class="menu-toggle" (click)="toggleSidebar()">☰</button>
       <div class="user-info">
         <span class="welcome">Bienvenido,</span>
         <span class="user-name">{{ userName }}</span>
