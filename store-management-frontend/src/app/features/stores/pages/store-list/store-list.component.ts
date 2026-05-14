@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { Store } from '../../../../core/models/store.model';
-import { StoreService } from '../../../../core/services/store.service';
+import { Store } from '../../models/store.model';
+import { StoreService } from '../../services/store.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { StoreFormComponent } from '../../components/store-form/store-form.component';

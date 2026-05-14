@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Store } from '../../../../core/models/store.model';
+import { Store } from '../../models/store.model';
 
 @Component({
   selector: 'app-store-form',
