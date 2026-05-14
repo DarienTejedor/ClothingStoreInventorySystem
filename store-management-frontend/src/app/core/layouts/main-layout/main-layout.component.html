@@ -1,39 +1,65 @@
-<div class="layout-wrapper">
-  
-  <aside class="sidebar" [class.hidden]="!isSidebarOpen">
-    <div class="logo">
-      <span class="logo-icon">✨</span>
-      <span>POS COSMÉTICOS</span>
+<div class="flex h-screen bg-[#F9F5F2]">
+
+  <!-- Sidebar -->
+  <aside class="flex flex-col w-64 bg-white border-r border-[#F4C0D1] transition-all duration-300"
+         [class.-translate-x-full]="!isSidebarOpen"
+         [class.hidden]="!isSidebarOpen">
+
+    <!-- Logo -->
+    <div class="px-6 py-8 border-b border-[#F4C0D1]">
+      <h1 class="font-serif text-2xl text-[#3D2E35] tracking-wide">Lumi</h1>
+      <p class="text-xs text-[#A85A6E] tracking-widest uppercase mt-0.5">Store Management</p>
     </div>
-    
-    <nav class="nav-menu">
-      
-      @for (option of filteredMenu; track option.label) {  
-          <a [routerLink]="option.path" routerLinkActive="active" class="nav-item">            
-            <span class="nav-label">{{ option.label }}</span>
-          </a>
-        }
+
+    <!-- Nav -->
+    <nav class="flex-1 px-3 py-6 space-y-1">
+      @for (option of filteredMenu; track option.label) {
+        <a [routerLink]="option.path"
+           routerLinkActive="bg-[#FBEAF0] text-[#A85A6E] font-medium"
+           class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-[#3D2E35] hover:bg-[#FBEAF0] hover:text-[#A85A6E] transition-colors duration-150">
+          {{ option.label }}
+        </a>
+      }
     </nav>
 
-    <div class="sidebar-footer">
-      <p class="role-badge">{{ userRole }}</p>
+    <!-- Role badge -->
+    <div class="px-6 py-4 border-t border-[#F4C0D1]">
+      <span class="inline-block text-xs px-3 py-1 rounded-full bg-[#FBEAF0] text-[#A85A6E] font-medium">
+        {{ userRole }}
+      </span>
     </div>
+
   </aside>
 
-  <div class="content-area">
-    <header class="top-bar">
-      <button class="menu-toggle" (click)="toggleSidebar()">☰</button>
-      <div class="user-info">
-        <span class="welcome">Bienvenido,</span>
-        <span class="user-name">{{ userName }}</span>
+  <!-- Main area -->
+  <div class="flex flex-col flex-1 overflow-hidden">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between px-6 py-4 bg-white border-b border-[#F4C0D1]">
+
+      <div class="flex items-center gap-4">
+        <button (click)="toggleSidebar()"
+                class="text-[#A85A6E] hover:text-[#C97A8C] transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+        <span class="text-sm text-[#3D2E35]">
+          Bienvenido, <strong>{{ userName }}</strong>
+        </span>
       </div>
-      <button class="btn-logout" (click)="logout()">
-        Cerrar Sesión 🚪
+
+      <button (click)="logout()"
+              class="text-sm text-[#A85A6E] hover:text-[#C97A8C] border border-[#F4C0D1] hover:border-[#C97A8C] px-4 py-1.5 rounded-full transition-colors">
+        Cerrar sesión
       </button>
+
     </header>
 
-    <main class="main-view">
+    <!-- Content -->
+    <main class="flex-1 overflow-auto p-6">
       <router-outlet></router-outlet>
     </main>
+
   </div>
 </div>
