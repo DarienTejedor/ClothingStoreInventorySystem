@@ -66,7 +66,7 @@ public class TokenService {
     /// se usa intant ya que permite medir el tiempo en nanosegundos y es inmutable
 
     private Instant tokenExpiration(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-05:00"));
+        return LocalDateTime.now().plusHours(8).toInstant(ZoneOffset.of("-05:00"));
     }
 
 }
