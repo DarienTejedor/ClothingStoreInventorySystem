@@ -55,7 +55,7 @@ loginUser: ADMIN
 password: admin123
 
 Autenticación y obtención de token
-URL: POST http://localhost:8080/api/auth/login
+URL: POST http://localhost:8080/login
 
 Cuerpo de la solicitud (JSON):
 
