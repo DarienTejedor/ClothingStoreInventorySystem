@@ -24,6 +24,12 @@ public class ExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> illegalArgument(IllegalArgumentException e){
+        ApiError error = new ApiError(400, "Bad Request", e.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         String message = "Parameter '" + e.getName() + "' is invalid. Value provided: '" + e.getValue() + "'.";
