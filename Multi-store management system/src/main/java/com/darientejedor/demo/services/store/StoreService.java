@@ -1,6 +1,6 @@
 package com.darientejedor.demo.services.store;
 import com.darientejedor.demo.domain.address.Address;
-import com.darientejedor.demo.domain.exceptions.ValidationException;
+import com.darientejedor.demo.exceptions.ValidationException;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.dto.StoreData;
 import com.darientejedor.demo.domain.stores.dto.StoreResponse;

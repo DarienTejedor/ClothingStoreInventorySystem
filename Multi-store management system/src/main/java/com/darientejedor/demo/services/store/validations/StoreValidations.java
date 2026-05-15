@@ -1,6 +1,6 @@
 package com.darientejedor.demo.services.store.validations;
 
-import com.darientejedor.demo.domain.exceptions.ValidationException;
+import com.darientejedor.demo.exceptions.ValidationException;
 import com.darientejedor.demo.domain.stores.Store;
 import com.darientejedor.demo.domain.stores.repository.StoreRepository;
 import jakarta.persistence.EntityNotFoundException;

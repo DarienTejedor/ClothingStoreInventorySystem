@@ -1,6 +1,6 @@
 package com.darientejedor.demo.services.user.authentications;
 
-import com.darientejedor.demo.domain.exceptions.ValidationException;
+import com.darientejedor.demo.exceptions.ValidationException;
 import com.darientejedor.demo.domain.users.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

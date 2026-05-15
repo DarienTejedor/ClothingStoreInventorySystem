@@ -1,6 +1,6 @@
 package com.darientejedor.demo.services.saledetail;
 
-import com.darientejedor.demo.domain.exceptions.ValidationException;
+import com.darientejedor.demo.exceptions.ValidationException;
 import com.darientejedor.demo.domain.inventory.Inventory;
 import com.darientejedor.demo.domain.inventory.repository.InventoryRepository;
 import com.darientejedor.demo.domain.products.Product;

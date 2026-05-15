@@ -1,7 +1,7 @@
 package com.darientejedor.demo.services.user;
 
 
-import com.darientejedor.demo.domain.exceptions.ValidationException;
+import com.darientejedor.demo.exceptions.ValidationException;
 import com.darientejedor.demo.domain.users.dto.*;
 import com.darientejedor.demo.domain.users.repository.UserRepository;
 import com.darientejedor.demo.domain.roles.Role;

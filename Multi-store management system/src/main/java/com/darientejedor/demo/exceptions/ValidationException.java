@@ -1,4 +1,4 @@
-package com.darientejedor.demo.domain.exceptions;
+package com.darientejedor.demo.exceptions;
 
 public class ValidationException extends RuntimeException{
     public ValidationException(String message) {

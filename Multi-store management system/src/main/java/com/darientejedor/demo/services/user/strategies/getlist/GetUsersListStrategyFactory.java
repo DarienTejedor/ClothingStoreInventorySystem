@@ -1,6 +1,6 @@
 package com.darientejedor.demo.services.user.strategies.getlist;
 
-import com.darientejedor.demo.domain.exceptions.ValidationException;
+import com.darientejedor.demo.exceptions.ValidationException;
 import com.darientejedor.demo.services.user.authentications.UserAuthentications;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

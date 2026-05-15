@@ -22,7 +22,6 @@ public class TokenService {
     @Value("${api.security.secret}")
     private String apiPassword;
 
-
     /// Genera el Token
 
     public String generateToken(User user){
@@ -43,19 +42,12 @@ public class TokenService {
     /// Verifica el token
 
     public String getSubject(String token){
-        if (token == null){
-            throw new RuntimeException();
-        }
-        DecodedJWT verifer = null;
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(apiPassword);
-            verifer = JWT.require(algorithm)
-                    .withIssuer("InvManagementSystem")
-                    .build()
-                    .verify(token);
-        } catch (JWTCreationException exception){
-            System.out.println(exception.toString());
-        }
+        if (token == null) throw new RuntimeException();
+        Algorithm algorithm = Algorithm.HMAC256(apiPassword);
+        DecodedJWT verifer = JWT.require(algorithm)
+                .withIssuer("InvManagementSystem")
+                .build()
+                .verify(token);
         if (verifer.getSubject() == null) {
             throw new RuntimeException("Invalid verification");
         }
