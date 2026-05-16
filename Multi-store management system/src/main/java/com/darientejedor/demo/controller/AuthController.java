@@ -6,6 +6,7 @@ import com.darientejedor.demo.domain.users.dto.UserAuthenticationData;
 import com.darientejedor.demo.security.dtos.JWTokenData;
 import com.darientejedor.demo.security.TokenService;
 import com.darientejedor.demo.security.dtos.JWTokenResponse;
+import com.darientejedor.demo.services.token.IRefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("login")
 public class AuthenticationController {
@@ -26,6 +29,9 @@ public class AuthenticationController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private IRefreshTokenService refreshTokenService;
 
     @PostMapping
     public ResponseEntity userAuth(@RequestBody @Valid UserAuthenticationData userAuthData){
@@ -39,5 +45,9 @@ public class AuthenticationController {
         String role = user.getAuthorities().iterator().next().getAuthority();
 
         return ResponseEntity.ok(new JWTokenResponse(JWToken, user.getName(), role));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JWTokenResponse> refreshToken( @RequestBody Map<String, String> payload) {
     }
 }
