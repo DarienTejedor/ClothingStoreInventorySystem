@@ -13,8 +13,8 @@ export class MainLayoutComponent {
   
   private router = inject(Router);
   
-  userRole = localStorage.getItem('role') || '';
-  userName = localStorage.getItem('name') || '';
+  userRole = sessionStorage.getItem('role') || '';
+  userName = sessionStorage.getItem('name') || '';
 
   isSidebarOpen = true;
 
@@ -44,7 +44,7 @@ export class MainLayoutComponent {
   logout(): void {
     if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
       // Limpiamos todo el almacenamiento
-      localStorage.clear();
+      sessionStorage.clear();
       // Redirigimos al login
       this.router.navigate(['/login']);
     }

@@ -42,7 +42,8 @@ public class SecurityConfigurations {
         return httpSecurity
                 .cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
                 .sessionManagement(seess -> seess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/login", "/login/refresh")
+                        .permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
                         .permitAll()
                         .anyRequest()

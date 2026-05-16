@@ -7,12 +7,16 @@ import { AuthRequest, AuthResponse } from "../models/auth.model";
 })
 export class AuthService{
 
+    private apiUrl = 'http://localhost:8080/';
+
     constructor(private http: HttpClient) {}
 
-    private apiUrl = 'http://localhost:8080/login';
-    
     login(credentials: AuthRequest){
-        return this.http.post<AuthResponse>(this.apiUrl, credentials)
+        return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
+    }
+
+    refreshToken(refreshToken: string){
+        return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, { refreshToken })
     }
 
 }

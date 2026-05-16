@@ -76,4 +76,6 @@ Headers: Authorization: Bearer (TU_TOKEN_JWT)
 Descripción: Devuelve la lista completa de usuarios paginada.
 
 ## Estado del Proyecto ##
-El proyecto se encuentra en una fase funcional y lista para ser utilizada como base. La inicialización de datos y la seguridad están completamente implementadas y operativas, y la API ya cuenta con la estructura necesaria para gestionar entidades clave como usuarios, tiendas, productos, y más. El siguiente paso es seguir desarrollando las lógicas de negocio específicas y los endpoints adicionales necesarios para un sistema de gestión completo al igual que otro tipo de funcionalidades.
+El proyecto se encuentra en una fase funcional y lista para ser utilizada como base. La inicialización de datos, la seguridad y el manejo de errores están implementadas y operativas, y la API ya cuenta con la estructura necesaria para gestionar entidades clave. El siguiente paso es seguir desarrollando las lógicas de negocio específicas segun nazcan nuevos requerimientos, mejorar continuamente la estrucutra y arquitectura del proyecto para mejorar el escalamiento.
+
+Actualemente se esta comenzando a implementar su parte visual con Angular 21 usando librerias como tailwind y primeNg.

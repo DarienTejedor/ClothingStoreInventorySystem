@@ -16,7 +16,6 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-
     /// Trae la contraseña desde las propiedades o variables de entorno
 
     @Value("${api.security.secret}")

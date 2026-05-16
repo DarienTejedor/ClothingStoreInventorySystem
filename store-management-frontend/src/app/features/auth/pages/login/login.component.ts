@@ -32,11 +32,11 @@ export class LoginComponent{
 
         this.authService.login(this.loginData).subscribe({
             next: (response) => {
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('role',response.role);
-                localStorage.setItem('name',response.name)
-                //
-                console.log('Login exitoso', response);
+                sessionStorage.setItem('token', response.token);
+                sessionStorage.setItem('refreshToken', response.refreshToken)
+                sessionStorage.setItem('role', response.role);
+                sessionStorage.setItem('name', response.name)
+                // Redirigir al dashboard
                 this.router.navigate(['/dashboard']);
             },
             error: (err) => {

@@ -1,9 +1,10 @@
 package com.darientejedor.demo.controller;
 
 
+import com.darientejedor.demo.domain.refreshToken.dto.RefreshTokenRequest;
+import com.darientejedor.demo.domain.refreshToken.dto.RefreshTokenResponse;
 import com.darientejedor.demo.domain.users.User;
 import com.darientejedor.demo.domain.users.dto.UserAuthenticationData;
-import com.darientejedor.demo.security.dtos.JWTokenData;
 import com.darientejedor.demo.security.TokenService;
 import com.darientejedor.demo.security.dtos.JWTokenResponse;
 import com.darientejedor.demo.services.token.IRefreshTokenService;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("login")
-public class AuthenticationController {
+public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -34,20 +35,22 @@ public class AuthenticationController {
     private IRefreshTokenService refreshTokenService;
 
     @PostMapping
-    public ResponseEntity userAuth(@RequestBody @Valid UserAuthenticationData userAuthData){
+    public ResponseEntity<JWTokenResponse> userAuth(@RequestBody @Valid UserAuthenticationData userAuthData){
         Authentication tokenAuth = new UsernamePasswordAuthenticationToken(userAuthData.loginUser(), userAuthData.password());
 
         var authenthicatedUser = authenticationManager.authenticate(tokenAuth);
 
         User user = (User) authenthicatedUser.getPrincipal();
         var JWToken = tokenService.generateToken(user);
+        var refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
         String role = user.getAuthorities().iterator().next().getAuthority();
 
-        return ResponseEntity.ok(new JWTokenResponse(JWToken, user.getName(), role));
+        return ResponseEntity.ok(new JWTokenResponse(JWToken, refreshToken.getToken(), user.getName(), role));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JWTokenResponse> refreshToken( @RequestBody Map<String, String> payload) {
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(refreshTokenService.refreshToken(request.refreshToken()));
     }
 }

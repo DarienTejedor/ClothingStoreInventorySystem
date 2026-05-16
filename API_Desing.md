@@ -6,40 +6,30 @@ En este documento se detallara la documentacion incial para comenzar el proyecto
 ##### 1. Entender los Requisitos y Definir Alcance (MVP):
 **¿Qué hará el sistema?**
 
-El sistema permitirá la gestión del inventario de una tienda de ropa, con funciones basicas, como: registro, muestra, actualización y eliminación logica de los productos de la tienda en su base de datos, el sistema funcionara de manera segura con autenticación de usuario.
+El sistema permitirá la gestión de inventario, usuarios, roles, productos y tiendas que funcionara como plantilla para que pueda ser adaptado a cualquier tipo de negocio que encaje en la plantilla, con funciones basicas, como: registro, muestra, actualización y eliminación logica de los objetos del negocio en su base de datos, el sistema funcionara de manera segura con autenticación jwt de usuario.
 
 **¿Qué usuarios lo usaran?**
 
-El sistema será utilizado por varios tipos de usuario, el administrador general o gerente, por el administrador de ventas y por un cajero con funciones especificas para cada uno.
+El sistema será utilizado principalmente por 3 tipos de usuario:  
+
+GENERAL_ADMIN: sera el admin general del sistema.
+STORE_ADMIN: sera el admin de su tienda asignada.
+CASHIER: sera el encargado de registar ventas.
 
 **Elementos prioritarios**
 
 Para un primer entregable el sistema tiene que realizar las siguientes funciones:
 
-1. Registrar productos
-2. Registrar ventas
-3. Registrar inventarios
-4. Registrar usuarios
-5. Registrar roles
-6. Eliminar productos 
-7. Eliminar usuarios 
-8. Actualizar productos 
-9. Actualizar stock del inventario 
-10. Actualizar informacion de usuarios 
-11. Mostrar productos 
-12. Mostrar ventas
-13. Almacenar datos en una BD
-14. Autenticación de usuarios por medio de tokens
+1. El CRUD para las entidades: inventory, product, role, sale, saledetails, store y user.
+2. Menejo de estas entidades en una base de datos sql(Postgres).
+3. Manejo de errores y validaciones.
 
+Para versiones posteriores se pretende realizar:
 
-
-Posteriormente, en una segunda versión se podria realizar:
-
-1. Reportes básicos 
+1. Reportes básicos y generales.
 2. Reportes por tiendas 
 3. Generación de facturas
-
-
+4. Refactorizacion: Mejorar la arquitectura del sistema pudiendo ser una arquitectura Hexagonal/microservicios.
 
 ### 2. Modelado de la Base de Datos (Diseño de Datos):
 
@@ -129,11 +119,11 @@ Muchos detalles de venta tienen un producto, un producto puede estar en muchos d
 **Identificar Recursos**:  
 Tiendas  
 Productos  
-Inventario  
+-Inventario  
 Usuarios  
 Roles  
 Ventas  
-DetalleVentas  
+-DetalleVentas  
 
 **Definir Endpoints y Métodos HTTP**:
 

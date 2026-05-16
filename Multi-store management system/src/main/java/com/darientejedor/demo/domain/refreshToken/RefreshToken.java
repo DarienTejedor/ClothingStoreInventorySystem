@@ -1,4 +1,4 @@
-package com.darientejedor.demo.domain.token;
+package com.darientejedor.demo.domain.refreshToken;
 
 import com.darientejedor.demo.domain.users.User;
 import jakarta.persistence.*;
@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.java.Log;
 
 import java.time.Instant;
 
@@ -20,7 +19,7 @@ public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
     @Column(nullable = false, unique = true)
