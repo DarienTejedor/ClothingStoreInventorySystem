@@ -12,7 +12,7 @@ export class AuthService{
     constructor(private http: HttpClient) {}
 
     login(credentials: AuthRequest){
-        return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
+        return this.http.post<AuthResponse>(`${this.apiUrl}login`, credentials)
     }
 
     refreshToken(refreshToken: string){
