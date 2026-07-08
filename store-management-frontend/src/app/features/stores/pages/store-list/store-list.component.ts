@@ -23,6 +23,10 @@ export class StoreListComponent implements OnInit{
   stores: Store[] = [];
 
   
+  constructor (
+    private storeService: StoreService,
+    private cdr: ChangeDetectorRef
+  ){}
   
   onSearch(event: any): void {
       const value = event.target.value;
@@ -31,10 +35,6 @@ export class StoreListComponent implements OnInit{
       this.loadStores(this.searchTerm);
     }
     
-  constructor (
-    private storeService: StoreService,
-    private cdr: ChangeDetectorRef
-  ){}
     
   offLoading(){
     this.cdr.detectChanges();

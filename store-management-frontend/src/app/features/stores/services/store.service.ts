@@ -7,7 +7,7 @@ import { Store } from "../models/store.model";
     providedIn: 'root'
 })
 export class StoreService {
-    private apiUrl = 'http://localhost:8080/stores'; // Ajusta a tu ruta real
+  private apiUrl = 'http://localhost:8080/stores'; // Ajusta a tu ruta real
 
   constructor(private http: HttpClient) { }
 

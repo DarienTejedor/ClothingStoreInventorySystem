@@ -4,6 +4,7 @@ import { HomeComponent } from './features/dashboard/pages/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
 import { StoreListComponent } from './features/stores/pages/store-list/store-list.component';
+import { UserListComponent } from './features/users/pages/user-list/user-list.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent},
@@ -13,16 +14,12 @@ export const routes: Routes = [
         component: MainLayoutComponent,
         canActivate: [authGuard],
         children: [
-            // Aquí van los "hijos". El RouterOutlet del MainLayout los cargará
-            { path: 'dashboard', component: HomeComponent },
-            
-            // Cuando se creen mas componentes, irán aquí:
+            { path: 'dashboard', component: HomeComponent},
+            { path: 'users', component: UserListComponent},
             { path: 'stores', component: StoreListComponent},
-            
-            // Redirección inicial dentro del layout
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
 
-    { path: '', redirectTo: 'login', pathMatch: 'full'}
+    { path: '**', redirectTo: 'login', pathMatch: 'full'}
 ];
