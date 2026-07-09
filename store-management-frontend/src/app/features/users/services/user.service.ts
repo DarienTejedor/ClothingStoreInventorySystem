@@ -17,7 +17,6 @@ export class UserService {
       if(searchTerm){
         params = params.set('search', searchTerm);
       }
-    
     return this.http.get<any>(this.apiUrl, { params });
   }
 

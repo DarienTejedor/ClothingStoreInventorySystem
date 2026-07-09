@@ -1,78 +1,150 @@
 @if (isOpen) {
-  <div class="fixed inset-0 bg-[#3D2E35]/40 flex items-center justify-center z-50 px-4">
-    <div class="bg-white rounded-2xl shadow-lg w-full max-w-lg border border-[#F4C0D1]">
+  <div class="fixed inset-0 bg-brand-900/40 flex items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-2xl shadow-lg w-full max-w-lg border border-brand-100">
 
       <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-[#F4C0D1]">
-        <h3 class="font-serif text-lg text-[#3D2E35]">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-brand-100">
+        <h3 class="font-serif text-lg text-brand-900">
           {{ isEditing ? 'Editar Tienda' : 'Nueva Tienda' }}
         </h3>
-        <button (click)="onClose()"
-                class="text-[#A85A6E] hover:text-[#C97A8C] text-xl leading-none transition-colors">
+
+        <button
+          (click)="onClose()"
+          class="text-brand-600 hover:text-brand-400 text-xl leading-none transition-colors">
           ×
         </button>
       </div>
 
       <!-- Form -->
-      <form [formGroup]="storeForm" (ngSubmit)="onSave()" class="px-6 py-5 space-y-4">
+      <form
+        [formGroup]="storeForm"
+        (ngSubmit)="onSave()"
+        class="px-6 py-5 space-y-4">
 
+        <!-- Nombre -->
         <div>
-          <label class="block text-xs font-medium text-[#3D2E35] mb-1.5">Nombre de la tienda</label>
-          <input type="text" formControlName="name" placeholder="Ej: Tienda Sur 1"
-                 class="w-full px-4 py-2.5 rounded-lg border border-[#E8D0D8] bg-[#F9F5F2] text-sm text-[#3D2E35] placeholder-[#C9A0AC] focus:outline-none focus:border-[#C97A8C] focus:ring-1 focus:ring-[#C97A8C] transition"/>
+          <label class="block text-xs font-medium text-brand-900 mb-1.5">
+            Nombre de la tienda
+          </label>
+
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Ej: Tienda Sur 1"
+            class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
+
+          <!-- Teléfono -->
           <div>
-            <label class="block text-xs font-medium text-[#3D2E35] mb-1.5">Teléfono</label>
-            <input type="text" formControlName="phoneNumber" placeholder="300..."
-                   class="w-full px-4 py-2.5 rounded-lg border border-[#E8D0D8] bg-[#F9F5F2] text-sm text-[#3D2E35] placeholder-[#C9A0AC] focus:outline-none focus:border-[#C97A8C] focus:ring-1 focus:ring-[#C97A8C] transition"/>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Teléfono
+            </label>
+
+            <input
+              type="text"
+              formControlName="phoneNumber"
+              placeholder="300..."
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
           </div>
+
+          <!-- Email -->
           <div>
-            <label class="block text-xs font-medium text-[#3D2E35] mb-1.5">Email</label>
-            <input type="email" formControlName="email" placeholder="correo@tienda.com"
-                   class="w-full px-4 py-2.5 rounded-lg border border-[#E8D0D8] bg-[#F9F5F2] text-sm text-[#3D2E35] placeholder-[#C9A0AC] focus:outline-none focus:border-[#C97A8C] focus:ring-1 focus:ring-[#C97A8C] transition"/>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Email
+            </label>
+
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="correo@tienda.com"
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
+
             @if (storeForm.get('email')?.invalid && storeForm.get('email')?.touched) {
-              <p class="text-xs text-[#A85A6E] font-medium mt-1">Ingresa un correo válido.</p>
+              <p class="text-xs text-brand-600 font-medium mt-1">
+                Ingresa un correo válido.
+              </p>
             }
           </div>
+
         </div>
 
         <!-- Dirección -->
-        <div formGroupName="address" class="border border-[#F4C0D1] rounded-xl p-4 space-y-3">
-          <p class="text-xs font-medium text-[#A85A6E] uppercase tracking-wider">Dirección</p>
+        <div
+          formGroupName="address"
+          class="border border-brand-100 rounded-xl p-4 space-y-3">
+
+          <p class="text-xs font-medium text-brand-600 uppercase tracking-wider">
+            Dirección
+          </p>
+
           <div>
-            <label class="block text-xs font-medium text-[#3D2E35] mb-1.5">Calle / Avenida</label>
-            <input type="text" formControlName="street" placeholder="Calle 10 #20-30"
-                   class="w-full px-4 py-2.5 rounded-lg border border-[#E8D0D8] bg-[#F9F5F2] text-sm text-[#3D2E35] placeholder-[#C9A0AC] focus:outline-none focus:border-[#C97A8C] focus:ring-1 focus:ring-[#C97A8C] transition"/>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Calle / Avenida
+            </label>
+
+            <input
+              type="text"
+              formControlName="street"
+              placeholder="Calle 10 #20-30"
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
           </div>
+
           <div class="grid grid-cols-2 gap-4">
+
             <div>
-              <label class="block text-xs font-medium text-[#3D2E35] mb-1.5">Localidad</label>
-              <input type="text" formControlName="locality" placeholder="Chapinero"
-                     class="w-full px-4 py-2.5 rounded-lg border border-[#E8D0D8] bg-[#F9F5F2] text-sm text-[#3D2E35] placeholder-[#C9A0AC] focus:outline-none focus:border-[#C97A8C] focus:ring-1 focus:ring-[#C97A8C] transition"/>
+              <label class="block text-xs font-medium text-brand-900 mb-1.5">
+                Localidad
+              </label>
+
+              <input
+                type="text"
+                formControlName="locality"
+                placeholder="Chapinero"
+                class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
             </div>
+
             <div>
-              <label class="block text-xs font-medium text-[#3D2E35] mb-1.5">Ciudad</label>
-              <input type="text" formControlName="city"
-                     class="w-full px-4 py-2.5 rounded-lg border border-[#E8D0D8] bg-[#F9F5F2] text-sm text-[#3D2E35] placeholder-[#C9A0AC] focus:outline-none focus:border-[#C97A8C] focus:ring-1 focus:ring-[#C97A8C] transition"/>
+              <label class="block text-xs font-medium text-brand-900 mb-1.5">
+                Ciudad
+              </label>
+
+              <input
+                type="text"
+                formControlName="city"
+                class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
             </div>
+
           </div>
+
         </div>
 
         <!-- Acciones -->
         <div class="flex justify-end gap-3 pt-2">
-          <button type="button" (click)="onClose()"
-                  class="px-5 py-2 rounded-full text-sm text-[#A85A6E] border border-[#F4C0D1] hover:border-[#C97A8C] transition-colors">
+
+          <button
+            type="button"
+            (click)="onClose()"
+            class="px-5 py-2 rounded-full text-sm text-brand-600 border border-brand-100 hover:border-brand-400 transition-colors">
+
             Cancelar
+
           </button>
-          <button type="submit" [disabled]="storeForm.invalid"
-                  class="px-5 py-2 rounded-full text-sm bg-[#C97A8C] hover:bg-[#A85A6E] text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+
+          <button
+            type="submit"
+            [disabled]="storeForm.invalid"
+            class="px-5 py-2 rounded-full text-sm bg-brand-400 hover:bg-brand-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+
             Guardar
+
           </button>
+
         </div>
 
       </form>
+
     </div>
   </div>
 }

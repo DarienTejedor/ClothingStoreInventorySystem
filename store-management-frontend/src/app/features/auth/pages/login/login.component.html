@@ -19,14 +19,14 @@
     </div>
 
     <!-- Card -->
-    <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl px-8 py-10">
+    <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-brand-100 shadow-xl px-8 py-10">
 
       <h2 class="text-xl font-medium text-brand-900 mb-6">
         Iniciar sesión
       </h2>
 
       @if (errorMessage) {
-        <div class="bg-brand-50/80 text-brand-600 text-sm rounded-lg px-4 py-3 mb-5">
+        <div class="bg-brand-50/80 border border-brand-100 text-brand-600 text-sm rounded-lg px-4 py-3 mb-5">
           {{ errorMessage }}
         </div>
       }
@@ -35,35 +35,55 @@
 
         <!-- Usuario -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-brand-900 mb-1.5">Usuario</label>
+          <label class="block text-sm font-medium text-brand-900 mb-1.5">
+            Usuario
+          </label>
+
           <div class="relative">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-400"
+                 xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
+
             <input
               [(ngModel)]="loginData.loginUser"
               type="text"
               name="loginUser"
               placeholder="Tu usuario"
-              class="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream text-brand-900 placeholder-brand-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 transition"
-            />
+              class="w-full pl-10 pr-4 py-3 rounded-2xl border border-brand-150 bg-cream text-brand-900 placeholder-brand-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition"/>
           </div>
         </div>
 
         <!-- Contraseña -->
         <div class="mb-6">
-          <label class="block text-sm font-medium text-brand-900 mb-1.5">Contraseña</label>
+          <label class="block text-sm font-medium text-brand-900 mb-1.5">
+            Contraseña
+          </label>
+
           <div class="relative">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-400"
+                 xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
             </svg>
+
             <input
               [(ngModel)]="loginData.password"
               type="password"
               name="password"
               placeholder="••••••••"
-              class="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream text-brand-900 placeholder-brand-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 transition"
-            />
+              class="w-full pl-10 pr-4 py-3 rounded-2xl border border-brand-150 bg-cream text-brand-900 placeholder-brand-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition"/>
           </div>
         </div>
 
@@ -71,12 +91,12 @@
         <button
           type="submit"
           [disabled]="isLoading"
-          class="w-full py-3 rounded-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-medium tracking-wide shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed"
-        >
+          class="w-full py-3 rounded-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-medium tracking-wide shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed">
           {{ isLoading ? 'Cargando...' : 'Entrar' }}
         </button>
 
       </form>
+
     </div>
 
     <!-- Footer -->
@@ -85,4 +105,5 @@
     </p>
 
   </div>
+
 </div>

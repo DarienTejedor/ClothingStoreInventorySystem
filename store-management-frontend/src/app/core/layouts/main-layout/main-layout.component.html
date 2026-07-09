@@ -1,7 +1,7 @@
 <div class="flex h-screen bg-brand-10 relative overflow-hidden">
 
   <aside
-    class="relative z-20 flex flex-col w-64 bg-white/80 backdrop-blur-md shadow-lg transition-all duration-300"
+    class="relative z-20 flex flex-col w-64 bg-white/80 backdrop-blur-md border-r border-brand-100 shadow-lg transition-all duration-300"
     [class.-translate-x-full]="!isSidebarOpen"
     [class.hidden]="!isSidebarOpen"
   >
@@ -19,8 +19,8 @@
       @for (option of filteredMenu; track option.label) {
         <a
           [routerLink]="option.path"
-          routerLinkActive="bg-brand-50/80 text-brand-800 font-medium border-l-4 border-brand-400 pl-3"
-          class="flex items-center px-4 py-3 rounded-xl text-sm text-brand-900 hover:bg-brand-50/50 hover:text-brand-800 transition-all duration-200"
+          routerLinkActive="bg-brand-50 text-brand-800 font-medium border-l-4 border-brand-400 pl-3"
+          class="flex items-center px-4 py-3 rounded-xl text-sm text-brand-900 hover:bg-brand-50 hover:text-brand-800 transition-all duration-200"
         >
           {{ option.label }}
         </a>
@@ -28,7 +28,7 @@
     </nav>
 
     <div class="px-6 py-5">
-      <span class="inline-block text-xs px-3 py-1.5 rounded-full bg-brand-50/60 text-brand-600 font-medium border border-brand-100/40">
+      <span class="inline-block text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 font-medium border border-brand-100">
         {{ userRole }}
       </span>
     </div>
@@ -37,16 +37,22 @@
 
   <div class="relative z-10 flex flex-col flex-1 overflow-hidden">
 
-    <header class="relative z-10 flex items-center justify-between px-6 py-4 bg-white/80 border-b border-brand-100/20">
+    <header class="relative z-10 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-brand-100">
 
       <div class="flex items-center gap-4">
         <button
           (click)="toggleSidebar()"
           class="text-brand-600 hover:text-brand-400 transition-colors"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"/>
+          <svg xmlns="http://www.w3.org/2000/svg"
+               class="h-5 w-5"
+               fill="none"
+               viewBox="0 0 24 24"
+               stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
 
@@ -57,12 +63,19 @@
 
       <button
         (click)="logout()"
-        class="flex items-center gap-2 text-sm text-brand-600 hover:text-brand-400 px-4 py-2 rounded-full bg-brand-50/60 hover:bg-brand-100/60 transition-all border border-brand-100/30"
+        class="flex items-center gap-2 px-4 py-2 rounded-full border border-brand-100 bg-brand-50 text-sm text-brand-600 hover:bg-brand-100 hover:text-brand-400 transition-all"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V7"/>
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="h-4 w-4"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V7"/>
         </svg>
+
         Cerrar sesión
       </button>
 
@@ -73,4 +86,5 @@
     </main>
 
   </div>
+
 </div>
