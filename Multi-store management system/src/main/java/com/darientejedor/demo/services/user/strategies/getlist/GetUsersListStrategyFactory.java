@@ -24,18 +24,11 @@ public class GetUsersListStrategyFactory {
                 .orElseThrow(() -> new ValidationException("Strategy not found: " + key));
     }
 
-    public IGetUserListStrategy userListStrategy(String role, Long storeId, Authentication authentication) {
+    public IGetUserListStrategy userListStrategy(String role) {
         return switch (role) {
-            case "ROLE_GENERAL_ADMIN":
-                if (storeId != null) {
-                    yield strategies.get("generalAdminUsersListByStoreId");
-                } else {
-                    yield strategies.get("generalAdminUsersList");
-                }
-            case "ROLE_STORE_ADMIN":
-                yield strategies.get("storeAdminUsersList");
-            default:
-                throw new ValidationException("Invalid role: " + role);
+            case "ROLE_GENERAL_ADMIN" -> getStrategy("generalAdminUsersList");
+            case "ROLE_STORE_ADMIN" -> getStrategy("storeAdminUsersList");
+            default -> throw new ValidationException("Invalid role: " + role);
         };
     }
 

@@ -5,6 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IGetUserListStrategy {
-    Page<UserResponse> listUsers(Long storeId, Pageable pageable);
-
+    Page<UserResponse> listUsers(Long storeId, String searchTerm, Pageable pageable);
 }

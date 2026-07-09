@@ -15,7 +15,13 @@ public class StoreAdminUsersList implements IGetUserListStrategy{
     }
 
     @Override
-    public Page<UserResponse> listUsers(Long storeId, Pageable pageable){
-        return userRepository.findByActiveTrueAndStoreId(storeId, pageable).map(UserResponse::new);
+    public Page<UserResponse> listUsers(Long storeId,String searchTerm, Pageable pageable){
+
+        if (searchTerm == null || searchTerm.isBlank()) {
+            return userRepository.findByActiveTrueAndStoreId(storeId, pageable)
+                    .map(UserResponse::new);
+        }
+
+        return userRepository.searchUsersByStores(searchTerm, storeId, pageable).map(UserResponse::new);
     }
 }

@@ -7,7 +7,9 @@ import org.springframework.security.core.Authentication;
 
 public interface IUserService {
 
-    Page<UserResponse> listActiveUsers(Authentication authentication, Long id,Pageable pageable);
+    Page<UserResponse> listActiveUsers(Authentication authentication, Long id, String searchTerm, Pageable pageable);
+
+
 
     UserResponse userResponse(Long id, Authentication authentication);
 

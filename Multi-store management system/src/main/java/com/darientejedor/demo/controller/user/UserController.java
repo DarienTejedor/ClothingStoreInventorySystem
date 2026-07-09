@@ -58,8 +58,9 @@ public class UserController {
     public ResponseEntity<Page<UserResponse>> userList(
                 Authentication authentication,
                 @RequestParam (required = false) Long storeId,
-                @PageableDefault(size = 10)Pageable pageable){
-        return ResponseEntity.ok(userService.listActiveUsers(authentication, storeId, pageable));
+                @PageableDefault(size = 10)Pageable pageable,
+                @RequestParam(required = false) String search){
+        return ResponseEntity.ok(userService.listActiveUsers(authentication, storeId, search, pageable));
     }
 
 

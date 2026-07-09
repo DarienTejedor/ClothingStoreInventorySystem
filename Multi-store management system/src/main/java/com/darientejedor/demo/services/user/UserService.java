@@ -50,11 +50,15 @@ public class UserService implements IUserService{
 
 
     @Override
-    public Page<UserResponse> listActiveUsers(Authentication authentication, Long storeId,Pageable pageable){
+    public Page<UserResponse> listActiveUsers(Authentication authentication,
+                                              Long storeId,
+                                              String searchTerm,
+                                              Pageable pageable){
         String authRole = userAuthentications.authRole(authentication);
-        IGetUserListStrategy strategy = listUsersStrategyFactory.userListStrategy(authRole, storeId, authentication);
+        IGetUserListStrategy strategy = listUsersStrategyFactory.userListStrategy(authRole);
         Long effectiveStoreId = listUsersStrategyFactory.resolveStoreId(authRole, storeId, authentication);
-        return strategy.listUsers(effectiveStoreId, pageable);
+
+        return strategy.listUsers(effectiveStoreId, searchTerm, pageable);
     }
 
     @Override

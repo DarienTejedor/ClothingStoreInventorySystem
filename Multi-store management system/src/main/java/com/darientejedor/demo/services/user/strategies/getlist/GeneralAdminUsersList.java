@@ -15,7 +15,23 @@ public class GeneralAdminUsersList implements IGetUserListStrategy{
     }
 
     @Override
-    public Page<UserResponse> listUsers(Long storeId, Pageable pageable){
-        return userRepository.findByActiveTrue(pageable).map(com.darientejedor.demo.domain.users.dto.UserResponse::new);
+    public Page<UserResponse> listUsers(Long storeId, String searchTerm,Pageable pageable){
+
+        //Sin filtrar por tienda
+        if (storeId == null){
+            if (searchTerm == null || searchTerm.isBlank()) {
+                return userRepository.findByActiveTrue(pageable)
+                        .map(UserResponse::new);
+            }
+             return userRepository.searchUsers(searchTerm.trim(), pageable).map(com.darientejedor.demo.domain.users.dto.UserResponse::new);
+
+        }
+        //con filtro por tienda
+        if (searchTerm == null || searchTerm.isBlank()){
+            return userRepository.findByActiveTrueAndStoreId(storeId, pageable)
+                    .map(UserResponse::new);
+        }
+        return userRepository.searchUsersByStores(searchTerm.trim(), storeId, pageable).map(UserResponse::new);
+
     }
 }
