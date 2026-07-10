@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { AlertService } from '../../../shared/services/alert.service';
 
 
 @Component({
@@ -12,6 +13,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
 export class MainLayoutComponent {
   
   private router = inject(Router);
+  private alertService = inject(AlertService);
   
   userRole = sessionStorage.getItem('role') || '';
   userName = sessionStorage.getItem('name') || '';
@@ -41,8 +43,11 @@ export class MainLayoutComponent {
 
   filteredMenu = this.menuOptions.filter(option => option.roles.includes(this.userRole));
 
-  logout(): void {
-    if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+  async logout(): Promise<void> {
+
+    const result = await this.alertService.confirmLogout();
+
+    if (result.isConfirmed) {
       // Limpiamos todo el almacenamiento
       sessionStorage.clear();
       // Redirigimos al login

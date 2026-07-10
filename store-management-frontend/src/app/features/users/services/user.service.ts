@@ -25,8 +25,8 @@ export class UserService {
     return this.http.post<any>(this.apiUrl, user);
   }
 
-  updateUser(id: number, user: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, user);
+  updateUser(id: number, userData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, userData);
   }
 
   // Si tienes un endpoint para eliminar/desactivar por ID

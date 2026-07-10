@@ -13,7 +13,9 @@ export interface UserResponse {
   name: string;
   document: number;
   roleId: number;
+  roleName: string;
   storeId: number;
+  storeName: string;
 }
 
 // Interfaz para mapear la respuesta paginada de Spring Data JPA

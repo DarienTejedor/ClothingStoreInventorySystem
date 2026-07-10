@@ -4,6 +4,7 @@ import { UserService } from '../../services/user.service';
 import { UserResponse } from '../../model/user.model';
 import { UserFormComponent } from "../../components/user-form/user-form.component";
 import { finalize } from 'rxjs';
+import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-user-list',
@@ -27,6 +28,7 @@ export class UserListComponent implements OnInit {
   
   constructor(
     private userService: UserService,
+    private alertService: AlertService,
     private cdr: ChangeDetectorRef
   ) {}
   
@@ -51,7 +53,7 @@ export class UserListComponent implements OnInit {
     // Cargamos los roles del back
     this.userService.getRoles().subscribe({
       next: (response: any) => {
-        this.rolesList = response.content || [];
+        this.rolesList = (response.content || []).filter((role: any) => role.name !== 'ROLE_GENERAL_ADMIN'); // Filtra el GA asi no sale como opcion en el form
         this.cdr.detectChanges();
       },
       error: (e) => console.error('Error al cargar roles para el form', e)});
@@ -88,14 +90,14 @@ export class UserListComponent implements OnInit {
     if (this.isEditing && this.selectedUserId) {
       this.userService.updateUser(this.selectedUserId, userData).subscribe({
         next: () => {
-          alert('Usuario actualizado');
+          this.alertService.success('Usuario actualizado');
           this.finishProcess();
         }
       });
     } else {
       this.userService.createUser(userData).subscribe({
         next: () => {
-          alert('Usuario creado');
+          this.alertService.success('Usuario creado con éxito');
           this.finishProcess();
         }
       });
@@ -129,10 +131,12 @@ export class UserListComponent implements OnInit {
   }
 
   // ELIMINAR ---------------------------------------------------------
-  deleteUser(id: number | undefined): void {
+   async deleteUser(id: number | undefined): Promise<void> {
     if (!id) return; 
 
-    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+    const result = await this.alertService.confirmDelete('usuario');
+
+    if (result.isConfirmed) {
       this.userService.deleteUser(id).subscribe({
         next: () => {
           this.loadUsers(); 

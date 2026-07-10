@@ -5,6 +5,7 @@ import { StoreService } from '../../services/store.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { StoreFormComponent } from '../../components/store-form/store-form.component';
+import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-store-list',
@@ -25,6 +26,7 @@ export class StoreListComponent implements OnInit{
   
   constructor (
     private storeService: StoreService,
+    private alertService: AlertService,
     private cdr: ChangeDetectorRef
   ){}
   
@@ -47,7 +49,7 @@ export class StoreListComponent implements OnInit{
   
   //MODAL ---------------------------------------------------------
 
-openModal() {
+  openModal() {
     this.isEditing = false;
     this.isModalOpen = true;
     this.storeFormChild.resetForm(); // Le decimos al hijo que limpie
@@ -71,14 +73,14 @@ openModal() {
     if (this.isEditing && this.selectedStoreId) {
       this.storeService.updateStore(this.selectedStoreId, storeData).subscribe({
         next: () => {
-          alert('Tienda actualizada');
+          this.alertService.success('Tienda actualizada');
           this.finishProcess();
         }
       });
     } else {
       this.storeService.createStore(storeData).subscribe({
         next: () => {
-          alert('Tienda creada');
+          this.alertService.success('Tienda creada');
           this.finishProcess();
         }
       });
@@ -116,14 +118,16 @@ openModal() {
   
   //DELETE ---------------------------------------------------------
 
-  deleteStore(id: number | undefined): void {
+  async deleteStore(id: number | undefined){
     if (!id) return;
     
-    if (confirm('¿Estás seguro de eliminar esta tienda?')) {
+    const result = await this.alertService.confirmDelete('¿Deseas eliminar esta tienda?');
+
+    if(result.isConfirmed) {
       this.storeService.deleteStore(id).subscribe(() => {
         this.stores = this.stores.filter(s => s.id !== id);
+        this.alertService.success('Tienda eliminada correctamente');
       });
     }
   }
-
 }

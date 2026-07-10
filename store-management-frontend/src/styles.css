@@ -1,3 +1,68 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =====================================================
+   SweetAlert2 - Tema Lumi
+===================================================== */
+
+.swal2-popup {
+    color: #3D2E35 !important;
+    border-radius: 24px !important;
+    padding: 1.6rem !important;
+}
+
+.swal2-icon {
+    border-color: #C97A8C !important;
+    color: #C97A8C !important;
+    margin-top: .5rem !important;
+    margin-bottom: .8rem !important;
+}
+
+.swal2-title {
+    margin: 0 !important;
+    color: #3D2E35 !important;
+    font-size: 2rem !important;
+    font-weight: 600;
+}
+
+.swal2-html-container {
+    margin-top: .6rem !important;
+    margin-bottom: 1.6rem !important;
+    color: #A85A6E !important;
+    font-size: 1rem !important;
+}
+
+.swal2-actions {
+    gap: .8rem !important;
+    margin-top: 0 !important;
+}
+
+.swal2-confirm,
+.swal2-cancel {
+    border-radius: 9999px !important;
+    padding: .7rem 1.6rem !important;
+    font-weight: 600 !important;
+    transition: .2s ease;
+}
+
+/* Botón principal (Cancelar) */
+.swal2-cancel {
+    background: #C97A8C !important;
+    color: white !important;
+}
+
+.swal2-cancel:hover {
+    background: #A85A6E !important;
+}
+
+/* Botón secundario (Aceptar / Eliminar / Cerrar sesión) */
+.swal2-confirm {
+    background: white !important;
+    color: #C97A8C !important;
+    border: 1.5px solid #C97A8C !important;
+}
+
+.swal2-confirm:hover {
+    background: #FBEAF0 !important;
+}

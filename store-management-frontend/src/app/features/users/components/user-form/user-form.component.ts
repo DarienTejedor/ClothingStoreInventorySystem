@@ -12,6 +12,8 @@ import { UserResponse } from '../../model/user.model';
 })
 export class UserFormComponent {
 
+  isGeneralAdmin: boolean = false; // Variable para controlar si el usuario es GENERAL_ADMIN
+
   @Input() isEditing = false;
   @Input() isOpen = false;
   
@@ -34,6 +36,18 @@ userForm = new FormGroup({
 
   // Este método lo llamará el PADRE (user-list) al presionar "Editar"
   setData(user: UserResponse) {
+    this.isGeneralAdmin = user.roleName === 'GENERAL_ADMIN'; // Actualizamos la variable según el rol del usuario
+    if (this.isGeneralAdmin) {
+
+      this.userForm.get('roleId')?.disable();
+      this.userForm.get('storeId')?.disable();
+
+    } else {
+
+      this.userForm.get('roleId')?.enable();
+      this.userForm.get('storeId')?.enable();
+
+    }
     this.userForm.patchValue({
         loginUser: user.loginUser,
         name: user.name,
@@ -51,6 +65,7 @@ userForm = new FormGroup({
   resetForm() {
     this.userForm.reset();
     // Reestablecemos el validador requerido para nuevos registros
+    this.isGeneralAdmin = false; // Reseteamos la variable al crear un nuevo usuario
     this.userForm.patchValue({ roleId: '', storeId: '' });
     this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
     this.userForm.get('password')?.updateValueAndValidity();

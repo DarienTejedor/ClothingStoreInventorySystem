@@ -32,8 +32,8 @@
           <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Usuario (Login)</th>
           <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Nombre Completo</th>
           <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Documento</th>
-          <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Rol ID</th>
-          <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Tienda ID</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Rol</th>
+          <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Tienda</th>
           <th class="text-left px-5 py-3 text-xs font-medium text-brand-600 uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>
@@ -45,11 +45,27 @@
             <td class="px-5 py-3.5 text-brand-900">{{ user.name }}</td>
             <td class="px-5 py-3.5 text-brand-900">{{ user.document }}</td>
             <td class="px-5 py-3.5">
-              <span class="px-2.5 py-1 text-xs rounded-full bg-brand-150 text-brand-900">
-                {{ user.roleId }}
+              @if (user.roleName === 'GENERAL_ADMIN') {
+                <span class="px-2.5 py-1 text-xs rounded-full bg-brand-50 text-brand-900 font-medium">
+                  👑 General Admin
+                </span>
+              } 
+              @if (user.roleName === 'STORE_ADMIN') {
+                <span class="px-2.5 py-1 text-xs rounded-full bg-brand-50 text-brand-900 font-medium">
+                  Store Admin
+                </span>
+              } 
+              @if (user.roleName === 'CASHIER') {
+                <span class="px-2.5 py-1 text-xs rounded-full bg-brand-50 text-brand-900 font-medium">
+                  Cashier
+                </span>
+              }
+            </td>
+            <td class="px-5 py-3.5">
+              <span class="px-2.5 py-1 text-xs rounded-full bg-brand-50 text-brand-900">
+                {{ user.storeName }}
               </span>
             </td>
-            <td class="px-5 py-3.5 text-brand-900">{{ user.storeId }}</td>
             <td class="px-5 py-3.5">
               <div class="flex gap-2">
                 <button (click)="openedEditModal(user)"
@@ -58,12 +74,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                   </svg>
                 </button>
-                <button (click)="deleteUser(user.id)"
-                        class="p-1.5 rounded-lg text-brand-400 hover:bg-brand-50 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                  </svg>
-                </button>
+                @if (user.roleName !== 'GENERAL_ADMIN') {
+                  <button (click)="deleteUser(user.id)"
+                          class="p-1.5 rounded-lg text-brand-400 hover:bg-brand-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                }
               </div>
             </td>
           </tr>
