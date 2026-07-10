@@ -32,6 +32,8 @@ public class UserService implements IUserService{
     private final IUserAuthentications userAuthentications;
     private final IStoreValidations storeValidations;
 
+    private static final String GENERAL_ADMIN = "GENERAL_ADMIN";
+
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        IRoleService roleService,
@@ -107,6 +109,9 @@ public class UserService implements IUserService{
 
         var hashedPassword = passwordEncoder.encode(userData.password());
         Role role = roleService.validRole(userData.roleId());
+        if (role.getName().equals(GENERAL_ADMIN)){
+            throw new ValidationException("Only one General Admin can exist in the system.");
+        }
         Store store = storeValidations.validStore(userData.storeId());
         var user = new User(userData, role, store, hashedPassword);
         userRepository.save(user);
@@ -149,6 +154,10 @@ public class UserService implements IUserService{
             throw new ValidationException("The old password provided is incorrect.");
         }
 
+        if(passwordEncoder.matches(updatePassword.newPassword(), user.getPassword())){
+            throw new ValidationException("The new password must be different.");
+        }
+
         var hashedPassword = passwordEncoder.encode(updatePassword.newPassword());
         user.setPassword(hashedPassword);
         userRepository.save(user);
@@ -157,10 +166,29 @@ public class UserService implements IUserService{
 
 
     @Override
-    public UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData){
+    public UserResponse updateRoleAndStore(Long id,
+                                           UpdateRoleAndStoreData data,
+                                           Authentication authentication){
+
+        User authUser = userAuthentications.authUser(authentication);
         User user = userValidations.validUser(id);
-        Role role = roleService.validRole(updateRoleAndStoreData.roleId());
-        Store store = storeValidations.validStore(updateRoleAndStoreData.storeId());
+
+        if ((authUser.getId().equals(id))){
+            throw new AccessDeniedException("You cannot change your own role");
+        }
+
+        if(user.getRole().getName().equals(GENERAL_ADMIN)){
+            throw new ValidationException(
+                    "General Admin permissions cannot be modified."
+            );
+        }
+
+        Role role = roleService.validRole(data.roleId());
+        if (role.getName().equals(GENERAL_ADMIN)){
+            throw new ValidationException("A new General Admin cannot be assigned.");
+        }
+
+        Store store = storeValidations.validStore(data.storeId());
         user.setRole(role);
         user.setStore(store);
         userRepository.save(user);
@@ -173,6 +201,12 @@ public class UserService implements IUserService{
         User authUser = userAuthentications.authUser(authentication);
         String authRole = userAuthentications.authRole(authentication);
         User user = userValidations.validUser(id);
+
+        if(user.getRole().getName().equals(GENERAL_ADMIN)){
+            throw new ValidationException(
+                    "The General Admin cannot be deactivated."
+            );
+        }
 
         switch (authRole){
             case "ROLE_GENERAL_ADMIN":

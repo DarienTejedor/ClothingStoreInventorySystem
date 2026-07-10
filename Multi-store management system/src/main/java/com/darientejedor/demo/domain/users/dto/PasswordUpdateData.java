@@ -7,6 +7,5 @@ public record PasswordUpdateData(
         String oldPassword,
         @NotBlank
         String newPassword
-
 ) {
 }

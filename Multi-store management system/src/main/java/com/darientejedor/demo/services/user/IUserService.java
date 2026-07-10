@@ -19,7 +19,7 @@ public interface IUserService {
 
     UserResponse changePassword(Long id, PasswordUpdateData updatePassword, Authentication authentication);
 
-    UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData);
+    UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData, Authentication authentication);
 
     void deactiveUser(Long id, Authentication authentication);
 

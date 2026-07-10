@@ -230,12 +230,13 @@ public class UserController {
                     )
             }
     )
-    @PutMapping("/{id}/role-store")
+    @PutMapping("/{id}/permissions")
     @Transactional
     @PreAuthorize("hasRole('GENERAL_ADMIN')")
     public ResponseEntity<UserResponse> updateRoleAndStore(@PathVariable Long id,
-                                                           @RequestBody @Valid UpdateRoleAndStoreData updateRoleAndStore){
-        UserResponse userResponse = userService.updateRoleAndStore(id, updateRoleAndStore);
+                                                           @RequestBody @Valid UpdateRoleAndStoreData updateRoleAndStore,
+                                                           Authentication authentication){
+        UserResponse userResponse = userService.updateRoleAndStore(id, updateRoleAndStore, authentication);
         return  ResponseEntity.ok(userResponse);
     }
 
