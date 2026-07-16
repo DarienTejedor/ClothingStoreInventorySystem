@@ -1,6 +1,7 @@
 package com.darientejedor.demo.services.user;
 
 import com.darientejedor.demo.domain.users.dto.*;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -23,4 +24,5 @@ public interface IUserService {
 
     void deactiveUser(Long id, Authentication authentication);
 
+    TemporaryPasswordResponse resetPassword(Long id, Authentication authentication);
 }

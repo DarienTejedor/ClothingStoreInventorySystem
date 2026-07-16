@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,7 +37,7 @@ public class RoleController {
 
     @Operation(
             summary = "List all active roles.",
-            description = "Returns a paginated list of all active roles in the system. but only by GENERAL_ADMIN",
+            description = "Returns a paginated list of all active roles in the system. Available only to GENERAL_ADMIN.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -60,6 +61,38 @@ public class RoleController {
     @PreAuthorize("hasAnyRole('GENERAL_ADMIN')")
     public ResponseEntity<Page<RoleResponse>> rolesList(@PageableDefault(size = 10) Pageable pageable){
         return ResponseEntity.ok(roleService.listActiveRoles(pageable));
+    }
+
+    @Operation(
+            summary = "List assignable roles based on authentication.",
+            description = "Returns a paginated list of the roles that the authenticated user is allowed to assign. " +
+                    "'GENERAL_ADMIN' can assign 'STORE_ADMIN' and 'CASHIER'. " +
+                    "'STORE_ADMIN' can only assign 'CASHIER'.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful operation",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. The authenticated user does not have permission to access assignable roles.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No assignable active roles found.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
+    @GetMapping("/assignable")
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
+    public ResponseEntity<Page<RoleResponse>> rolesAssignableList(Authentication authentication, @PageableDefault(size = 10) Pageable pageable){
+        return ResponseEntity.ok(roleService.listAssignableRoles(authentication, pageable));
     }
 
     @Operation(

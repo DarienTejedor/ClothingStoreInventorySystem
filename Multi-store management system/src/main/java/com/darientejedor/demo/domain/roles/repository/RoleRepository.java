@@ -11,4 +11,8 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByName(String name);
 
     Page<Role> findByActiveTrue(Pageable pageable);
+
+    Page<Role> findByNameNotAndActiveTrue(String roleGeneralAdmin, Pageable pageable);
+
+    Page<Role> findByNameAndActiveTrue(String name, Pageable pageable);
 }

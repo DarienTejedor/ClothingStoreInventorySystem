@@ -7,10 +7,13 @@ import com.darientejedor.demo.domain.roles.dto.RoleResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 public interface IRoleService {
 
     Page<RoleResponse> listActiveRoles(Pageable pageable);
+
+    Page<RoleResponse> listAssignableRoles(Authentication authentication, Pageable pageable);
 
     RoleResponse roleResponse(Long id);
 

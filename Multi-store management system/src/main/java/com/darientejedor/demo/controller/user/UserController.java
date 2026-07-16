@@ -203,6 +203,15 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
+    @PutMapping("/{id}/reset-password")
+    @Transactional
+    @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
+    public ResponseEntity<TemporaryPasswordResponse> resetPassword(@PathVariable Long id,
+                                                       Authentication authentication){
+        TemporaryPasswordResponse response = userService.resetPassword(id, authentication);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(
             summary = "Update a user role and store",
             description = "Updates a user's role and store. but only by GENERAL_ADMIN",

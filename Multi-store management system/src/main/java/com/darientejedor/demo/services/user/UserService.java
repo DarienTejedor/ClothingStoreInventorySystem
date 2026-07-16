@@ -20,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+
 
 @Service
 public class UserService implements IUserService{
@@ -93,28 +95,48 @@ public class UserService implements IUserService{
         User authUser = userAuthentications.authUser(authentication);
         String authRole = userAuthentications.authRole(authentication);
 
-        switch (authRole){
-            case "ROLE_GENERAL_ADMIN":
-                break;
-            case "ROLE_STORE_ADMIN":
-                if (!(authUser.getStore().getId().equals(userData.storeId()))){
-                    throw new AccessDeniedException("You can only create users from your own store.");
-                }
-            default:
-                throw new IllegalArgumentException("Invalid user role.");
-        }
-        if (userRepository.findByDocument(userData.document()).isPresent()){
-            throw new ValidationException("User with this document already exists: " + userData.document());
+        if (userRepository.findByDocument(userData.document()).isPresent()) {
+            throw new ValidationException(
+                    "User with this document already exists: " + userData.document()
+            );
         }
 
         var hashedPassword = passwordEncoder.encode(userData.password());
+
         Role role = roleService.validRole(userData.roleId());
-        if (role.getName().equals(GENERAL_ADMIN)){
-            throw new ValidationException("Only one General Admin can exist in the system.");
+
+        // No se puede crear otro General Admin
+        if (role.getName().equals(GENERAL_ADMIN)) {
+            throw new ValidationException(
+                    "Only one General Admin can exist in the system."
+            );
         }
-        Store store = storeValidations.validStore(userData.storeId());
-        var user = new User(userData, role, store, hashedPassword);
+
+        Store store;
+
+        switch (authRole) {
+
+            case "ROLE_GENERAL_ADMIN":
+                // El General Admin puede elegir la tienda
+                store = storeValidations.validStore(userData.storeId());
+                break;
+            case "ROLE_STORE_ADMIN":
+                // Un Store Admin solo puede crear cajeros
+                if (!role.getName().equals("CASHIER")) {
+                    throw new AccessDeniedException(
+                            "Store Admin can only create Cashier users."
+                    );
+                }
+                // La tienda siempre será la del Store Admin autenticado
+                store = authUser.getStore();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid user role.");
+        }
+
+        User user = new User(userData, role, store, hashedPassword);
         userRepository.save(user);
+
         return new UserResponse(user);
     }
 
@@ -164,6 +186,46 @@ public class UserService implements IUserService{
         return new UserResponse(user);
     }
 
+    @Override
+    public TemporaryPasswordResponse resetPassword(Long id, Authentication authentication) {
+        System.out.println("1");
+        User authUser = userAuthentications.authUser(authentication);
+        System.out.println("2");
+        User user = userValidations.validUser(id);
+        System.out.println("3");
+        String authRole = userAuthentications.authRole(authentication);
+        System.out.println("4");
+
+        switch (authRole){
+            case "ROLE_GENERAL_ADMIN":
+                break;
+            case "ROLE_STORE_ADMIN":
+                if (!(authUser.getStore().getId().equals(user.getStore().getId()))){
+                    throw new AccessDeniedException("You can only update users from your own store.");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid user role.");
+        }
+        System.out.println("5");
+        if (authUser.getId().equals(user.getId())) {
+            throw new ValidationException("You cannot reset your own password.");
+        }
+        System.out.println(user.getRole().getName());
+        System.out.println("6");
+        if (authRole.equals("ROLE_STORE_ADMIN")
+                && !user.getRole().getName().equals("CASHIER")) {
+
+            throw new AccessDeniedException("Store Admin can only reset Cashier passwords.");
+        }
+        System.out.println("7");
+        String temporaryPassword = generateTemporaryPassword();
+        String hashedPassword = passwordEncoder.encode(temporaryPassword);
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+        System.out.println("8");
+        return new TemporaryPasswordResponse(user.getLoginUser(), temporaryPassword);
+    }
 
     @Override
     public UserResponse updateRoleAndStore(Long id,
@@ -222,5 +284,18 @@ public class UserService implements IUserService{
 
         user.deactiveUser();
         userRepository.save(user);
+    }
+
+    private String generateTemporaryPassword(){
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < 10; i++) {
+            password.append(characters.charAt(random.nextInt(characters.length())));
+        }
+
+        return password.toString();
     }
 }
