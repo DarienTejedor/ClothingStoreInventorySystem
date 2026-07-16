@@ -203,6 +203,33 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
+    @Operation(
+            summary = "Reset a user password to a temporary one",
+            description = "Generates and sets a temporary password for the specified user. Requires GENERAL_ADMIN or STORE_ADMIN roles.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Password reset successfully. Returns the new temporary password.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = TemporaryPasswordResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied. User doesn't have permissions.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found with the provided ID",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input or bad request.",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
     @PutMapping("/{id}/reset-password")
     @Transactional
     @PreAuthorize("hasAnyRole('GENERAL_ADMIN', 'STORE_ADMIN')")
