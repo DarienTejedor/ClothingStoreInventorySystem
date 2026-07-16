@@ -26,3 +26,7 @@ export interface UserPageResponse {
   size: number;
   number: number;
 }
+
+export interface TemporaryPasswordResponse {
+  temporaryPassword: string;
+}

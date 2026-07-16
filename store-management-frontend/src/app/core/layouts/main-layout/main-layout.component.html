@@ -1,7 +1,8 @@
 <div class="flex h-screen bg-brand-10 relative overflow-hidden">
 
+  <!-- Sidebar -->
   <aside
-    class="relative z-20 flex flex-col w-64 bg-white/80 backdrop-blur-md border-r border-brand-100 shadow-lg transition-all duration-300"
+    class="relative z-20 flex flex-col w-64 shrink-0 bg-white/80 backdrop-blur-md border-r border-brand-100 shadow-lg transition-all duration-300"
     [class.-translate-x-full]="!isSidebarOpen"
     [class.hidden]="!isSidebarOpen"
   >
@@ -10,6 +11,7 @@
       <h1 class="font-serif text-2xl text-brand-800 tracking-wide">
         Lumi
       </h1>
+
       <p class="text-xs text-brand-600 tracking-widest uppercase mt-1">
         Store Management
       </p>
@@ -27,23 +29,19 @@
       }
     </nav>
 
-    <div class="px-6 py-5">
-      <span class="inline-block text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 font-medium border border-brand-100">
-        {{ userRole }}
-      </span>
-    </div>
-
   </aside>
 
+  <!-- Contenido -->
   <div class="relative z-10 flex flex-col flex-1 overflow-hidden">
 
-    <header class="relative z-10 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-brand-100">
+    <header
+      class="relative z-10 flex flex-wrap items-center justify-between gap-4 px-6 py-4 bg-white/80 backdrop-blur-md border-b border-brand-100">
 
+      <!-- Izquierda -->
       <div class="flex items-center gap-4">
         <button
           (click)="toggleSidebar()"
-          class="text-brand-600 hover:text-brand-400 transition-colors"
-        >
+          class="text-brand-600 hover:text-brand-400 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg"
                class="h-5 w-5"
                fill="none"
@@ -59,25 +57,81 @@
         <span class="text-base text-brand-900">
           Bienvenido, <strong>{{ userName }}</strong>
         </span>
+
       </div>
 
-      <button
-        (click)="logout()"
-        class="flex items-center gap-2 px-4 py-2 rounded-full border border-brand-100 bg-brand-50 text-sm text-brand-600 hover:bg-brand-100 hover:text-brand-400 transition-all"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="h-4 w-4"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor">
-          <path stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V7"/>
-        </svg>
+      <!-- Perfil -->
+      <div class="relative user-menu">
 
-        Cerrar sesión
-      </button>
+        <button
+          (click)="toggleUserMenu()"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-brand-50 transition">
+
+          <!-- Avatar -->
+          <div
+            class="flex items-center justify-center w-9 h-9 rounded-full bg-brand-100 text-brand-800 font-semibold">
+
+            {{ userName.charAt(0) }}
+
+          </div>
+
+          <div class="hidden sm:block text-left">
+
+            <p class="text-sm font-medium text-brand-900">
+              {{ userName }}
+            </p>
+
+            <p class="text-xs text-brand-600">
+              {{ roleLabel }}
+            </p>
+
+          </div>
+
+          <svg
+            class="w-4 h-4 text-brand-600 transition-transform"
+            [class.rotate-180]="isUserMenuOpen"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"/>
+
+          </svg>
+
+        </button>
+
+        @if (isUserMenuOpen) {
+
+          <div
+            class="absolute right-0 top-full mt-3 w-56 rounded-2xl bg-white border border-brand-100 shadow-xl overflow-hidden">
+
+            <button
+              (click)="goToProfile()"
+              class="w-full px-5 py-3 text-left text-sm text-brand-900 hover:bg-brand-50 transition">
+
+              Mi perfil
+
+            </button>
+
+            <div class="border-t border-brand-100"></div>
+
+            <button
+              (click)="logout()"
+              class="w-full px-5 py-3 text-left text-sm text-red-600 hover:bg-red-50 transition">
+
+              Cerrar sesión
+
+            </button>
+
+          </div>
+
+        }
+
+      </div>
 
     </header>
 

@@ -25,12 +25,26 @@ export class UserFormComponent {
   @Output() save = new EventEmitter<any>();
 
 
-userForm = new FormGroup({
-    loginUser: new FormControl('', [Validators.required, Validators.minLength(4)]),
-    name: new FormControl('', Validators.required),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    document: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+$')]),
-    roleId: new FormControl<number | string>('', Validators.required), 
+  infoForm = new FormGroup({
+  loginUser: new FormControl(''),
+  name: new FormControl('', Validators.required),
+  document: new FormControl('', [
+    Validators.required,
+    Validators.pattern('^[0-9]+$')
+    ])
+  });
+
+  passwordForm = new FormGroup({
+    oldPassword: new FormControl('', Validators.required),
+    newPassword: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6)
+    ]),
+    confirmPassword: new FormControl('', Validators.required)
+  });
+
+  permissionsForm = new FormGroup({
+    roleId: new FormControl<number | string>('', Validators.required),
     storeId: new FormControl<number | string>('', Validators.required)
   });
 
@@ -38,46 +52,56 @@ userForm = new FormGroup({
   setData(user: UserResponse) {
     this.isGeneralAdmin = user.roleName === 'GENERAL_ADMIN'; // Actualizamos la variable según el rol del usuario
     if (this.isGeneralAdmin) {
-
-      this.userForm.get('roleId')?.disable();
-      this.userForm.get('storeId')?.disable();
-
+      this.permissionsForm.get('roleId')?.disable();
+      this.permissionsForm.get('storeId')?.disable();
     } else {
-
-      this.userForm.get('roleId')?.enable();
-      this.userForm.get('storeId')?.enable();
-
+      this.permissionsForm.get('roleId')?.enable();
+      this.permissionsForm.get('storeId')?.enable();
     }
-    this.userForm.patchValue({
+    this.infoForm.patchValue({
         loginUser: user.loginUser,
         name: user.name,
         document: user.document.toString() || '',
+    })
+    this.permissionsForm.patchValue({
         roleId: user.roleId,
         storeId: user.storeId
     });
-
-    // Al editar, el password deja de ser obligatorio en el Front (el back no lo requerirá si no cambia)
-    this.userForm.get('password')?.clearValidators();
-    this.userForm.get('password')?.updateValueAndValidity();
   }
 
   // Este método lo llamará el PADRE al presionar "Nuevo Usuario"
   resetForm() {
-    this.userForm.reset();
+    this.infoForm.reset();
+    this.passwordForm.reset();
+    this.permissionsForm.reset();
     // Reestablecemos el validador requerido para nuevos registros
     this.isGeneralAdmin = false; // Reseteamos la variable al crear un nuevo usuario
-    this.userForm.patchValue({ roleId: '', storeId: '' });
-    this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
-    this.userForm.get('password')?.updateValueAndValidity();
-  }
-
-  onSave() {
-    if (this.userForm.valid) {
-      this.save.emit(this.userForm.value);
-    }
+    this.permissionsForm.patchValue({
+      roleId: '',
+      storeId: ''
+    });
   }
 
   onClose() {
     this.close.emit();
+  }
+  onSaveInfo() {
+    if (this.infoForm.valid) {
+      // Puedes enviar un objeto indicando qué se actualizó
+      this.save.emit({ type: 'INFO', data: this.infoForm.value });
+    }
+  }
+
+  onSavePassword() {
+    if (this.passwordForm.valid) {
+      this.save.emit({ type: 'PASSWORD', data: this.passwordForm.value });
+    }
+  }
+
+  onSavePermissions() {
+    if (this.permissionsForm.valid) {
+      // Usamos getRawValue() por si los campos están deshabilitados (isGeneralAdmin)
+      this.save.emit({ type: 'PERMISSIONS', data: this.permissionsForm.getRawValue() });
+    }
   }
 }

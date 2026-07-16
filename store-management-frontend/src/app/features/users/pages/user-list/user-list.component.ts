@@ -21,10 +21,13 @@ export class UserListComponent implements OnInit {
   isEditing: boolean = false;
   searchTerm: string = '';
   selectedUserId: number | null = null;
+  currentRole = sessionStorage.getItem('role') || '';
+  currentUserId = Number(sessionStorage.getItem('id'));
   
   rolesList: any[] = [];   
   storesList: any[] = [];  
   
+
   
   constructor(
     private userService: UserService,
@@ -51,20 +54,77 @@ export class UserListComponent implements OnInit {
 
   loadData(): void {
     // Cargamos los roles del back
-    this.userService.getRoles().subscribe({
-      next: (response: any) => {
-        this.rolesList = (response.content || []).filter((role: any) => role.name !== 'ROLE_GENERAL_ADMIN'); // Filtra el GA asi no sale como opcion en el form
-        this.cdr.detectChanges();
-      },
-      error: (e) => console.error('Error al cargar roles para el form', e)});
+    if (this.currentRole === 'ROLE_GENERAL_ADMIN') {
+      this.userService.getAssignableRoles().subscribe({
+        next: (response: any) => {
+          this.rolesList = (response.content || []).filter((role: any) => role.name !== 'ROLE_GENERAL_ADMIN'); // Filtra el GA asi no sale como opcion en el form
+          this.cdr.detectChanges();
+        },
+        error: (e) => console.error('Error al cargar roles para el form', e)});
 
-    // Cargamos las tiendas del back (Usa tu userService o storeService aquí)
-    this.userService.getStores().subscribe({
-      next: (response: any) => {
-        this.storesList = response.content || [];
-        this.cdr.detectChanges();
-      },
-      error: (e) => console.error('Error al cargar tiendas para el form', e)
+      // Cargamos las tiendas del back (Usa tu userService o storeService aquí)
+      this.userService.getStores().subscribe({
+        next: (response: any) => {
+          this.storesList = response.content || [];
+          this.cdr.detectChanges();
+        },
+        error: (e) => console.error('Error al cargar tiendas para el form', e)
+      });
+    }
+  }
+
+  // Función para determinar si el usuario puede editar otro usuario
+  canEdit(user: UserResponse): boolean {
+  if (this.currentRole === 'ROLE_GENERAL_ADMIN') {
+    return true;
+  }
+  if (this.currentRole === 'ROLE_STORE_ADMIN') {
+    return user.roleName !== 'GENERAL_ADMIN';
+  }
+    return false;
+  }
+
+  // Función para determinar si el usuario puede eliminar otro usuario
+  canDelete(user: UserResponse): boolean {
+  if (user.roleName === 'GENERAL_ADMIN') {
+    return false;
+  }
+  if (this.currentRole === 'ROLE_GENERAL_ADMIN') {
+    return true;
+  }
+  if (this.currentRole === 'ROLE_STORE_ADMIN') {
+    return user.id !== this.currentUserId;
+  }
+    return false;
+  }
+
+  // Función para determinar si el usuario puede resetear la contraseña de otro usuario
+  canResetPassword(user: UserResponse): boolean {
+  if (user.id === this.currentUserId) {
+    return false;
+  }
+  if (this.currentRole === 'ROLE_GENERAL_ADMIN') {
+    return user.roleName !== 'GENERAL_ADMIN';
+  }
+  if (this.currentRole === 'ROLE_STORE_ADMIN') {
+    return user.roleName === 'CASHIER';
+  }
+    return false;
+  }
+
+  // Función para resetear la contraseña de un usuario
+  async resetPassword(user: UserResponse): Promise<void> {
+  const result = await this.alertService.confirmResetPassword(user.name);
+  if (!result.isConfirmed) {
+    return;
+  }
+  this.userService.resetPassword(user.id).subscribe({
+    next: (response) => {
+      this.alertService.showTemporaryPassword(
+        response.temporaryPassword
+      );
+    },
+    error: (e) => console.error(e)
     });
   }
 
@@ -86,22 +146,67 @@ export class UserListComponent implements OnInit {
     setTimeout(() => this.userFormChild.setData(user), 0);
   }
 
-  handleSave(userData: any) {
-    if (this.isEditing && this.selectedUserId) {
-      this.userService.updateUser(this.selectedUserId, userData).subscribe({
-        next: () => {
-          this.alertService.success('Usuario actualizado');
-          this.finishProcess();
-        }
-      });
-    } else {
-      this.userService.createUser(userData).subscribe({
-        next: () => {
-          this.alertService.success('Usuario creado con éxito');
-          this.finishProcess();
-        }
-      });
+handleSave(event: any) {
+
+  // CREAR USUARIO
+  if (!this.isEditing) {
+    this.userService.createUser(event.data).subscribe({
+      next: () => {
+        this.alertService.success('Usuario creado con éxito');
+        this.finishProcess();
+      }
+    });
+    return;
+  }
+
+  if (!this.selectedUserId) return;
+
+  switch (event.type) {
+
+    case 'INFO':
+      this.userService
+        .updateUserInfo(this.selectedUserId, event.data)
+        .subscribe({
+          next: () => {
+            this.alertService.success('Información actualizada');
+            this.refreshData();
+          }
+        });
+      break;
+
+    case 'PASSWORD':
+
+      // No enviamos confirmPassword al backend
+      const passwordData = {
+        oldPassword: event.data.oldPassword,
+        newPassword: event.data.newPassword
+      };
+
+      this.userService
+        .updateUserPassword(this.selectedUserId, passwordData)
+        .subscribe({
+          next: () => {
+            this.alertService.success('Contraseña actualizada');
+            this.refreshData();
+          }
+        });
+      break;
+
+    case 'PERMISSIONS':
+      this.userService
+        .updateUserPermissions(this.selectedUserId, event.data)
+        .subscribe({
+          next: () => {
+            this.alertService.success('Permisos actualizados');
+            this.refreshData();
+          }
+        });
+      break;
     }
+  }
+
+  private refreshData() {
+    this.loadUsers();
   }
   
   private finishProcess() {
