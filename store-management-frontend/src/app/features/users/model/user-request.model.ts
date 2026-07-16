@@ -1,11 +1,7 @@
-export interface UserResponse {
-  id: number;
+export interface UserData {
   loginUser: string;
   name: string;
   document: number;
   roleId: number;
-  roleName: string;
   storeId: number;
-  storeName: string;
 }
-

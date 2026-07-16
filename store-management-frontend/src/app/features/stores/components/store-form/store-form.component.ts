@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '../../models/store.model';
+import { StoreRequest } from '../../models/store-request.model';
 
 @Component({
   selector: 'app-store-form',
@@ -16,7 +17,7 @@ export class StoreFormComponent {
   
   // Eventos para avisar al padre
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<any>();
+  @Output() save = new EventEmitter<StoreRequest>();
 
   storeForm = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -39,7 +40,7 @@ export class StoreFormComponent {
 
   onSave() {
     if (this.storeForm.valid) {
-      this.save.emit(this.storeForm.value);
+      this.save.emit(this.storeForm.getRawValue() as StoreRequest);
     }
   }
 

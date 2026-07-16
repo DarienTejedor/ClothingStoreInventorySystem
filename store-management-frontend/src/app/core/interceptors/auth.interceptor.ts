@@ -14,7 +14,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return next(req);
     }
     
-    const token = sessionStorage.getItem('token');
+    const token = authService.getToken();
     
     //Si tenemos un token se clona y se pone al header
     if(token){
@@ -36,11 +36,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
             //si el Token ha expirado, intentamos renovarlo
             if (error.status === 401) {
-                const refreshToken = sessionStorage.getItem('refreshToken');
+                const refreshToken = authService.getRefreshToken();
                 //Si el token es nulo, se limpia sesión y se redirige a login / desloguea al usuario
                 if (!refreshToken) {
-                    sessionStorage.clear();
-                    router.navigate(['/login']);
+                    authService.logout();
                     return throwError(() => error);
                 }
             
@@ -48,7 +47,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 return authService.refreshToken(refreshToken).pipe(
                     switchMap((response) => {
                             // Guardamos el nuevo access token
-                            sessionStorage.setItem('token', response.token);
+                            authService.setToken(response.token);
 
                             // Reintentamos la request original con el nuevo token
                             const retryReq = req.clone({
@@ -58,7 +57,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                     }),
                     catchError((refreshError) => {
                         // Si el refresh token también falla, limpiamos sesión y redirigimos a login
-                        sessionStorage.clear();
+                        authService.logout();
                         router.navigate(['/login']);
                         return throwError(() => refreshError);
                     })

@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TemporaryPasswordResponse, UserData, UserPageResponse, UserResponse } from '../model/user.model';
+import {UserResponse } from '../model/user.model';
+import { TemporaryPasswordResponse } from '../model/temporary-password.model';
+import { UserPageResponse } from '../model/user-page.model';
+import { UserData } from '../model/user-request.model';
+import { UserInfoRequest } from '../model/user-info-request.model';
+import { UserPasswordRequest } from '../model/user-password-request.model';
+import { UserPermissionsRequest } from '../model/user-permissions-request.model';
+import { Store, StorePageResponse } from '../../stores/models/store.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +19,17 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   // Obtener usuarios paginados
-  getUsers(searchTerm: string = ''): Observable<any> {
+  getUsers(searchTerm: string = ''): Observable<UserPageResponse> {
     let params = new HttpParams()
       if(searchTerm){
         params = params.set('search', searchTerm);
       }
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<UserPageResponse>(this.apiUrl, { params });
+  }
+
+  //Obtiene un usuario por ID
+  getUserById(id: number): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.apiUrl}/${id}`);
   }
 
   // Obtener roles autorizados
@@ -26,23 +38,23 @@ export class UserService {
   }
 
   // Crear nuevo usuario
-  createUser(user: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, user);
+  createUser(user: UserData): Observable<UserResponse> {
+    return this.http.post<UserResponse>(this.apiUrl, user);
   }
 
   //Actualiza informacion (name y document)
-  updateUserInfo(id: number, userData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, userData);
+  updateUserInfo(id: number, userData: UserInfoRequest): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${this.apiUrl}/${id}`, userData);
   }
 
   //Actualiza permisos (roleId y storeId)
-  updateUserPermissions(id: number, permissionsData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/permissions`, permissionsData);
+  updateUserPermissions(id: number, permissionsData: UserPermissionsRequest): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${this.apiUrl}/${id}/permissions`, permissionsData);
   }
 
   //Actualiza password
-  updateUserPassword(id: number, passwordData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/password`, passwordData);
+  updateUserPassword(id: number, passwordData: UserPasswordRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/password`, passwordData);
   }
 
   resetPassword(id: number): Observable<TemporaryPasswordResponse> {
@@ -58,7 +70,7 @@ export class UserService {
     return this.http.get<any[]>('http://localhost:8080/roles');
   }
 
-  getStores(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:8080/stores');
+  getStores(): Observable<StorePageResponse> {
+    return this.http.get<StorePageResponse>('http://localhost:8080/stores');
   }
 }

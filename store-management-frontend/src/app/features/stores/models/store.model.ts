@@ -11,3 +11,11 @@ export interface Store {
     phoneNumber: string;
     email: string;
 }
+
+export interface StorePageResponse {
+  content: Store[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}

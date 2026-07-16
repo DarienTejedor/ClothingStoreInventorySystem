@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { Store } from '../../models/store.model';
+import { Store, StorePageResponse } from '../../models/store.model';
 import { StoreService } from '../../services/store.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { StoreFormComponent } from '../../components/store-form/store-form.component';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { StoreRequest } from '../../models/store-request.model';
 
 @Component({
   selector: 'app-store-list',
@@ -30,12 +31,12 @@ export class StoreListComponent implements OnInit{
     private cdr: ChangeDetectorRef
   ){}
   
-  onSearch(event: any): void {
-      const value = event.target.value;
-      this.searchTerm = value;
-    
-      this.loadStores(this.searchTerm);
-    }
+  onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm = value;
+
+    this.loadStores(this.searchTerm);
+  }
     
     
   offLoading(){
@@ -69,7 +70,7 @@ export class StoreListComponent implements OnInit{
     setTimeout(() => this.storeFormChild.setData(store), 0); 
   }
 
-  handleSave(storeData: any) {
+  handleSave(storeData: StoreRequest): void {
     if (this.isEditing && this.selectedStoreId) {
       this.storeService.updateStore(this.selectedStoreId, storeData).subscribe({
         next: () => {
@@ -105,7 +106,7 @@ export class StoreListComponent implements OnInit{
       finalize(() => this.offLoading())
     )
     .subscribe({
-      next: (response: any) => {
+      next: (response: StorePageResponse) => {
         this.stores = response.content;
         this.offLoading();
       },
@@ -124,9 +125,15 @@ export class StoreListComponent implements OnInit{
     const result = await this.alertService.confirmDelete('¿Deseas eliminar esta tienda?');
 
     if(result.isConfirmed) {
-      this.storeService.deleteStore(id).subscribe(() => {
-        this.stores = this.stores.filter(s => s.id !== id);
-        this.alertService.success('Tienda eliminada correctamente');
+      this.storeService.deleteStore(id).subscribe({
+        next: () => {
+          this.alertService.success('Tienda eliminada');
+          this.loadStores(this.searchTerm);
+        },
+        error: (e) => {
+          console.error('Error al eliminar tienda', e);
+          this.alertService.error('Error al eliminar tienda');
+        }
       });
     }
   }

@@ -32,10 +32,7 @@ export class LoginComponent{
 
         this.authService.login(this.loginData).subscribe({
             next: (response) => {
-                sessionStorage.setItem('token', response.token);
-                sessionStorage.setItem('refreshToken', response.refreshToken)
-                sessionStorage.setItem('role', response.role);
-                sessionStorage.setItem('name', response.name)
+                this.authService.saveSession(response);
                 // Redirigir al dashboard
                 this.router.navigate(['/dashboard']);
             },

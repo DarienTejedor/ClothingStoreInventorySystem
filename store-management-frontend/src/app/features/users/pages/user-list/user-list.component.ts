@@ -5,11 +5,14 @@ import { UserResponse } from '../../model/user.model';
 import { UserFormComponent } from "../../components/user-form/user-form.component";
 import { finalize } from 'rxjs';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { Store, StorePageResponse } from '../../../stores/models/store.model';
+import { UserFormEvent } from '../../model/user-form-event.model';
+import { UserPageResponse } from '../../model/user-page.model';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, UserFormComponent, UserFormComponent], // Agrega aquí ReactiveFormsModule o subcomponentes si los usas
+  imports: [CommonModule, UserFormComponent], 
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css']
 })
@@ -25,9 +28,7 @@ export class UserListComponent implements OnInit {
   currentUserId = Number(sessionStorage.getItem('id'));
   
   rolesList: any[] = [];   
-  storesList: any[] = [];  
-  
-
+  storesList: Store[] = [];  
   
   constructor(
     private userService: UserService,
@@ -35,10 +36,10 @@ export class UserListComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
   
-  onSearch(event: any): void {
-      const value = event.target.value;
+  onSearch(event: Event): void {
+      const value = (event.target as HTMLInputElement).value;
+
       this.searchTerm = value;
-  
       this.loadUsers(this.searchTerm);
   }
 
@@ -64,7 +65,7 @@ export class UserListComponent implements OnInit {
 
       // Cargamos las tiendas del back (Usa tu userService o storeService aquí)
       this.userService.getStores().subscribe({
-        next: (response: any) => {
+        next: (response: StorePageResponse) => {
           this.storesList = response.content || [];
           this.cdr.detectChanges();
         },
@@ -146,10 +147,12 @@ export class UserListComponent implements OnInit {
     setTimeout(() => this.userFormChild.setData(user), 0);
   }
 
-handleSave(event: any) {
-
+  handleSave(event: UserFormEvent){
   // CREAR USUARIO
   if (!this.isEditing) {
+
+    if (event.type !== 'CREATE') {return;}
+
     this.userService.createUser(event.data).subscribe({
       next: () => {
         this.alertService.success('Usuario creado con éxito');
@@ -175,15 +178,8 @@ handleSave(event: any) {
       break;
 
     case 'PASSWORD':
-
-      // No enviamos confirmPassword al backend
-      const passwordData = {
-        oldPassword: event.data.oldPassword,
-        newPassword: event.data.newPassword
-      };
-
       this.userService
-        .updateUserPassword(this.selectedUserId, passwordData)
+        .updateUserPassword(this.selectedUserId, event.data)
         .subscribe({
           next: () => {
             this.alertService.success('Contraseña actualizada');
@@ -224,7 +220,7 @@ handleSave(event: any) {
     .pipe(
       finalize(() => this.offLoading())
     ).subscribe({
-      next: (response: any) => {
+      next: (response: UserPageResponse) => {
         this.users = response.content;
         this.offLoading();
       },

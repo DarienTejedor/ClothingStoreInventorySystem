@@ -1,0 +1,215 @@
+<div class="max-w-7xl mx-auto px-4 py-6 space-y-8">
+
+  <!-- Encabezado -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+
+    <div>
+      <h2 class="font-serif text-3xl text-brand-900">
+        Mi Perfil
+      </h2>
+
+      <p class="text-sm text-brand-600 mt-1">
+        Administra tu información personal y la seguridad de tu cuenta.
+      </p>
+    </div>
+
+    <!-- Tarjeta del usuario -->
+    <div
+      class="flex items-center gap-4 rounded-2xl border border-brand-100 bg-white px-5 py-4 shadow-sm">
+
+      <div
+        class="h-14 w-14 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xl font-semibold">
+
+        {{ user?.name?.charAt(0) }}
+
+      </div>
+
+      <div>
+        <p class="font-medium text-brand-900">
+          {{ user?.name }}
+        </p>
+
+        <p class="text-sm text-brand-600">
+          {{ user?.roleName }}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Cards -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+
+    <!-- Información -->
+    <div
+      class="bg-white rounded-2xl border border-brand-100 shadow-sm overflow-hidden">
+
+      <div class="px-6 py-4 bg-brand-50/40 border-b border-brand-100">
+        <h3 class="font-serif text-xl text-brand-900">
+          Información Personal
+        </h3>
+      </div>
+
+      <form
+        [formGroup]="infoForm"
+        (ngSubmit)="saveInfo()"
+        class="p-6 space-y-5">
+
+        <div>
+          <label class="block text-xs font-medium text-brand-900 mb-1.5">
+            Nombre Completo
+          </label>
+
+          <input
+            type="text"
+            formControlName="name"
+            class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400"/>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Usuario
+            </label>
+
+            <input
+              type="text"
+              formControlName="loginUser"
+              readonly
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-100 bg-brand-50 text-brand-700 opacity-80 cursor-default text-sm"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Documento
+            </label>
+
+            <input
+              type="text"
+              formControlName="document"
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400"/>
+          </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Rol
+            </label>
+
+            <input
+              [value]="user?.roleName"
+              readonly
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-100 bg-brand-50 text-brand-700 opacity-80 cursor-default text-sm"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Tienda
+            </label>
+
+            <input
+              [value]="user?.storeName"
+              readonly
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-100 bg-brand-50 text-brand-700 opacity-80 cursor-default text-sm"/>
+          </div>
+
+        </div>
+
+        <div class="flex justify-end pt-3">
+
+          <button
+            type="submit"
+            [disabled]="infoForm.invalid"
+            class="px-6 py-2 rounded-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-medium transition-colors disabled:opacity-50">
+
+            Guardar Información
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- Seguridad -->
+    <div
+      class="bg-white rounded-2xl border border-brand-100 shadow-sm overflow-hidden">
+
+      <div class="px-6 py-4 bg-brand-50/40 border-b border-brand-100">
+        <h3 class="font-serif text-xl text-brand-900">
+          Seguridad
+        </h3>
+      </div>
+
+      <form
+        [formGroup]="passwordForm"
+        (ngSubmit)="savePassword()"
+        class="p-6 space-y-5">
+
+        <div>
+          <label class="block text-xs font-medium text-brand-900 mb-1.5">
+            Contraseña Actual
+          </label>
+
+          <input
+            type="password"
+            formControlName="oldPassword"
+            class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400"/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-brand-900 mb-1.5">
+            Nueva Contraseña
+          </label>
+
+          <input
+            type="password"
+            formControlName="newPassword"
+            class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400"/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-brand-900 mb-1.5">
+            Confirmar Contraseña
+          </label>
+
+          <input
+            type="password"
+            formControlName="confirmPassword"
+            class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400"/>
+        </div>
+
+        <div class="rounded-xl bg-brand-50 border border-brand-100 p-4">
+
+          <p class="text-xs text-brand-600 leading-relaxed">
+            Por seguridad, utiliza una contraseña de al menos 6 caracteres.
+          </p>
+
+        </div>
+
+        <div class="flex justify-end pt-1">
+
+          <button
+            type="submit"
+            [disabled]="passwordForm.invalid"
+            class="px-6 py-2 rounded-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-medium transition-colors disabled:opacity-50">
+
+            Cambiar Contraseña
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

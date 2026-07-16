@@ -7,6 +7,7 @@
       <h3 class="font-serif text-lg text-brand-900">
         {{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}
       </h3>
+
       <button
         type="button"
         (click)="onClose()"
@@ -17,86 +18,182 @@
 
     <div class="px-6 py-5 overflow-y-auto space-y-8">
 
-      <form [formGroup]="infoForm" (ngSubmit)="onSaveInfo()" class="space-y-4">
+      <!-- ==================== INFORMACIÓN ==================== -->
+
+      <form
+        [formGroup]="infoForm"
+        (ngSubmit)="isEditing ? onSaveInfo() : onCreateUser()"
+        class="space-y-4">
+
         <h4 class="text-xs font-medium text-brand-600 uppercase tracking-wider border-b border-brand-100 pb-1">
           Información Personal
         </h4>
-        
+
         <div>
-          <label class="block text-xs font-medium text-brand-900 mb-1.5">Nombre Completo</label>
-          <input type="text" formControlName="name" placeholder="Ej: Darien Tejedor"
+          <label class="block text-xs font-medium text-brand-900 mb-1.5">
+            Nombre Completo
+          </label>
+
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Ej: Darien Tejedor"
             class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
+
           <div>
-            <label class="block text-xs font-medium text-brand-900 mb-1.5">Usuario (Login)</label>
-            <input type="text" formControlName="loginUser" readonly
-              class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition opacity-80 cursor-not-allowed"/>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-brand-900 mb-1.5">Documento</label>
-            <input type="text" formControlName="document" placeholder="123456789"
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Usuario (Login)
+            </label>
+
+            <input
+              type="text"
+              formControlName="loginUser"
+              placeholder="Ej: dtejedor"
+              [readonly]="isEditing"
+              [class.opacity-80]="isEditing"
+              [class.cursor-not-allowed]="isEditing"
               class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
           </div>
+
+          <div>
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Documento
+            </label>
+
+            <input
+              type="text"
+              formControlName="document"
+              placeholder="123456789"
+              class="w-full px-4 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 placeholder-brand-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition"/>
+          </div>
+
         </div>
 
+        <!-- Botón solo al editar -->
+        @if (isEditing) {
         <div class="flex justify-end pt-1">
-          <button type="submit" [disabled]="infoForm.invalid"
+          <button
+            type="submit"
+            [disabled]="infoForm.invalid"
             class="px-5 py-2 rounded-full text-sm bg-brand-400 hover:bg-brand-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             Guardar Información
           </button>
         </div>
+        }
+
       </form>
 
-    
 
-      <form [formGroup]="permissionsForm" (ngSubmit)="onSavePermissions()" class="space-y-4">
+      <!-- ==================== PERMISOS ==================== -->
+
+      <form
+        [formGroup]="permissionsForm"
+        (ngSubmit)="isEditing ? onSavePermissions() : onCreateUser()"
+        class="space-y-4">
+
         <h4 class="text-xs font-medium text-brand-600 uppercase tracking-wider border-b border-brand-100 pb-1">
           Configuración y Accesos
         </h4>
 
-        @if (isGeneralAdmin) {
+        @if (isEditing && isGeneralAdmin) {
         <div class="rounded-lg bg-brand-50 border border-brand-100 p-3 text-sm text-brand-700">
           Este usuario es el General Admin del sistema. Su rol y tienda no pueden modificarse.
         </div>
         }
 
         <div class="grid grid-cols-2 gap-4">
+
           <div>
-            <label class="block text-xs font-medium text-brand-900 mb-1.5">Rol</label>
-            <select formControlName="roleId"
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Rol
+            </label>
+
+            <select
+              formControlName="roleId"
               class="w-full px-4 pr-12 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition disabled:opacity-70 disabled:cursor-not-allowed">
-              <option value="">Seleccionar rol...</option>
-              <option *ngFor="let role of rolesList" [value]="role.id">{{ role.name }}</option>
+
+              <option [ngValue]="null">Seleccionar rol...</option>
+
+              <option
+                *ngFor="let role of rolesList"
+                [ngValue]="role.id">
+
+                {{ role.name }}
+
+              </option>
+
             </select>
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-brand-900 mb-1.5">Tienda asignada</label>
-            <select formControlName="storeId"
+            <label class="block text-xs font-medium text-brand-900 mb-1.5">
+              Tienda asignada
+            </label>
+
+            <select
+              formControlName="storeId"
               class="w-full px-4 pr-12 py-2.5 rounded-lg border border-brand-150 bg-cream text-sm text-brand-900 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition disabled:opacity-70 disabled:cursor-not-allowed">
-              <option value="">Seleccionar tienda...</option>
-              <option *ngFor="let store of storesList" [value]="store.id">{{ store.name }}</option>
+
+              <option [ngValue]="null">Seleccionar tienda...</option>
+
+              <option
+                *ngFor="let store of storesList"
+                [ngValue]="store.id">
+
+                {{ store.name }}
+
+              </option>
+
             </select>
+
           </div>
+
         </div>
 
+        <!-- Botón solo al editar -->
+        @if (isEditing) {
         <div class="flex justify-end pt-1">
-          <button type="submit" [disabled]="permissionsForm.invalid"
+          <button
+            type="submit"
+            [disabled]="permissionsForm.invalid"
             class="px-5 py-2 rounded-full text-sm bg-brand-400 hover:bg-brand-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             Guardar Permisos
           </button>
         </div>
+        }
+
       </form>
 
     </div>
 
-    <div class="px-6 py-4 border-t border-brand-100 flex justify-end shrink-0 bg-brand-50/30 rounded-b-2xl">
-      <button type="button" (click)="onClose()"
-        class="px-5 py-2 rounded-full text-sm text-brand-600 border border-brand-100 hover:border-brand-400 hover:bg-brand-50 transition-colors">
-        Cerrar Ventana
+    <!-- FOOTER -->
+
+    <div class="px-6 py-4 border-t border-brand-100 flex justify-between items-center shrink-0 bg-brand-50/30 rounded-b-2xl">
+
+      @if (!isEditing) {
+      <button
+        type="button"
+        (click)="onCreateUser()"
+        [disabled]="infoForm.invalid || permissionsForm.invalid"
+        class="px-6 py-2 rounded-full bg-brand-400 hover:bg-brand-600 text-white text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+
+        Crear Usuario
+
       </button>
+      }
+
+      <button
+        type="button"
+        (click)="onClose()"
+        class="ml-auto px-5 py-2 rounded-full text-sm text-brand-600 border border-brand-100 hover:border-brand-400 hover:bg-brand-50 transition-colors">
+
+        Cerrar Ventana
+
+      </button>
+
     </div>
 
   </div>

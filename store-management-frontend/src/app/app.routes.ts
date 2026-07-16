@@ -5,6 +5,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
 import { StoreListComponent } from './features/stores/pages/store-list/store-list.component';
 import { UserListComponent } from './features/users/pages/user-list/user-list.component';
+import { ProfileComponent } from './features/users/pages/profile/profile.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent},
@@ -17,6 +18,7 @@ export const routes: Routes = [
             { path: 'dashboard', component: HomeComponent},
             { path: 'users', component: UserListComponent},
             { path: 'stores', component: StoreListComponent},
+            { path: 'profile', component: ProfileComponent },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
