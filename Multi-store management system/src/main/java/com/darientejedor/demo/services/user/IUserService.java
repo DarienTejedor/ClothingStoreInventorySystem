@@ -22,6 +22,8 @@ public interface IUserService {
 
     UserResponse updateRoleAndStore(Long id, UpdateRoleAndStoreData updateRoleAndStoreData, Authentication authentication);
 
+    UserResponse updateRole(Long id, UpdateRole updateRole, Authentication authentication);
+
     void deactiveUser(Long id, Authentication authentication);
 
     TemporaryPasswordResponse resetPassword(Long id, Authentication authentication);
