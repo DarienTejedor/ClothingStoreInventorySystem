@@ -44,7 +44,7 @@ public class AuthController {
 
         String role = user.getAuthorities().iterator().next().getAuthority();
 
-        return ResponseEntity.ok(new LoginResponse(JWToken, refreshToken.getToken(), user.getId(), user.getName(), role));
+        return ResponseEntity.ok(new LoginResponse(JWToken, refreshToken.getToken(), user.getId(), user.getName(), role, user.getStore().getId(), user.getStore().getName()));
     }
 
     @PostMapping("/refresh")

@@ -276,6 +276,16 @@ public class UserController {
         return  ResponseEntity.ok(userResponse);
     }
 
+    @PutMapping("/{id}/role")
+    @Transactional
+    @PreAuthorize("hasRole('STORE_ADMIN')")
+    public ResponseEntity<UserResponse> updateUserRole(@PathVariable Long id,
+                                                       @RequestBody @Valid UpdateRole updateRole,
+                                                       Authentication authentication){
+        UserResponse userResponse = userService.updateRole(id, updateRole, authentication);
+        return ResponseEntity.ok(userResponse);
+    }
+
     @Operation(
             summary = "Deactivate a user.",
             description = "Deactivates an existing user by its ID. " +

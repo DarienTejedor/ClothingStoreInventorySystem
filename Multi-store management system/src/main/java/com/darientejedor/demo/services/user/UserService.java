@@ -188,13 +188,9 @@ public class UserService implements IUserService{
 
     @Override
     public TemporaryPasswordResponse resetPassword(Long id, Authentication authentication) {
-        System.out.println("1");
         User authUser = userAuthentications.authUser(authentication);
-        System.out.println("2");
         User user = userValidations.validUser(id);
-        System.out.println("3");
         String authRole = userAuthentications.authRole(authentication);
-        System.out.println("4");
 
         switch (authRole){
             case "ROLE_GENERAL_ADMIN":
@@ -207,23 +203,19 @@ public class UserService implements IUserService{
             default:
                 throw new IllegalArgumentException("Invalid user role.");
         }
-        System.out.println("5");
         if (authUser.getId().equals(user.getId())) {
             throw new ValidationException("You cannot reset your own password.");
         }
         System.out.println(user.getRole().getName());
-        System.out.println("6");
         if (authRole.equals("ROLE_STORE_ADMIN")
                 && !user.getRole().getName().equals("CASHIER")) {
 
             throw new AccessDeniedException("Store Admin can only reset Cashier passwords.");
         }
-        System.out.println("7");
         String temporaryPassword = generateTemporaryPassword();
         String hashedPassword = passwordEncoder.encode(temporaryPassword);
         user.setPassword(hashedPassword);
         userRepository.save(user);
-        System.out.println("8");
         return new TemporaryPasswordResponse(user.getLoginUser(), temporaryPassword);
     }
 
@@ -257,6 +249,28 @@ public class UserService implements IUserService{
         return new UserResponse(user);
     }
 
+    @Override
+    public UserResponse updateRole(Long id, UpdateRole updateRole, Authentication authentication) {
+        User authUser = userAuthentications.authUser(authentication);
+        User user = userValidations.validUser(id);
+
+        if (!(authUser.getStore().getId().equals(user.getStore().getId()))){
+            throw new IllegalArgumentException("You only can modify users from your own store");
+        }
+
+        if(user.getRole().getName().equals("GENERAL_ADMIN")){
+            throw new IllegalArgumentException("General Admin can't be modified.");
+        }
+
+        Role role = roleService.validRole(updateRole.roleId());
+        if (!role.getName().equals("CASHIER")) {
+            throw new IllegalArgumentException("Invalid role.");
+        }
+
+        user.setRole(role);
+        userRepository.save(user);
+        return new UserResponse(user);
+    }
 
     @Override
     public void deactiveUser(Long id, Authentication authentication) {

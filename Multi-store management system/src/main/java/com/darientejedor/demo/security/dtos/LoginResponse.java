@@ -5,6 +5,8 @@ public record LoginResponse(
         String refreshToken,
         Long id,
         String name,
-        String role
+        String role,
+        Long storeId,
+        String storeName
 ) {
 }
