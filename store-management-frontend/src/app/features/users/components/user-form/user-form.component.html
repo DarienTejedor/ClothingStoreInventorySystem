@@ -72,7 +72,6 @@
 
         </div>
 
-        <!-- Botón solo al editar -->
         @if (isEditing) {
         <div class="flex justify-end pt-1">
           <button
@@ -85,7 +84,6 @@
         }
 
       </form>
-
 
       <!-- ==================== PERMISOS ==================== -->
 
@@ -102,6 +100,12 @@
         <div class="rounded-lg bg-brand-50 border border-brand-100 p-3 text-sm text-brand-700">
           Este usuario es el General Admin del sistema. Su rol y tienda no pueden modificarse.
         </div>
+        }
+
+        @if (isStoreAdmin) {
+        <p class="text-sm text-brand-600">
+          <span class="font-medium">Nota:</span> Como administrador de tienda solo puedes modificar el rol. La tienda se asigna automáticamente.
+        </p>
         }
 
         <div class="grid grid-cols-2 gap-4">
@@ -153,7 +157,6 @@
 
         </div>
 
-        <!-- Botón solo al editar -->
         @if (isEditing) {
         <div class="flex justify-end pt-1">
           <button

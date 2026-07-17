@@ -9,6 +9,8 @@ export interface AuthResponse{
     id: number;
     name: string;
     role: string;
+    storeId: number | null;
+    storeName: string | null;
 }
 
 export interface RefreshTokenRequest{

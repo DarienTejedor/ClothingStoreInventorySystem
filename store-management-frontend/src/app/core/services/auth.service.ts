@@ -55,6 +55,8 @@ export class AuthService{
         sessionStorage.setItem('name', response.name);
         sessionStorage.setItem('role', response.role);
         sessionStorage.setItem('id', response.id.toString());
+        sessionStorage.setItem('storeId', response.storeId?.toString() ?? '');
+        sessionStorage.setItem('storeName', response.storeName ?? '');
     }
 
     //Datos de los Roles
@@ -69,6 +71,17 @@ export class AuthService{
 
     isCashier(): boolean {
         return this.getRole() === 'ROLE_CASHIER';
+    }
+
+    // Datos del store
+
+    getStoreId(): number | null {
+        const value = sessionStorage.getItem('storeId');
+        return value ? Number(value) : null;
+    }
+
+    getStoreName(): string {
+        return sessionStorage.getItem('storeName') ?? '';
     }
 
     //Sesion

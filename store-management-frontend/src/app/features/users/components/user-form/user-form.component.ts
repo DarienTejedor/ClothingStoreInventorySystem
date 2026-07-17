@@ -9,6 +9,8 @@ import { UserInfoRequest } from '../../model/user-info-request.model';
 import { UserPasswordRequest } from '../../model/user-password-request.model';
 import { UserPermissionsRequest } from '../../model/user-permissions-request.model';
 import { UserData } from '../../model/user-request.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { UserRoleRequest } from '../../model/user-role-request.model';
 
 @Component({
   selector: 'app-user-form',
@@ -20,6 +22,8 @@ import { UserData } from '../../model/user-request.model';
 export class UserFormComponent {
 
   isGeneralAdmin: boolean = false; // Variable para controlar si el usuario es GENERAL_ADMIN
+  isStoreAdmin: boolean = false; // Variable para controlar si el usuario es STORE_ADMIN
+  isCurrentUser = false;
 
   @Input() isEditing = false;
   @Input() isOpen = false;
@@ -31,6 +35,10 @@ export class UserFormComponent {
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<UserFormEvent>();
 
+  constructor(
+    private authService: AuthService
+  ) {}
+
 
   infoForm = UserFormFactory.createInfoForm();
 
@@ -41,13 +49,27 @@ export class UserFormComponent {
     storeId: new FormControl<number | null>(null, Validators.required)
   });
 
+  ngOnInit(): void {
+    this.isGeneralAdmin = this.authService.isGeneralAdmin();
+    this.isStoreAdmin = this.authService.isStoreAdmin();
+  }
+
   // Este método lo llamará el PADRE (user-list) al presionar "Editar"
   setData(user: UserResponse) {
-    this.isGeneralAdmin = user.roleName === 'GENERAL_ADMIN'; // Actualizamos la variable según el rol del usuario
-    if (this.isGeneralAdmin) {
+
+    this.isGeneralAdmin = user.roleName === 'GENERAL_ADMIN';
+
+    if (this.isGeneralAdmin || this.isCurrentUser) {
+      //El usuario editado es GA, deshabilitamos los campos de rol y tienda
       this.permissionsForm.get('roleId')?.disable();
       this.permissionsForm.get('storeId')?.disable();
+
+    } else if (this.isStoreAdmin) {
+      //SA solo puede cambiar el rol, no la tienda
+      this.permissionsForm.get('roleId')?.enable();
+      this.permissionsForm.get('storeId')?.disable();
     } else {
+      //GA editando un usuario normal
       this.permissionsForm.get('roleId')?.enable();
       this.permissionsForm.get('storeId')?.enable();
     }
@@ -66,13 +88,20 @@ export class UserFormComponent {
   resetForm() {
     this.infoForm.reset();
     this.passwordForm.reset();
-    this.permissionsForm.reset();
-    // Reestablecemos el validador requerido para nuevos registros
     this.isGeneralAdmin = false; // Reseteamos la variable al crear un nuevo usuario
+
     this.permissionsForm.reset({
       roleId: null,
-      storeId: null
+      storeId: this.isStoreAdmin
+          ? this.authService.getStoreId()
+          : null
     });
+
+    if (this.isStoreAdmin) {
+      this.permissionsForm.get('storeId')?.disable();
+    } else {
+      this.permissionsForm.get('storeId')?.enable();
+    }
   }
 
   onClose() {
@@ -109,7 +138,7 @@ export class UserFormComponent {
     });
   }
 
-onSavePermissions() {
+  onSavePermissions() {
     if (this.permissionsForm.invalid) return;
 
     const raw = this.permissionsForm.getRawValue();
@@ -118,6 +147,17 @@ onSavePermissions() {
       roleId: raw.roleId!,
       storeId: raw.storeId!
     };
+
+    if (this.isStoreAdmin) {
+
+      this.save.emit({
+          type: 'ROLE',
+          data: {
+              roleId: raw.roleId!
+          }
+      });
+      return;
+    }
 
     this.save.emit({
       type: 'PERMISSIONS',

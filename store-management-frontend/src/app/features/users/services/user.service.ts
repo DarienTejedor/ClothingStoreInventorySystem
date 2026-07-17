@@ -9,6 +9,7 @@ import { UserInfoRequest } from '../model/user-info-request.model';
 import { UserPasswordRequest } from '../model/user-password-request.model';
 import { UserPermissionsRequest } from '../model/user-permissions-request.model';
 import { Store, StorePageResponse } from '../../stores/models/store.model';
+import { UserRoleRequest } from '../model/user-role-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,10 @@ export class UserService {
   //Actualiza permisos (roleId y storeId)
   updateUserPermissions(id: number, permissionsData: UserPermissionsRequest): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.apiUrl}/${id}/permissions`, permissionsData);
+  }
+
+  updateRole(id: number, roleData: UserRoleRequest): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${this.apiUrl}/${id}/role`, roleData);
   }
 
   //Actualiza password
